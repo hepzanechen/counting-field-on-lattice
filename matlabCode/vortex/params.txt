@@ -1,0 +1,42 @@
+calcInvMethod,"directInv"
+B,2
+sumMethod,"fraction"
+threshold,0.0001
+Temperature,1e-2
+orbPerSite,2
+eta,0+1e-05i
+E_start,-10
+E_end,10
+num_points,100
+threshold,0.0001
+Temperature,1e-06
+ifSpin,True
+Nx,16
+Ny,16
+lambda,25
+lambda_s,2
+muCentral,-5
+vortexflux,0
+m,2
+Delta,25
+mLead,0
+lambdaLead,0
+muLead1,20
+muLead2,1
+muLead3,1
+muLead4,1
+muLead,0
+DeltaLead,0
+thopLead,25
+DeltaPhi,0
+tLeadC,20
+numLeads,2
+startTemp,0
+stepTemp,1
+numSteps,4
+variableToUpdate,vortexflux
+filename,"sprintf('trigrvortexflux(%f)_Tem(%f)_Nx(%f)_Ny(%f)_lambda(%f)_mu(%f)_Delta(%f).mat',vortexflux,Temperature,Nx,Ny,lambda,muCentral, Delta)"
+filePattern,"sprintf('trigrvorvortexflux(*)_Tem(%f)_Nx(%f)_Ny(%f)_lambda(%f)_mu(%f)_Delta(%f).mat',Temperature,Nx,Ny,lambda,,muCentral, Delta)"
+plotCondition,"data.tLeadC< 4 && data.tLeadC > 0 && mod(data.tLeadC, 1) == 0";
+dymLegend,"data.muCentral";
+strLegend,"muCentral";

@@ -1,0 +1,7 @@
+Miniconda3-latest-Linux-x86_64.sh
+*.png
+*.pdf
+*.html
+*.ipynb_checkpoints
+*.ipynb_checkpoints/*
+*.mat
