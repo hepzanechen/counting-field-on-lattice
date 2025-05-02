@@ -71,7 +71,7 @@ def calculate_transport_properties(
     num_leads = len(leads_info)
     noise = torch.zeros((batch_size, num_leads, num_leads), dtype=torch.float32, device=device)
     current = torch.zeros((batch_size, num_leads), dtype=torch.float32, device=device)   
-    ptypes = ['h', 'e']  
+    ptypes = ['e']  
     # Initialize 4D transmission tensor (batch, lead_i, lead_j, particle_type)
     T = torch.zeros((batch_size, num_leads, num_leads, 2, 2), 
                     dtype=torch.float32, device=device)
