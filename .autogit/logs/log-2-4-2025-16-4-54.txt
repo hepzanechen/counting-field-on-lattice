@@ -1,0 +1,115 @@
+-------------------- Auto-Git Log --------------------
+Fri May 02 2025 16:04:54 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+
+
+Created files:
+
+
+Deleted files:
+* calculations/__init__.py:Zone.Identifier
+* calculations/__pycache__/__init__.cpython-312.pyc:Zone.Identifier
+* calculations/__pycache__/__init__.cpython-39.pyc:Zone.Identifier
+* calculations/__pycache__/calculation_cf_autograd.cpython-312.pyc:Zone.Identifier
+* calculations/__pycache__/calculation_cf_autograd.cpython-39.pyc:Zone.Identifier
+* calculations/__pycache__/calculation_cf_autograd_vmap.cpython-312.pyc:Zone.Identifier
+* calculations/calculation_cf_autograd.py:Zone.Identifier
+* calculations/calculation_cf_autograd_physical.py:Zone.Identifier
+* cleanMem.sh
+* data/ssh_chain/comparison_derivative_order1.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order1_onsite.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order2.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order2_onsite.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order3.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order3_onsite.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order4.png:Zone.Identifier
+* data/ssh_chain/comparison_derivative_order4_onsite.png:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite0.0_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite0.2_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite0.4_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite0.6_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite0.8_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/energyrange0.9to1.1/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_split_onsite1.0_tlc1.0_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/finitesplitingOnsite/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.02_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/finitesplitingOnsite/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.04_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/finitesplitingOnsite/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.06_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/finitesplitingOnsite/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.08_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/finitesplitingOnsite/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.10_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.02_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.06_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/ssh_Nx8_tu-1.00+0.00j_tv-0.50+0.00j_mu-1.00+0.00j_Delta0.00+0.00j_split_onsite0.10_tlc1.00_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/zerospliting/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_tlc0.1_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/zerospliting/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_tlc0.4_temp1.0e-06.mat:Zone.Identifier
+* data/ssh_chain/zerospliting/ssh_Nx8_tu-1.0+0.0j_tv-0.5+0.0j_mu-1.0+0.0j_Delta0.0+0.0j_tlc0.7_temp1.0e-06.mat:Zone.Identifier
+* dataplot/__init__.py:Zone.Identifier
+* dataplot/__pycache__/__init__.cpython-312.pyc:Zone.Identifier
+* dataplot/__pycache__/__init__.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/current_density_plot.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/dispersion_plot.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/ldos_plot.cpython-312.pyc:Zone.Identifier
+* dataplot/__pycache__/ldos_plot.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/plot_all.cpython-312.pyc:Zone.Identifier
+* dataplot/__pycache__/plot_all.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/plot_all_gradients.cpython-39.pyc:Zone.Identifier
+* dataplot/__pycache__/transport_plot.cpython-312.pyc:Zone.Identifier
+* dataplot/__pycache__/transport_plot.cpython-39.pyc:Zone.Identifier
+* dataplot/current_density_plot.py:Zone.Identifier
+* dataplot/dispersion_plot.py:Zone.Identifier
+* dataplot/ldos_plot.py:Zone.Identifier
+* dataplot/plot_all_gradients.py:Zone.Identifier
+* dataplot/save_all_gradients.py:Zone.Identifier
+* dataplot/transport_plot.py:Zone.Identifier
+* greens_functions/__init__.py:Zone.Identifier
+* greens_functions/__pycache__/__init__.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/__init__.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/add_ginv_leads.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/add_ginv_leads.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_central.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_central.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_tlc.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_tlc.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_total.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/construct_ginv_total.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/direct_calculation.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/direct_calculation.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/lead_greens.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/total_self_energy.cpython-312.pyc:Zone.Identifier
+* greens_functions/__pycache__/total_self_energy.cpython-39.pyc:Zone.Identifier
+* greens_functions/__pycache__/transport_calculation.cpython-312.pyc:Zone.Identifier
+* greens_functions/add_ginv_leads.py:Zone.Identifier
+* greens_functions/construct_ginv_central.py:Zone.Identifier
+* greens_functions/construct_ginv_tlc.py:Zone.Identifier
+* greens_functions/construct_ginv_total.py:Zone.Identifier
+* greens_functions/direct_calculation.py:Zone.Identifier
+* greens_functions/total_self_energy.py:Zone.Identifier
+* greens_functions/transport_calculation.py:Zone.Identifier
+* hamiltonians/Lead.py:Zone.Identifier
+* hamiltonians/__init__.py:Zone.Identifier
+* hamiltonians/__pycache__/Central.cpython-312.pyc:Zone.Identifier
+* hamiltonians/__pycache__/Central.cpython-39.pyc:Zone.Identifier
+* hamiltonians/__pycache__/Lead.cpython-312.pyc:Zone.Identifier
+* hamiltonians/__pycache__/Lead.cpython-39.pyc:Zone.Identifier
+* hamiltonians/__pycache__/__init__.cpython-312.pyc:Zone.Identifier
+* hamiltonians/__pycache__/__init__.cpython-39.pyc:Zone.Identifier
+* hamiltonians/__pycache__/central_hamiltonian.cpython-312.pyc:Zone.Identifier
+* hamiltonians/__pycache__/lead_hamiltonian.cpython-312.pyc:Zone.Identifier
+* utils/__init__.py:Zone.Identifier
+* utils/__pycache__/__init__.cpython-312.pyc:Zone.Identifier
+* utils/__pycache__/__init__.cpython-39.pyc:Zone.Identifier
+* utils/__pycache__/batch_trace.cpython-312.pyc:Zone.Identifier
+* utils/__pycache__/batch_trace.cpython-39.pyc:Zone.Identifier
+* utils/__pycache__/fermi_distribution.cpython-312.pyc:Zone.Identifier
+* utils/__pycache__/fermi_distribution.cpython-39.pyc:Zone.Identifier
+* utils/__pycache__/lead_decimation.cpython-312.pyc:Zone.Identifier
+* utils/__pycache__/lead_decimation.cpython-39.pyc:Zone.Identifier
+* utils/__pycache__/load_config.cpython-312.pyc:Zone.Identifier
+* utils/__pycache__/load_config.cpython-39.pyc:Zone.Identifier
+* utils/batch_trace.py:Zone.Identifier
+* utils/fermi_distribution.py:Zone.Identifier
+* utils/lead_decimation.py:Zone.Identifier
+* utils/load_config.py:Zone.Identifier
+
+
+Renamed files:
