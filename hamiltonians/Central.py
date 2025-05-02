@@ -961,6 +961,67 @@ class SSHChainBdG(SSHChain):
                      torch.kron(pairing_matrix.conj(), torch.tensor([[0, 0], [1, 0]], dtype=torch.complex64, device=self.funcDevice))
         
         return H_full_BdG
+
+class KitaevChain:
+    """Class for constructing Kitaev chain Hamiltonian with p-wave pairing."""
+    
+    def __init__(self, Nx: int, t: torch.Tensor, mu: torch.Tensor, Delta: torch.Tensor):
+        """Initialize Kitaev chain Hamiltonian.
+        
+        Args:
+            Nx: Number of sites in the chain
+            t: Hopping parameter
+            mu: Chemical potential
+            Delta: Superconducting pairing parameter
+        """
+        self.Nx = Nx
+        self.t = t
+        self.mu = mu
+        self.Delta = Delta
+        self.funcDevice = t.device
+        
+        # Construct the Hamiltonian matrices
+        self.H_intra_BdG = self._construct_intra_bdg()
+        self.H_inter_BdG = self._construct_inter_bdg()
+        
+        # Assemble the full Hamiltonian
+        self.H_full = self._construct_full_hamiltonian()
+    
+    def _construct_intra_bdg(self) -> torch.Tensor:
+        """Constructs the onsite BdG Hamiltonian matrix."""
+        H_intra = torch.tensor([[-self.mu, 0], [0, self.mu]], 
+                              dtype=torch.complex64, device=self.funcDevice)
+        return H_intra
+    
+    def _construct_inter_bdg(self) -> torch.Tensor:
+        """Constructs the hopping BdG Hamiltonian matrix."""
+        H_inter = torch.tensor([[-self.t, -self.Delta], 
+                               [self.Delta.conj(), self.t.conj()]], 
+                              dtype=torch.complex64, device=self.funcDevice)
+        return H_inter
+    
+    def _construct_full_hamiltonian(self) -> torch.Tensor:
+        """Assembles the full Kitaev chain Hamiltonian."""
+        # Onsite terms
+        H_onsite = torch.kron(torch.eye(self.Nx, dtype=torch.complex64, device=self.funcDevice), 
+                             self.H_intra_BdG)
+        
+        # Hopping terms (right)
+        H_hop_right = torch.kron(torch.diag(torch.ones(self.Nx-1, dtype=torch.complex64, device=self.funcDevice), 1), 
+                                self.H_inter_BdG)
+        
+        # Hopping terms (left) - Hermitian conjugate
+        H_hop_left = torch.kron(torch.diag(torch.ones(self.Nx-1, dtype=torch.complex64, device=self.funcDevice), 1).T, 
+                               self.H_inter_BdG.conj().T)
+        
+        # Full Hamiltonian
+        H_full = H_onsite + H_hop_right + H_hop_left
+        
+        return H_full
+    
+    def __repr__(self):
+        return f"KitaevChain(Nx={self.Nx}, t={self.t}, mu={self.mu}, Delta={self.Delta})"
+
 class SSH2DCellMethod:
     """
     Class for constructing the 2D SSH Hamiltonian based on the provided formula
@@ -1074,6 +1135,7 @@ class SSH2DCellMethod:
     def __repr__(self):
         return (f"SSH2D(Nx={self.Nx}, Ny={self.Ny}, gamma_x={self.gamma_x}, gamma_y={self.gamma_y}, "
                 f"lambda_x={self.lambda_x}, lambda_y={self.lambda_y})")
+
 class SSH2DChainMethod:
     """
     use slice or chain method to construct the 2D SSH Hamiltonian.
