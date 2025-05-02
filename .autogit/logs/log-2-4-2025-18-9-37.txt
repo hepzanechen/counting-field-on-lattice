@@ -1,0 +1,18 @@
+-------------------- Auto-Git Log --------------------
+Fri May 02 2025 18:09:37 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* dataplot/__pycache__/transport_plot.cpython-312.pyc
+* dataplot/transport_plot.py
+* hamiltonians/__pycache__/Central.cpython-312.pyc
+* test1dsuschriffermodel.ipynb
+
+
+Created files:
+
+
+Deleted files:
+
+
+Renamed files:

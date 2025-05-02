@@ -231,4 +231,366 @@ def plot_conductance_matrix(
     * calculation results.                                            *
     **************************************************************
 """
-s
+import numpy as np
+import matplotlib.pyplot as plt
+import torch
+import os
+from typing import Dict, List, Optional, Tuple, Union, Any
+
+def plot_current_comparison(
+    E_values: Union[np.ndarray, torch.Tensor],
+    autograd_results: Dict[str, Any],
+    direct_results: Dict[str, Any],
+    terminal_idx: int = 0,
+    save_path: Optional[str] = None,
+    title_prefix: str = ""
+) -> None:
+    """
+    Plot a comparison between the 1st order derivative from autograd method and 
+    the current from direct calculation method for a specified terminal.
+    """
+    # Convert to numpy if tensors
+    if isinstance(E_values, torch.Tensor):
+        E_values = E_values.cpu().numpy()
+    
+    # Print available keys for debugging
+    print(f"Available autograd derivative keys: {list(autograd_results['derivatives'].keys())}")
+    print(f"Available direct result keys: {list(direct_results.keys())}")
+    
+    # Find first order derivative based on dimensionality
+    first_order = None
+    for order, derivative in autograd_results['derivatives'].items():
+        if derivative.ndim == 2:  # First-order derivatives are 2D (batch_size, num_leads)
+            first_order = derivative
+            first_order_key = order
+            break
+            
+    if first_order is None:
+        raise ValueError("No first order derivatives (2D tensor) found in autograd results")
+    
+    # Get current from direct results
+    current = direct_results.get('current', None)
+    if current is None:
+        raise ValueError("No current found in direct results")
+    
+    # Plot comparison
+    plt.figure(figsize=(10, 6))
+    
+    # Plot first order derivative for the specified terminal
+    plt.plot(E_values, first_order[:, terminal_idx], 
+             label=f'Autograd {first_order_key}-Order Derivative Terminal {terminal_idx+1}', 
+             linestyle='-', linewidth=2)
+    
+    # Plot current for the specified terminal
+    plt.plot(E_values, current[:, terminal_idx], 
+             label=f'Direct Current Terminal {terminal_idx+1}', 
+             linestyle='--', linewidth=2)
+    
+    plt.xlabel('Energy (E)')
+    plt.ylabel(f'Current / {first_order_key}-Order Derivative')
+    plt.title(f'{title_prefix}Comparison: {first_order_key}-Order Derivative vs Current (Terminal {terminal_idx+1})')
+    plt.legend()
+    plt.grid(True)
+    
+    if save_path:
+        plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
+def plot_noise_comparison(
+    E_values: Union[np.ndarray, torch.Tensor],
+    autograd_results: Dict[str, Any],
+    direct_results: Dict[str, Any],
+    terminal_i: int = 0,
+    terminal_j: int = 0,
+    save_path: Optional[str] = None,
+    title_prefix: str = ""
+) -> None:
+    """
+    Plot a comparison between the 2nd order derivative from autograd method and 
+    the noise from direct calculation method for a specified terminal pair.
+    """
+    # Convert to numpy if tensors
+    if isinstance(E_values, torch.Tensor):
+        E_values = E_values.cpu().numpy()
+    
+    # Find second order derivative based on dimensionality
+    second_order = None
+    for order, derivative in autograd_results['derivatives'].items():
+        if derivative.ndim == 3:  # Second-order derivatives are 3D (batch_size, num_leads, num_leads)
+            second_order = derivative
+            second_order_key = order
+            break
+            
+    if second_order is None:
+        raise ValueError("No second order derivatives (3D tensor) found in autograd results")
+    
+    # Get noise from direct results
+    noise = direct_results.get('noise', None)
+    if noise is None:
+        raise ValueError("No noise found in direct results")
+    
+    # Plot comparison
+    plt.figure(figsize=(10, 6))
+    
+    # Plot second order derivative for the specified terminal pair
+    plt.plot(E_values, second_order[:, terminal_i, terminal_j], 
+             label=f'Autograd {second_order_key}-Order Derivative ({terminal_i+1},{terminal_j+1})', 
+             linestyle='-', linewidth=2)
+    
+    # Plot noise for the specified terminal pair
+    plt.plot(E_values, noise[:, terminal_i, terminal_j], 
+             label=f'Direct Noise ({terminal_i+1},{terminal_j+1})', 
+             linestyle='--', linewidth=2)
+    
+    plt.xlabel('Energy (E)')
+    plt.ylabel(f'Noise / {second_order_key}-Order Derivative')
+    plt.title(f'{title_prefix}Comparison: {second_order_key}-Order Derivative vs Noise ({terminal_i+1},{terminal_j+1})')
+    plt.legend()
+    plt.grid(True)
+    
+    if save_path:
+        plt.savefig(save_path)
+    plt.show()
+    plt.close()
+
+def plot_all_terminal_currents(
+    E_values: Union[np.ndarray, torch.Tensor],
+    autograd_results: Dict[str, Any],
+    direct_results: Dict[str, Any],
+    save_dir: Optional[str] = None,
+    title_prefix: str = ""
+) -> None:
+    """
+    Create subplots comparing the 1st order derivative from autograd method and 
+    the current from direct calculation method for all terminals.
+    """
+    # Convert to numpy if tensors
+    if isinstance(E_values, torch.Tensor):
+        E_values = E_values.cpu().numpy()
+    
+    # Find first order derivative based on dimensionality
+    first_order = None
+    for order, derivative in autograd_results['derivatives'].items():
+        if derivative.ndim == 2:  # First-order derivatives are 2D (batch_size, num_leads)
+            first_order = derivative
+            first_order_key = order
+            break
+            
+    if first_order is None:
+        raise ValueError("No first order derivatives (2D tensor) found in autograd results")
+    
+    if isinstance(first_order, torch.Tensor):
+        first_order = first_order.cpu().numpy()
+    
+    # Get current from direct results
+    current = direct_results.get('current', None)
+    if current is None:
+        raise ValueError("No current found in direct results")
+    
+    if isinstance(current, torch.Tensor):
+        current = current.cpu().numpy()
+    
+    # Determine number of terminals
+    num_terminals = current.shape[1]
+    
+    # Create figure with subplots for each terminal
+    n_cols = min(3, num_terminals)  # Max 3 columns
+    n_rows = (num_terminals + n_cols - 1) // n_cols  # Ceiling division
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows), sharex=True)
+    
+    # Flatten axes for easy indexing
+    if num_terminals > 1:
+        if n_rows > 1 or n_cols > 1:
+            axes = axes.flatten()
+    else:
+        axes = [axes]
+    
+    # Plot for each terminal
+    for i in range(num_terminals):
+        ax = axes[i]
+        
+        # Plot first order derivative with minus sign
+        ax.plot(E_values, -first_order[:, i], 
+                label=f'Autograd {first_order_key}-Order Derivative', 
+                linestyle='-', linewidth=2)
+        
+        # Plot current
+        ax.plot(E_values, current[:, i], 
+                label='Direct Current', 
+                linestyle='--', linewidth=2)
+        
+        ax.set_title(f'Terminal {i+1}')
+        ax.set_xlabel('Energy (E)')
+        ax.set_ylabel(f'Current / -{first_order_key}-Order Derivative')
+        ax.legend()
+        ax.grid(True)
+    
+    # Hide any unused subplots
+    for i in range(num_terminals, len(axes)):
+        fig.delaxes(axes[i])
+    
+    # Set overall title
+    fig.suptitle(f'{title_prefix}Comparison: -{first_order_key}-Order Derivatives vs Currents', fontsize=16)
+    plt.tight_layout(rect=[0, 0, 1, 0.96])  # Make room for suptitle
+    
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
+        plt.savefig(os.path.join(save_dir, 'all_terminal_currents_comparison.png'))
+    plt.show()
+    plt.close()
+
+def plot_all_terminal_noise(
+    E_values: Union[np.ndarray, torch.Tensor],
+    autograd_results: Dict[str, Any],
+    direct_results: Dict[str, Any],
+    save_dir: Optional[str] = None,
+    title_prefix: str = "",
+    selected_pairs: Optional[List[Tuple[int, int]]] = None
+) -> None:
+    """
+    Create subplots comparing the 2nd order derivative from autograd method and 
+    the noise from direct calculation method for all terminal pairs or selected pairs.
+    """
+    # Convert to numpy if tensors
+    if isinstance(E_values, torch.Tensor):
+        E_values = E_values.cpu().numpy()
+    
+    # Find second order derivative based on dimensionality
+    second_order = None
+    for order, derivative in autograd_results['derivatives'].items():
+        if derivative.ndim == 3:  # Second-order derivatives are 3D (batch_size, num_leads, num_leads)
+            second_order = derivative
+            second_order_key = order
+            break
+            
+    if second_order is None:
+        raise ValueError("No second order derivatives (3D tensor) found in autograd results")
+    
+    if isinstance(second_order, torch.Tensor):
+        second_order = second_order.cpu().numpy()
+    
+    # Get noise from direct results
+    noise = direct_results.get('noise', None)
+    if noise is None:
+        raise ValueError("No noise found in direct results")
+    
+    if isinstance(noise, torch.Tensor):
+        noise = noise.cpu().numpy()
+    
+    # Determine number of terminals
+    num_terminals = noise.shape[1]
+    
+    # Determine terminal pairs to plot
+    if selected_pairs is None:
+        # Generate all possible pairs
+        terminal_pairs = [(i, j) for i in range(num_terminals) for j in range(num_terminals)]
+    else:
+        terminal_pairs = selected_pairs
+    
+    # Create figure with subplots for each terminal pair
+    n_pairs = len(terminal_pairs)
+    n_cols = min(3, n_pairs)  # Max 3 columns
+    n_rows = (n_pairs + n_cols - 1) // n_cols  # Ceiling division
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows), sharex=True)
+    
+    # Flatten axes for easy indexing
+    if n_pairs > 1:
+        if n_rows > 1 or n_cols > 1:
+            axes = axes.flatten()
+    else:
+        axes = [axes]
+    
+    # Plot for each terminal pair
+    for idx, (i, j) in enumerate(terminal_pairs):
+        if idx < len(axes):  # Ensure we don't go out of bounds
+            ax = axes[idx]
+            
+            # Plot second order derivative with minus sign
+            ax.plot(E_values, -second_order[:, i, j], 
+                    label=f'Autograd {second_order_key}-Order Derivative', 
+                    linestyle='-', linewidth=2)
+            
+            # Plot noise
+            ax.plot(E_values, noise[:, i, j], 
+                    label='Direct Noise', 
+                    linestyle='--', linewidth=2)
+            
+            ax.set_title(f'Terminal Pair ({i+1},{j+1})')
+            ax.set_xlabel('Energy (E)')
+            ax.set_ylabel(f'Noise / -{second_order_key}-Order Derivative')
+            ax.legend()
+            ax.grid(True)
+    
+    # Hide any unused subplots
+    for i in range(n_pairs, len(axes)):
+        fig.delaxes(axes[i])
+    
+    # Set overall title
+    fig.suptitle(f'{title_prefix}Comparison: -{second_order_key}-Order Derivatives vs Noise', fontsize=16)
+    plt.tight_layout(rect=[0, 0, 1, 0.96])  # Make room for suptitle
+    
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
+        plt.savefig(os.path.join(save_dir, 'all_terminal_noise_comparison.png'))
+    plt.show()
+    plt.close()
+
+def plot_comprehensive_comparison(
+    E_values: Union[np.ndarray, torch.Tensor],
+    autograd_results: Dict[str, Any],
+    direct_results: Dict[str, Any],
+    save_dir: Optional[str] = None,
+    title_prefix: str = ""
+) -> None:
+    """
+    Create a comprehensive set of comparison plots between autograd and direct calculation methods.
+    """
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
+    
+    # Print the available keys for debugging
+    print(f"Available autograd derivative keys: {list(autograd_results['derivatives'].keys())}")
+    print(f"Available direct result keys: {list(direct_results.keys())}")
+    
+    # Plot all terminal currents comparison
+    plot_all_terminal_currents(
+        E_values, 
+        autograd_results, 
+        direct_results,
+        save_dir=save_dir,
+        title_prefix=title_prefix
+    )
+    
+    # Plot all terminal noise comparison
+    plot_all_terminal_noise(
+        E_values, 
+        autograd_results, 
+        direct_results,
+        save_dir=save_dir,
+        title_prefix=title_prefix
+    )
+    
+    # # Plot generating function values (real and imaginary parts)
+    # if 'gen_func_values_real' in autograd_results and 'gen_func_values_imag' in autograd_results:
+    #     gen_func_real = autograd_results['gen_func_values_real']
+    #     gen_func_imag = autograd_results['gen_func_values_imag']
+    #     if isinstance(gen_func_real, torch.Tensor):
+    #         gen_func_real = gen_func_real.cpu().numpy()
+    #     if isinstance(gen_func_imag, torch.Tensor):
+    #         gen_func_imag = gen_func_imag.cpu().numpy()
+    #     plt.figure(figsize=(10, 6))
+    #     plt.plot(E_values, gen_func_real, label='GenFunc Real')
+    #     plt.plot(E_values, gen_func_imag, label='GenFunc Imag', linestyle='--')
+    #     plt.xlabel('Energy (E)')
+    #     plt.ylabel('Generating Function')
+    #     plt.title(f'{title_prefix}Generating Function vs Energy')
+    #     plt.legend()
+    #     plt.grid(True)
+        
+    #     if save_dir:
+    #         plt.savefig(os.path.join(save_dir, 'generating_function.png'))
+    #     plt.show()
+    #     plt.close()
