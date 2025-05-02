@@ -222,3 +222,13 @@ def plot_conductance_matrix(
         plt.savefig(save_path)
     plt.show()
     plt.close()
+
+
+
+"""-----------------------------------------------------------------
+    **************************************************************
+    * Comparison plotting functions for comparing autograd and direct *
+    * calculation results.                                            *
+    **************************************************************
+"""
+s
