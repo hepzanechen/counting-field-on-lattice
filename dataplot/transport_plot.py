@@ -411,8 +411,8 @@ def plot_all_terminal_currents(
     for i in range(num_terminals):
         ax = axes[i]
         
-        # Plot first order derivative with minus sign
-        ax.plot(E_values, -first_order[:, i], 
+        # Plot first order derivative 
+        ax.plot(E_values, first_order[:, i], 
                 label=f'Autograd {first_order_key}-Order Derivative', 
                 linestyle='-', linewidth=2)
         
@@ -423,7 +423,7 @@ def plot_all_terminal_currents(
         
         ax.set_title(f'Terminal {i+1}')
         ax.set_xlabel('Energy (E)')
-        ax.set_ylabel(f'Current / -{first_order_key}-Order Derivative')
+        ax.set_ylabel(f'Current / {first_order_key}-Order Derivative')
         ax.legend()
         ax.grid(True)
     
@@ -432,7 +432,7 @@ def plot_all_terminal_currents(
         fig.delaxes(axes[i])
     
     # Set overall title
-    fig.suptitle(f'{title_prefix}Comparison: -{first_order_key}-Order Derivatives vs Currents', fontsize=16)
+    fig.suptitle(f'{title_prefix}Comparison: {first_order_key}-Order Derivatives vs Currents', fontsize=16)
     plt.tight_layout(rect=[0, 0, 1, 0.96])  # Make room for suptitle
     
     if save_dir:
@@ -508,8 +508,8 @@ def plot_all_terminal_noise(
         if idx < len(axes):  # Ensure we don't go out of bounds
             ax = axes[idx]
             
-            # Plot second order derivative with minus sign
-            ax.plot(E_values, -second_order[:, i, j], 
+            # Plot second order derivative without minus sign
+            ax.plot(E_values, second_order[:, i, j], 
                     label=f'Autograd {second_order_key}-Order Derivative', 
                     linestyle='-', linewidth=2)
             
@@ -520,7 +520,7 @@ def plot_all_terminal_noise(
             
             ax.set_title(f'Terminal Pair ({i+1},{j+1})')
             ax.set_xlabel('Energy (E)')
-            ax.set_ylabel(f'Noise / -{second_order_key}-Order Derivative')
+            ax.set_ylabel(f'Noise / {second_order_key}-Order Derivative')
             ax.legend()
             ax.grid(True)
     
@@ -529,7 +529,7 @@ def plot_all_terminal_noise(
         fig.delaxes(axes[i])
     
     # Set overall title
-    fig.suptitle(f'{title_prefix}Comparison: -{second_order_key}-Order Derivatives vs Noise', fontsize=16)
+    fig.suptitle(f'{title_prefix}Comparison: {second_order_key}-Order Derivatives vs Noise', fontsize=16)
     plt.tight_layout(rect=[0, 0, 1, 0.96])  # Make room for suptitle
     
     if save_dir:
