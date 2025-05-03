@@ -76,10 +76,13 @@ def calculation_cf_autograd(
         current_derivative_func_real = jacrev(current_derivative_func_real)
         # Odd-order derivatives of the imaginary part
         current_derivative_func_imag = jacrev(current_derivative_func_imag)
+        # Determine sign based on order//2: even -> positive, odd -> negative
+        sign = 1 if (order // 2) % 2 == 0 else -1
+        
         if order % 2 == 0:
-            derivative = current_derivative_func_real(lambda_tensor)
+            derivative = sign * current_derivative_func_real(lambda_tensor)
         else:
-            derivative = current_derivative_func_imag(lambda_tensor)
+            derivative = sign * current_derivative_func_imag(lambda_tensor)
 
         # # Permute dimensions to bring batch_size to the first dimension
         # permute_dims = (-1,) + tuple(range(derivative.dim() - 1))
