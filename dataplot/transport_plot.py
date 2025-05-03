@@ -594,3 +594,134 @@ def plot_comprehensive_comparison(
     #         plt.savefig(os.path.join(save_dir, 'generating_function.png'))
     #     plt.show()
     #     plt.close()
+
+
+def plot_all_gradients(
+    E_values: Union[np.ndarray, torch.Tensor],
+    gradient_data: Dict[str, Any],
+    save_dir: Optional[str] = None,
+    title_prefix: str = ""
+) -> None:
+    """
+    Plots the generating function values and their derivatives against energy values.
+
+    Parameters:
+    -----------
+    E_values : Union[np.ndarray, torch.Tensor]
+        Array of energy values (batch_size,).
+    gradient_data : Dict[str, Any]
+        The results dictionary returned by calculation_cf_autograd.
+    save_dir : Optional[str]
+        Directory to save the plots. If None, plots are not saved.
+    title_prefix : str
+        Prefix for the plot titles.
+    """
+    # Convert to numpy if needed
+    if isinstance(E_values, torch.Tensor):
+        E_values = E_values.detach().cpu().numpy()
+    
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
+    
+    # Plot generating function values
+    if 'gen_func_values_real' in gradient_data and 'gen_func_values_imag' in gradient_data:
+        gen_func_real = gradient_data['gen_func_values_real']
+        gen_func_imag = gradient_data['gen_func_values_imag']
+        
+        if isinstance(gen_func_real, torch.Tensor):
+            gen_func_real = gen_func_real.detach().cpu().numpy()
+        if isinstance(gen_func_imag, torch.Tensor):
+            gen_func_imag = gen_func_imag.detach().cpu().numpy()
+            
+        plt.figure(figsize=(10, 6))
+        plt.plot(E_values, gen_func_real, label='GenFunc Real')
+        plt.plot(E_values, gen_func_imag, label='GenFunc Imag', linestyle='--')
+        plt.xlabel('Energy (E)')
+        plt.ylabel('Generating Function')
+        plt.title(f'{title_prefix}Generating Function vs Energy')
+        plt.legend()
+        plt.grid(True)
+        
+        if save_dir:
+            plt.savefig(os.path.join(save_dir, 'generating_function.png'))
+        plt.show()
+        plt.close()
+
+    # Plot derivatives
+    if 'derivatives' in gradient_data:
+        derivatives = gradient_data['derivatives']
+        for order, derivative in derivatives.items():
+            if isinstance(derivative, torch.Tensor):
+                derivative = derivative.detach().cpu().numpy()
+                
+            if derivative.ndim == 2:
+                # First-order derivatives (terminals)
+                fig, ax = plt.subplots(figsize=(10, 6))
+                for lead_idx in range(derivative.shape[1]):
+                    ax.plot(E_values, derivative[:, lead_idx], label=f'Terminal {lead_idx + 1}')
+                ax.set_xlabel('Energy (E)')
+                ax.set_ylabel(f'{order}-Order Derivative')
+                ax.set_title(f'{title_prefix}{order}-Order Derivatives vs Energy')
+                ax.legend()
+                ax.grid(True)
+                
+                if save_dir:
+                    plt.savefig(os.path.join(save_dir, f'{order}_order_derivatives.png'))
+                plt.show()
+                plt.close()
+                
+            elif derivative.ndim == 3:
+                # Second-order derivatives (Hessian)
+                n_terminals = derivative.shape[1]
+                fig, axes = plt.subplots(n_terminals, n_terminals, figsize=(15, 15), sharex=True, sharey=True)
+                
+                # Handle the case of a single terminal
+                if n_terminals == 1:
+                    axes = np.array([[axes]])
+                
+                for i in range(n_terminals):
+                    for j in range(n_terminals):
+                        axes[i, j].plot(E_values, derivative[:, i, j])
+                        axes[i, j].set_title(f'Terminal [{i+1},{j+1}]')
+                        axes[i, j].grid(True)
+                
+                # Set common labels
+                fig.text(0.5, 0.04, 'Energy (E)', ha='center', va='center', fontsize=12)
+                fig.text(0.06, 0.5, f'{order}-Order Derivative', ha='center', va='center', rotation='vertical', fontsize=12)
+                fig.suptitle(f'{title_prefix}{order}-Order Derivatives vs Energy', fontsize=16)
+                plt.tight_layout(rect=[0.08, 0.08, 0.98, 0.95])
+                
+                if save_dir:
+                    plt.savefig(os.path.join(save_dir, f'{order}_order_derivatives.png'))
+                plt.show()
+                plt.close()
+                
+            elif derivative.ndim >= 4:
+                # Higher-order derivatives - create a summary plot
+                plt.figure(figsize=(10, 6))
+                
+                # Plot a few representative elements
+                if derivative.ndim == 4:  # Third-order
+                    for i in range(min(3, derivative.shape[1])):
+                        for j in range(min(3, derivative.shape[2])):
+                            for k in range(min(3, derivative.shape[3])):
+                                plt.plot(E_values, derivative[:, i, j, k], 
+                                         label=f'[{i+1},{j+1},{k+1}]')
+                elif derivative.ndim == 5:  # Fourth-order
+                    for i in range(min(2, derivative.shape[1])):
+                        for j in range(min(2, derivative.shape[2])):
+                            for k in range(min(2, derivative.shape[3])):
+                                for l in range(min(2, derivative.shape[4])):
+                                    plt.plot(E_values, derivative[:, i, j, k, l], 
+                                             label=f'[{i+1},{j+1},{k+1},{l+1}]')
+                
+                plt.xlabel('Energy (E)')
+                plt.ylabel(f'{order}-Order Derivative')
+                plt.title(f'{title_prefix}{order}-Order Derivatives vs Energy (Sample)')
+                plt.legend()
+                plt.grid(True)
+                
+                if save_dir:
+                    plt.savefig(os.path.join(save_dir, f'{order}_order_derivatives_sample.png'))
+                plt.show()
+                plt.close()
