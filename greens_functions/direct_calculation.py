@@ -71,18 +71,23 @@ def calculate_transport_properties(
     num_leads = len(leads_info)
     noise = torch.zeros((batch_size, num_leads, num_leads), dtype=torch.float32, device=device)
     current = torch.zeros((batch_size, num_leads), dtype=torch.float32, device=device)   
-    ptypes = ['e']  
+    ptypes = ['e', 'h']
+    etype=['e']  
     # Initialize 4D transmission tensor (batch, lead_i, lead_j, particle_type)
     T = torch.zeros((batch_size, num_leads, num_leads, 2, 2), 
                     dtype=torch.float32, device=device)
-
+    """
+    -------------Pre Computation, prepare common factors-------------
+    """
     # Calculate common sum for noise calculations
     common_sum = sum(
         lead.Gamma[ptype] * fermi_distribution(E_batch, lead.mu, temperature, ptype).unsqueeze(-1).unsqueeze(-1)
         for lead in leads_info
         for ptype in ptypes
     )
-    
+    """
+    ------------Transmission Calculation-------------
+    """
     # Calculate transmission coefficients T(i,j,alpha,beta)
     for i in range(num_leads):
         for j in range(num_leads):
@@ -105,11 +110,32 @@ def calculate_transport_properties(
                                 leads_info[j].Gamma[beta] @ G_retarded.conj().transpose(-1, -2)
                             )
                         )
-
+    """
+    -------------Current-------------
+    """
     for i in range(num_leads):
         for j in range(num_leads):
-            for alpha_idx, alpha in enumerate(ptypes):
+            for alpha_idx, alpha in enumerate(etype):
                 for beta_idx, beta in enumerate(ptypes):
+                    # Sign factors
+                    sign_alpha = 1 if alpha_idx == 1 else -1  # 1 for 'e', -1 for 'h'
+                    sign_beta = 1 if beta_idx == 1 else -1
+                    f_i_alpha = fermi_distribution(E_batch, leads_info[i].mu, temperature, alpha)
+                    f_j_beta = fermi_distribution(E_batch, leads_info[j].mu, temperature, beta)
+                    # First term delta function
+                    if i == j and alpha == beta:
+                        current[:, i] += sign_alpha * leads_info[i].t.size(0) * f_i_alpha
+
+                    # Second term (T)
+                    current[:, i] -= sign_alpha * T[:, i, j, alpha_idx, beta_idx] * f_j_beta
+                    
+    """
+    -------------Noise-------------
+    """
+    for i in range(num_leads):
+        for j in range(num_leads):
+            for alpha_idx, alpha in enumerate(etype):
+                for beta_idx, beta in enumerate(etype):
                     # Sign factors
                     sign_alpha = 1 if alpha_idx == 1 else -1  # 1 for 'e', -1 for 'h'
                     sign_beta = 1 if beta_idx == 1 else -1
@@ -118,11 +144,8 @@ def calculate_transport_properties(
                     # First term (diagonal terms)
                     if i == j and alpha == beta:
                         noise[:, i, j] += leads_info[i].t.size(0) * f_i_alpha * (1 - f_i_alpha)
-                        current[:, i] += sign_alpha * leads_info[i].t.size(0) * f_i_alpha
 
-                    # Second term (cross correlations)
-                    current[:, i] -= sign_alpha * T[:, i, j, alpha_idx, beta_idx] * f_j_beta
-                    
+                    # Second term (cross correlations)                  
                     noise[:, i, j] -= sign_alpha * sign_beta * (
                         T[:, j, i, beta_idx, alpha_idx] * f_i_alpha * (1 - f_i_alpha) +
                         T[:, i, j, alpha_idx, beta_idx] * f_j_beta * (1 - f_j_beta)
