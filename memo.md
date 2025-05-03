@@ -5,7 +5,8 @@ the device is contrled by funcDevice, set to Ebatch device or lead.v1laph device
 * lead_decimation calc hole and electron seperately and combine them in add_ginv_lead, and inv the whole, this may be improved by 1. pass in H_lead_BdG together, 2. use the hole and electron seperately to calc the hole and electron seperately, and combine them in add_ginv_lead use symmetric property.
 * tLC can only be real number for now
 * since $$ is current, the hermitial part automatically handles the minius sign needed becuae $\exp{(-i \lambda)}$ also reverse sign due to hermitian.
-
+# sign and Real imag of genfunc/lambda
+$$\left\langle\left\langle(\Delta n)^j\right\rangle\right\rangle=\left.\frac{\partial^j \ln Z(\lambda, t)}{\partial(i \lambda)^j}\right|_{\lambda=0}$$
 $ \ln S \propto \frac{1}{2}(\psi_{1}^{\dagger}(E)\psi_{2}(E) + \psi_{2}^{\dagger}(E)\psi_{1}(E)) - \frac{1}{2}(\psi_{2}(-E)\psi_{1}^{\dagger}(-E) + \psi_{1}(-E)\psi_{2}^{\dagger}(-E)) $
 
 $-E$ means $\omega\psi_{1}^{\dagger}\psi_{1} \rightarrow -\omega\psi_{1}\psi_{1}^{\dagger}$ corresponding hole energy is $-E$ and this is due to p-h symmetry redundancy, while $-\frac{1}{2}(\psi_{2}(-E)\psi_{1}^{\dagger}(-E))$ means $t\psi_{1}^{\dagger}\psi_{2} \rightarrow -t\psi_{2}\psi_{1}^{\dagger}$
@@ -35,4 +36,7 @@ eta value should fit in E numpoints, for e.g. when eta is small E numpoints shou
 
 * For e.g. " tCL[lead.position[idx], :] = lead.V1alpha[idx, :]" lead.position is a list of int, decided by central Nx,Ny.
 
+# Electron and Hole
+Note for both augograd and direct inv G method, for BdG case, we should only include electron part, this is make sure by 1. only add couting field the electron section
+2. for direct inv G current only let current formula's $\alpha$ only loop e and noise $\alpha,\beta$ only loop 'e' 
 image.png
