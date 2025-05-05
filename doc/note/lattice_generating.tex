@@ -96,43 +96,36 @@ Similarly, the current-current correlation function $\left\langle I_{mn}(t)I_{mn
 \begin{centering}
 \fbox{%
 \begin{minipage}{0.95\textwidth}
-\textbf{Algorithm:} Calculating generating function and derivatives using automatic differentiation
-
-\textbf{Input:} $H_{BdG}$ (central Hamiltonian), $E_{batch}$ (energy values), $\eta$ (broadening), 
-\texttt{leads\_info} (lead information), $N_{deriv}$ (max derivative order)
-
-\textbf{Output:} $\ln Z(0)$ (generating function), derivatives $\frac{\partial^n \ln Z}{\partial (i\lambda)^n}\big|_{\lambda=0}$ for $n=1 \dots N_{deriv}$
+\textbf{PyTorch Autograd Implementation for Counting Field Calculations}
 
 \begin{enumerate}
-\item Initialize $\boldsymbol{\lambda}$ tensor of size $N_L$ (number of leads) with zeros, enable gradient tracking
-\item Define function ComputeGenFunc($\boldsymbol{\lambda}_{vals}$):
+\item Initialize counting field vector $\boldsymbol{\lambda}$ with \texttt{requires\_grad\_(True)} to enable automatic differentiation
+
+\item Define generating function $Z(\boldsymbol{\lambda})$:
    \begin{enumerate}
-   \item Update \texttt{lambda\_} parameter in each lead using $\boldsymbol{\lambda}_{vals}$
-   \item Construct central region inverse Green's function $\boldsymbol{g_{Central}^{-1}}(E_{batch})$
-   \item Construct block-diagonal matrix containing $\boldsymbol{g_{Central}^{-1}}$ and lead inverse Green's functions
-   \item For each lead $i$:
-      \begin{enumerate}
-      \item Construct coupling matrix $\boldsymbol{t_{CL,i}\Lambda_{i}(\lambda_{i})}$
-      \item Place couplings into appropriate blocks to form full matrix $\mathcal{M}(\boldsymbol{\lambda}_{vals}, E_{batch})$
-      \end{enumerate}
-   \item Calculate and return $\ln \det \mathcal{M}(\boldsymbol{\lambda}_{vals}, E_{batch})$
+   \item Construct matrix $\mathcal{M}(\boldsymbol{\lambda})$ incorporating counting fields
+   \item Calculate $\ln\det\mathcal{M}(\boldsymbol{\lambda})$ using PyTorch's \texttt{logdet}
    \end{enumerate}
-\item Compute base value $\ln Z(0) =$ ComputeGenFunc($\boldsymbol{\lambda}$)
-\item Initialize derivative functions using real and imaginary parts
-\item For $n = 1$ to $N_{deriv}$:
+
+\item For computing $n$-th order derivatives ($n = 1,2,3...$):
    \begin{enumerate}
-   \item Apply Jacobian function to update $f_{real}$ and $f_{imag}$
-   \item Calculate sign factor $s = (-1)^{\lfloor n/2 \rfloor}$
-   \item If $n$ is even: $D_n = s \times f_{real}(\boldsymbol{\lambda})$
-   \item Else: $D_n = s \times f_{imag}(\boldsymbol{\lambda})$
-   \item Store $D_n$ in derivatives dictionary
+   \item Split into real/imaginary parts: $f_{real}(\boldsymbol{\lambda}) = \text{Re}[Z(\boldsymbol{\lambda})]$, $f_{imag}(\boldsymbol{\lambda}) = \text{Im}[Z(\boldsymbol{\lambda})]$
+   \item Apply PyTorch's \texttt{jacrev} function recursively to obtain higher-order derivatives
+   \item For even orders: compute from real part with appropriate sign
+   \item For odd orders: compute from imaginary part with appropriate sign
    \end{enumerate}
-\item Return $\ln Z(0)$ and computed derivatives
+
+\item Extract physical observables:
+   \begin{enumerate}
+   \item Current = 1st-order derivative w.r.t. counting field
+   \item Noise = 2nd-order derivative w.r.t. counting field
+   \item Higher-order cumulants = Higher-order derivatives
+   \end{enumerate}
 \end{enumerate}
 \end{minipage}}
 \par\end{centering}
-\caption{Pseudocode for Calculating Generating Function and Derivatives using Automatic Differentiation}
-\label{alg:autograd_cf}
+\caption{Compact implementation of the counting field method using PyTorch's automatic differentiation to efficiently compute the generating function and its derivatives.}
+\label{alg:autograd_cf_compact}
 \end{algorithm}
 
 To facilitate the computation, we transform the action into the frequency domain via Fourier transformation. We assume time-translation invariance, under which the current $I_{mn}(t)$ becomes independent of the specific time $t$. This implies that the corresponding counting field $\lambda$ can be treated as constant in the frequency domain. 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.19)  5 MAY 2025 16:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.19)  5 MAY 2025 18:24
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -689,35 +689,39 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 132.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 125.
  (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 ) [2] [3]
-Overfull \hbox (8.93362pt too wide) in paragraph at lines 218--223
+Overfull \hbox (8.93362pt too wide) in paragraph at lines 211--216
 []\T1/cmr/m/n/10 We be-gin by ma-nip-u-lat-ing the de-ter-mi-nant of the ma-trix $\OMS/cmsy/m/n/10 M\OT1/cmr/m/n/10 ([]\OML/cmm/m/it/10 ; !\OT1/cmr/m/n/10 )$ \T1/cmr/m/n/10 us-ing the block de-ter-mi-nant iden-tity: $[] [] \OT1/cmr/m/n/10 =
  []
 
-[4] [5]
-Overfull \hbox (28.60208pt too wide) detected at line 290
+[4]
+Overfull \hbox (28.60208pt too wide) detected at line 283
 [][][]
  []
 
-[6] [7] [8] [9] (./lattice_generating.aux)
+[5] [6] [7] [8] [9] (./lattice_generating.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 7372 strings out of 474222
- 116051 string characters out of 5748732
- 1945975 words of memory out of 5000000
- 29521 multiletter control sequences out of 15000+600000
+ 7373 strings out of 474222
+ 116076 string characters out of 5748732
+ 1951975 words of memory out of 5000000
+ 29522 multiletter control sequences out of 15000+600000
  574407 words of font info for 81 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,21n,65p,749b,477s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,21n,65p,749b,416s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on lattice_generating.pdf (9 pages, 329654 bytes).
+Output written on lattice_generating.pdf (9 pages, 338766 bytes).
 PDF statistics:
  160 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream
