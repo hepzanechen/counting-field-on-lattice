@@ -1,0 +1,20 @@
+-------------------- Auto-Git Log --------------------
+Mon May 05 2025 18:57:23 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* doc/note/lattice_generating.aux
+* doc/note/lattice_generating.log
+* doc/note/lattice_generating.synctex.gz
+* doc/note/lattice_generating.tex
+* test_kitaev.ipynb
+
+
+Created files:
+* .autogit/logs/log-5-4-2025-17-57-9.txt
+
+
+Deleted files:
+
+
+Renamed files:
