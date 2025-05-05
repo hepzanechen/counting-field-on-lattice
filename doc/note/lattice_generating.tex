@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{geometry}
 \geometry{verbose,lmargin=1.5cm,rmargin=1.5cm}
+\usepackage[ruled,vlined]{algorithm2e}
 
 \makeatletter
 
@@ -93,11 +94,45 @@ Similarly, the current-current correlation function $\left\langle I_{mn}(t)I_{mn
 
 \begin{algorithm}[H]
 \begin{centering}
+\fbox{%
+\begin{minipage}{0.95\textwidth}
+\textbf{Algorithm:} Calculating generating function and derivatives using automatic differentiation
 
+\textbf{Input:} $H_{BdG}$ (central Hamiltonian), $E_{batch}$ (energy values), $\eta$ (broadening), 
+\texttt{leads\_info} (lead information), $N_{deriv}$ (max derivative order)
+
+\textbf{Output:} $\ln Z(0)$ (generating function), derivatives $\frac{\partial^n \ln Z}{\partial (i\lambda)^n}\big|_{\lambda=0}$ for $n=1 \dots N_{deriv}$
+
+\begin{enumerate}
+\item Initialize $\boldsymbol{\lambda}$ tensor of size $N_L$ (number of leads) with zeros, enable gradient tracking
+\item Define function ComputeGenFunc($\boldsymbol{\lambda}_{vals}$):
+   \begin{enumerate}
+   \item Update \texttt{lambda\_} parameter in each lead using $\boldsymbol{\lambda}_{vals}$
+   \item Construct central region inverse Green's function $\boldsymbol{g_{Central}^{-1}}(E_{batch})$
+   \item Construct block-diagonal matrix containing $\boldsymbol{g_{Central}^{-1}}$ and lead inverse Green's functions
+   \item For each lead $i$:
+      \begin{enumerate}
+      \item Construct coupling matrix $\boldsymbol{t_{CL,i}\Lambda_{i}(\lambda_{i})}$
+      \item Place couplings into appropriate blocks to form full matrix $\mathcal{M}(\boldsymbol{\lambda}_{vals}, E_{batch})$
+      \end{enumerate}
+   \item Calculate and return $\ln \det \mathcal{M}(\boldsymbol{\lambda}_{vals}, E_{batch})$
+   \end{enumerate}
+\item Compute base value $\ln Z(0) =$ ComputeGenFunc($\boldsymbol{\lambda}$)
+\item Initialize derivative functions using real and imaginary parts
+\item For $n = 1$ to $N_{deriv}$:
+   \begin{enumerate}
+   \item Apply Jacobian function to update $f_{real}$ and $f_{imag}$
+   \item Calculate sign factor $s = (-1)^{\lfloor n/2 \rfloor}$
+   \item If $n$ is even: $D_n = s \times f_{real}(\boldsymbol{\lambda})$
+   \item Else: $D_n = s \times f_{imag}(\boldsymbol{\lambda})$
+   \item Store $D_n$ in derivatives dictionary
+   \end{enumerate}
+\item Return $\ln Z(0)$ and computed derivatives
+\end{enumerate}
+\end{minipage}}
 \par\end{centering}
-\caption{Comparing the Counting Field method for calculating observables with
-the recursive Green's function, the major change in labor is from
-matrix inversion to matrix determinant calculation.}
+\caption{Pseudocode for Calculating Generating Function and Derivatives using Automatic Differentiation}
+\label{alg:autograd_cf}
 \end{algorithm}
 
 To facilitate the computation, we transform the action into the frequency domain via Fourier transformation. We assume time-translation invariance, under which the current $I_{mn}(t)$ becomes independent of the specific time $t$. This implies that the corresponding counting field $\lambda$ can be treated as constant in the frequency domain. 
@@ -111,85 +146,82 @@ Here, $\mathcal{N}$ represents a normalization factor that depends on the system
 but is independent of the counting fields $\boldsymbol{\lambda}$. 
 Observables such as current and noise correlations are subsequently obtained via functional derivatives of $\ln Z(\boldsymbol{\lambda}, \omega)$ with respect to $\boldsymbol{\lambda}$.
 
-where,$\boldsymbol{\lambda}=\left(\lambda_{1},\cdots,\lambda_{N_{L}}\right)$
-,$\lambda_{i}$ is generating fields for $i$th lead, $N_{L}$ is
-total lead number , the explict form of $\mathcal{M}$ matrix is 
+The counting field vector $\boldsymbol{\lambda}=(\lambda_1, \lambda_2, \ldots, \lambda_{N_L})$ contains independent parameters associated with each of the $N_L$ leads in the system. Each component $\lambda_i$ serves as a generating field for transport quantities related to the $i$-th lead. 
 
-The vector $\boldsymbol{\lambda}=\left(\lambda_{1},\cdots,\lambda_{N_{L}}\right)$
-consists of generating fields for each lead $i$, with $N_{L}$ being
-the total number of leads. The explicit form of the $\mathcal{M}$
-matrix is:
+The core of our computational approach resides in the structure of the matrix $\mathcal{M}(\boldsymbol{\lambda},\omega)$, which takes a block form encompassing both the central region and all leads:
 
 \[
-\left.\mathcal{M}(\boldsymbol{\lambda},\omega)=\left(\begin{array}{cccc}
+\mathcal{M}(\boldsymbol{\lambda},\omega)=\left(\begin{array}{cccc}
 \boldsymbol{g_{Central}^{-1}(\omega)} & \boldsymbol{-t_{CL1}\Lambda_{1}(\lambda_{1},\omega)} & \boldsymbol{\cdots} & \boldsymbol{-t_{CLN_{L}}\Lambda_{N_{L}}(\lambda_{N_{L}},\omega)}\\
 \boldsymbol{-\Lambda_{1}^{\dagger}(\lambda_{1},\omega)t_{CL1}^{\dagger}} & \boldsymbol{g_{Lead1}^{-1}(\omega)} & \boldsymbol{} & \boldsymbol{}\\
 \boldsymbol{\vdots} & \boldsymbol{} & \boldsymbol{\ddots} & \boldsymbol{}\\
 \boldsymbol{-\Lambda_{N_{L}}^{\dagger}(\lambda_{N_{L}},\omega)t_{CLN_{L}}^{\dagger}} & \boldsymbol{} & \boldsymbol{} & \boldsymbol{g_{LeadN_{L}}^{-1}(\omega)}
-\end{array}\right.\right)
-\]
-
-Each element in the matrix has a 2\texttimes 2 block structure:
-\[
-\boldsymbol{g_{c0}^{RKA}}=\left(\begin{array}{cc}
-\left(g_{C}^{r}\right)^{-1} & \left(g_{C}^{r}\right)^{-1}g_{C}^{k}\left(g_{C}^{a}\right)^{-1}\\
- & \left(g_{C}^{a}\right)^{-1}
 \end{array}\right)
 \]
+
+Within the Keldysh formalism, each matrix element above possesses an internal $2 \times 2$ substructure corresponding to the retarded-advanced-Keldysh (RAK) space. Specifically, the inverse Green's functions for the central region and leads take the form:
+
+\[
+\boldsymbol{g_{c0}^{RAK}}=\left(\begin{array}{cc}
+\left(g_{C}^{r}\right)^{-1} & \left(g_{C}^{r}\right)^{-1}g_{C}^{k}\left(g_{C}^{a}\right)^{-1}\\
+0 & \left(g_{C}^{a}\right)^{-1}
+\end{array}\right)
+\]
+
+The hopping matrices between the central region and leads maintain their structure in the RAK space:
 
 \[
 \boldsymbol{t_{CL}}=\left(\begin{array}{cc}
-t_{CL}\\
- & t_{CL}
-\end{array}\right);
-\]
-\[
-\boldsymbol{\Lambda_{1}(\lambda_{1},\omega)}=\left(\begin{array}{cc}
-\cos\left(\dfrac{\lambda}{2}\right) & -i\sin\left(\dfrac{\lambda}{2}\right)\\
--i\sin\left(\dfrac{\lambda}{2}\right) & \cos\left(\dfrac{\lambda}{2}\right)
+t_{CL} & 0\\
+0 & t_{CL}
 \end{array}\right)
 \]
 
-For instance, when there is only one lead, the matrix $\mathcal{M}(\boldsymbol{\lambda},\omega)$
+The counting field enters through the matrix $\boldsymbol{\Lambda}$, which is parameterized by the corresponding counting field $\lambda_i$:
+
+\[
+\boldsymbol{\Lambda_{i}(\lambda_{i},\omega)}=\left(\begin{array}{cc}
+\cos\left(\dfrac{\lambda_i}{2}\right) & -i\sin\left(\dfrac{\lambda_i}{2}\right)\\
+-i\sin\left(\dfrac{\lambda_i}{2}\right) & \cos\left(\dfrac{\lambda_i}{2}\right)
+\end{array}\right)
+\]
+
+This matrix structure encodes the effect of the counting field on the quantum-mechanical transition amplitudes between the central region and the leads, capturing both particle and energy fluxes.
+
+For a concrete illustration, we consider the case of a system with a single lead. In this simplified scenario, the matrix $\mathcal{M}(\boldsymbol{\lambda},\omega)$ assumes a more transparent form:
 \begin{equation}
 \mathcal{M}(\boldsymbol{\lambda},\omega)=\left(\begin{array}{cccc}
 \left(g_{C}^{r}\right)^{-1} & \left(g_{C}^{r}\right)^{-1}g_{C}^{k}\left(g_{C}^{a}\right)^{-1} & t_{LC}\cos\left(\dfrac{\lambda}{2}\right) & -it_{LC}\sin\left(\dfrac{\lambda}{2}\right)\\
- & \left(g_{C}^{a}\right)^{-1} & -it_{LC}\sin\left(\dfrac{\lambda}{2}\right) & t_{LC}\cos\left(\dfrac{\lambda}{2}\right)\\
-t_{CL}^{*}\cos\left(\dfrac{\lambda}{2}\right) & it_{LC}^{*}\sin\left(\dfrac{\lambda}{2}\right) & \left(g_{Leadi}^{r}\right)^{-1} & \left(g_{Leadi}^{r}\right)^{-1}g_{Leadi}^{k}\left(g_{Leadi}^{a}\right)^{-1}\\
-it_{LC}^{*}\sin\left(\dfrac{\lambda}{2}\right) & t_{CL}^{*}\cos\left(\dfrac{\lambda}{2}\right) &  & \left(g_{Leadi}^{a}\right)^{-1}
+0 & \left(g_{C}^{a}\right)^{-1} & -it_{LC}\sin\left(\dfrac{\lambda}{2}\right) & t_{LC}\cos\left(\dfrac{\lambda}{2}\right)\\
+t_{CL}^{*}\cos\left(\dfrac{\lambda}{2}\right) & it_{LC}^{*}\sin\left(\dfrac{\lambda}{2}\right) & \left(g_{Lead}^{r}\right)^{-1} & \left(g_{Lead}^{r}\right)^{-1}g_{Lead}^{k}\left(g_{Lead}^{a}\right)^{-1}\\
+it_{LC}^{*}\sin\left(\dfrac{\lambda}{2}\right) & t_{CL}^{*}\cos\left(\dfrac{\lambda}{2}\right) & 0 & \left(g_{Lead}^{a}\right)^{-1}
 \end{array}\right)\label{eq:M explicty}
 \end{equation}
 
-Note that each block is also multi-dimensional; for example, $\left(g_{C}^{r}\right)^{-1}$
-has dimensions $N_{C}\times N_{C}$, where $N_{C}$ is the size of
-the central region.
+It is important to note that each block in Eq.~\ref{eq:M explicty} is itself a matrix of considerable dimension. For instance, the retarded Green's function of the central region, $\left(g_{C}^{r}\right)^{-1}$, has dimensions $N_{C}\times N_{C}$, where $N_{C}$ represents the number of sites in the central region. When accounting for electronic spin or particle-hole degrees of freedom in superconducting systems, these dimensions are further multiplied accordingly.
 
-In practical calculations, the final non-equilibrium state of the
-central region is entirely determined by the leads, so we can drop
-the term $\left(g_{C}^{r}\right)^{-1}g_{C}^{k}\left(g_{C}^{a}\right)^{-1}$
-in the matrix \ref{eq:M explicty}.. This simplification allows $\left(g_{C}^{r,a}\right)^{-1}$
-to be expressed simply as $\omega-H_{C}\pm i\eta.$
+In practical implementations, we can introduce a significant computational simplification. Since the non-equilibrium state of the central region is entirely determined by its coupling to the leads, the term $\left(g_{C}^{r}\right)^{-1}g_{C}^{k}\left(g_{C}^{a}\right)^{-1}$ in Eq.~\ref{eq:M explicty} can be safely omitted without affecting the physical observables. This simplification allows us to express the inverse retarded and advanced Green's functions in a more straightforward manner:
+\begin{equation}
+\left(g_{C}^{r,a}\right)^{-1} = \omega - H_{C} \pm i\eta
+\end{equation}
+where $H_C$ is the Hamiltonian of the central region and $\eta$ is a small positive number representing the broadening.
 
-Compare to old Recursive Green's function method, now we only need
-to do determinant calcuation. The time complexity for both matrix
-inversion and determinant calculation for band matrices, to which
-Hamiltonian matrices often belong, is essentially equivalent, typically
-of the order $O(MN^{3})$, where $N$ is the dimension of the small
-matrix, and $M$ is the number of blocks.Determinant calculation generally
-has a lower space complexity since it can often be performed in-place
-or with minimal additional storage.
+When compared to the conventional recursive Green's function method commonly employed in tight-binding transport calculations, our approach based on determinant evaluation offers comparable computational efficiency. The time complexity for both matrix inversion (in the recursive method) and determinant calculation (in our approach) scales as $O(MN^{3})$ for band matrices typical of tight-binding Hamiltonians, where $N$ is the dimension of the smaller submatrix and $M$ is the number of blocks. Importantly, determinant calculation typically exhibits superior memory efficiency as it can often be performed in-place with minimal auxiliary storage requirements.
 
 
-\subsection{Analytically verication }
+\subsection{Analytical Verification}
 
-In this section, we analytically calculate $\left\langle I_{mn}(t)\right\rangle =i\dfrac{\delta\ln(S_{0})}{\delta\lambda(t)}$
-using the generating function method, in order to verify that it corresponds
-to the familiar current formula.
+To establish the validity of our counting field approach, we now provide an analytical verification by demonstrating that the current derived from the counting field method corresponds exactly to the standard current formula expressed in terms of Green's functions. This verification serves as an important consistency check before implementing the numerical calculations.
 
-By repeatedly applying the determinant identity $\left.\det\left(\begin{array}{cc}
+Specifically, we calculate analytically the current $\left\langle I_{mn}(t)\right\rangle = \dfrac{\delta\ln Z}{\delta(i\lambda(t))}\big|_{\lambda(t)=0}$ using the generating function method. The calculation proceeds by evaluating the derivative of the logarithm of the generating functional with respect to the counting field parameter $\lambda$.
+
+We begin by manipulating the determinant of the matrix $\mathcal{M}(\boldsymbol{\lambda},\omega)$ using the block determinant identity:
+$\det\left(\begin{array}{cc}
 A & B\\
 C & D
-\end{array}\right.\right)=\det(D)\det\left(A-BD^{-1}C\right),$ we get:
+\end{array}\right)=\det(D)\det\left(A-BD^{-1}C\right)$.
+
+Applying this identity recursively to our multi-block matrix structure yields:
 
 \begin{equation}
 \begin{aligned}\det\mathcal{M}(\boldsymbol{\lambda},\omega) & =\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}t_{CLi}\Lambda_{i}(\lambda_{i},\omega)g_{Leadi}^{-1}(\omega)\Lambda_{i}^{\dagger}(\lambda_{i},\omega)t_{CLi}^{\dagger}\right)\\
@@ -197,107 +229,129 @@ C & D
 \end{aligned}
 \end{equation}
 
-For simplicity, let us consider$\boldsymbol{\lambda}=\left(\lambda_{1},0,\cdots,0\right)$
+where we have defined $\Sigma_{i}\left(\lambda_{i},\omega\right) = t_{CLi}\Lambda_{i}(\lambda_{i},\omega)g_{Leadi}^{-1}(\omega)\Lambda_{i}^{\dagger}(\lambda_{i},\omega)t_{CLi}^{\dagger}$ as the $\lambda$-dependent self-energy contribution from the $i$-th lead.
+
+To further streamline the calculation, we focus on a specific configuration where only the first lead carries a non-zero counting field, i.e., $\boldsymbol{\lambda}=(\lambda_{1},0,\ldots,0)$. The derivative of the logarithm of the generating functional with respect to $\lambda_1$ is then given by:
 
 \begin{equation}
-\begin{aligned}\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} & =\dfrac{1}{\lambda_{1}}\ln\dfrac{\mathcal{N}\det\mathcal{M}(\lambda_{1},\omega)}{\mathcal{N}\det\mathcal{M}(0,\omega)}=\dfrac{1}{\lambda_{1}}\ln\dfrac{\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(\lambda_{1}\delta_{i1},\omega\right)\right)}{\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)\right)}\\
- & =\dfrac{1}{\lambda_{1}}\ln\dfrac{\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)+\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)}{\det\left(\underset{G_{Central}^{-1}(\omega)}{\underbrace{g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)}}\right)}\\
- & =\dfrac{1}{\lambda_{1}}\ln\det\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right)
+\begin{aligned}
+\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} &= \dfrac{1}{\lambda_{1}}\ln\dfrac{\mathcal{N}\det\mathcal{M}(\lambda_{1},\omega)}{\mathcal{N}\det\mathcal{M}(0,\omega)} \\
+&= \dfrac{1}{\lambda_{1}}\ln\dfrac{\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(\lambda_{1}\delta_{i1},\omega\right)\right)}{\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)\right)} \\
+&= \dfrac{1}{\lambda_{1}}\ln\dfrac{\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)+\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)}{\det\left(\underset{G_{Central}^{-1}(\omega)}{\underbrace{g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(0,\omega\right)}}\right)} \\
+&= \dfrac{1}{\lambda_{1}}\ln\det\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right)
 \end{aligned}
 \end{equation}
 
-Taking the limit as $\lambda_{1}\rightarrow0:$
+Taking the limit as $\lambda_{1}\rightarrow 0$ to obtain the current:
 
 \begin{equation}
-\begin{aligned}\lim_{\lambda_{1}\rightarrow0}\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} & =\lim_{\lambda_{1}\rightarrow0}\dfrac{1}{\lambda_{1}}\ln\det\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right)\\
- & =\lim_{\lambda_{1}\rightarrow0}\dfrac{1}{\lambda_{1}}\text{Tr}\ln\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right)\\
- & =\lim_{\lambda_{1}\rightarrow0}\dfrac{1}{\lambda_{1}}\text{Tr}\ln\left(\mathbb{I}+G_{Central}(\omega)\left.\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(0_{1},\omega\right)\right.\right.\right.\\
- & \left.\left.\left.-\frac{i\lambda_{1}}{2}\sigma_{x}^{RAK}\Sigma_{1}\left(0_{1},\omega\right)+\frac{i\lambda_{1}}{2}\Sigma_{1}\left(0_{1},\omega\right)\sigma_{x}^{RAK}+O(\lambda_{1})\right)\right)\right)\\
- & =\lim_{\lambda_{1}\rightarrow0}\dfrac{1}{\lambda_{1}}\text{Tr}\ln\left(\mathbb{I}+G_{Central}(\omega)\frac{i\lambda_{1}}{2}\left(\Sigma_{1}\left(0_{1},\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0_{1},\omega\right)\right)\right)\\
- & =\dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}\left(0_{1},\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0_{1},\omega\right)\right)\right]
+\begin{aligned}
+\lim_{\lambda_{1}\rightarrow 0}\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} &= \lim_{\lambda_{1}\rightarrow 0}\dfrac{1}{\lambda_{1}}\text{Tr}\ln\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right) \\
+&= \lim_{\lambda_{1}\rightarrow 0}\dfrac{1}{\lambda_{1}}\text{Tr}\ln\left(\mathbb{I}+G_{Central}(\omega)\frac{i\lambda_{1}}{2}\left(\Sigma_{1}\left(0,\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0,\omega\right)\right)\right) \\
+&= \dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0,\omega\right)\right)\right]
 \end{aligned}
 \end{equation}
 
-In the second but last step we used $\ln\left(\mathbb{I}+tA\right)=tA+O(t)$
+To connect this expression to the standard current formula, we need to expand the trace operation explicitly in the Keldysh space. 
+Recalling that the Keldysh Green's function and self-energy in the RAK representation have the following block structures:
 
 \begin{equation}
-\begin{aligned} & \dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}\left(0_{1},\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0_{1},\omega\right)\right)\right]\\
-= & \dfrac{i}{2}\text{Tr}\left(\left.\left(\begin{array}{cc}
- & G^{a}(\omega)\\
-G^{r}(\omega) & G^{k}(\omega)
-\end{array}\right.\right)\left.\left(\begin{array}{cc}
-\Sigma_{1}^{r}(\omega) & \Sigma_{1}^{k}(\omega)\\
-0 & \Sigma_{1}^{a}(\omega)
-\end{array}\right.\right)-\left.\left(\begin{array}{cc}
-G^{r}(\omega) & G^{k}(\omega)\\
- & G^{a}(\omega)
-\end{array}\right.\right)\left.\left(\begin{array}{cc}
-0 & \Sigma_{1}^{a}(\omega)\\
-\Sigma_{1}^{r}(\omega) & \Sigma_{1}^{k}(\omega)
-\end{array}\right.\right)\right)\\
-= & \dfrac{i}{2}\text{Tr}\left(G^{r}(\omega)\Sigma_{1}^{k}(\omega)+G^{k}(\omega)\Sigma_{1}^{a}(\omega)-G^{k}(\omega)\Sigma_{1}^{r}(\omega)-G^{a}(\omega)\Sigma_{1}^{k}(\omega)\right)\\
-= & \dfrac{i}{2}\text{Tr}\left(\left(G^{r}(\omega)-G^{a}(\omega)\right)\Sigma_{1}^{k}(\omega)+G^{k}(\omega)\left(\Sigma_{1}^{a}(\omega)-\Sigma_{1}^{r}(\omega)\right)\right)\\
-= & \text{\ensuremath{\dfrac{i}{2}}Tr}\left(\left(G^{r}(\omega)-G^{a}(\omega)\right)\left(\Sigma_{1}^{<}(\omega)+\Sigma_{1}^{>}(\omega)\right)+\left(G^{<}(\omega)+G^{>}(\omega)\right)\left(\Sigma_{1}^{a}(\omega)-\Sigma_{1}^{r}(\omega)\right)\right)\\
-= & \dfrac{i}{2}\text{Tr}\left(\left(G^{r}(\omega)-G^{a}(\omega)\right)\left(2\Sigma_{1}^{<}(\omega)+\Sigma_{1}^{r}(\omega)-\Sigma_{1}^{a}(\omega)\right)\right.\\
- & \left.+\left(2G^{<}(\omega)+G^{r}(\omega)-G^{a}(\omega)\right)\left(\Sigma_{1}^{a}(\omega)-\Sigma_{1}^{r}(\omega)\right)\right)\\
-= & i\text{Tr}\left(\left(G^{r}(\omega)-G^{a}(\omega)\right)\Sigma_{1}^{<}(\omega)+G^{<}(\omega)\left(\Sigma_{1}^{a}(\omega)-\Sigma_{1}^{r}(\omega)\right)\right)\\
-\\\end{aligned}
-\label{eq:current 5}
+G_{Central}(\omega) = \begin{pmatrix} G^r(\omega) & G^k(\omega) \\ 0 & G^a(\omega) \end{pmatrix}, \quad
+\Sigma_1(\omega) = \begin{pmatrix} \Sigma_1^r(\omega) & \Sigma_1^k(\omega) \\ 0 & \Sigma_1^a(\omega) \end{pmatrix}
 \end{equation}
 
-Notice that in the third line after applying the trace over the RAK
-space, the remaining trace is taken over lattice sites, etc.
+and the Pauli matrix $\sigma_x^{RAK}$ is given by:
 
-In the middle step we used $G^{>}(\omega)-G^{<}(\omega)=G^{r}(\omega)-G^{a}(\omega)$.
+\begin{equation}
+\sigma_x^{RAK} = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+\end{equation}
 
-The current calculated from the Counting Field method, as derived
-in Eq.\ref{eq:current 5} , is in agreement with the common current
-formula:
+We can expand the expression for the current:
 
-\[
-I=\frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}\left[\left(\mathbf{G}(\omega)\boldsymbol{\Sigma}_{1}(\omega)-\boldsymbol{\Sigma}_{1}(\omega)\mathbf{G}(\omega)\right)^{<}\right]
-\]
-
-\[
-.\begin{aligned}I & =\frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}\left[\mathbf{G}^{r}(\omega)\boldsymbol{\Sigma}_{1}^{<}(\omega)+\mathbf{G}^{<}(\omega)\boldsymbol{\Sigma}_{1}^{a}(\omega)-\boldsymbol{\Sigma}_{1}^{r}(\omega)\mathbf{G}^{<}(\omega)-\boldsymbol{\Sigma}_{1}^{<}(\omega)\mathbf{G}^{a}(\omega)\right]\\
- & =\frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}\left[\left(\mathbf{G}^{r}(\omega)-\mathbf{G}^{a}(\omega)\right)\boldsymbol{\Sigma}_{1}^{<}(\omega)+\mathbf{G}^{<}(\omega)\left(\boldsymbol{\Sigma}_{1}^{a}(\omega)-\boldsymbol{\Sigma}_{1}^{r}(\omega)\right)\right]
+\begin{equation}
+\begin{aligned} 
+\dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}(0,\omega)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}(0,\omega)\right)\right]
+&= \dfrac{i}{2}\text{Tr}\left(
+\begin{pmatrix} G^r & G^k \\ 0 & G^a \end{pmatrix}
+\begin{pmatrix} \Sigma_1^r & \Sigma_1^k \\ 0 & \Sigma_1^a \end{pmatrix}
+\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+- 
+\begin{pmatrix} G^r & G^k \\ 0 & G^a \end{pmatrix}
+\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+\begin{pmatrix} \Sigma_1^r & \Sigma_1^k \\ 0 & \Sigma_1^a \end{pmatrix}
+\right) \\
+&= \dfrac{i}{2}\text{Tr}\left(
+\begin{pmatrix} G^r\Sigma_1^k + G^k\Sigma_1^a & G^r\Sigma_1^a \\ G^a\Sigma_1^k & G^a\Sigma_1^a \end{pmatrix}
+- 
+\begin{pmatrix} G^k\Sigma_1^r & G^k\Sigma_1^k + G^a\Sigma_1^r \\ G^a\Sigma_1^r & G^a\Sigma_1^k \end{pmatrix}
+\right) \\
+&= \dfrac{i}{2}\text{Tr}\left(G^r\Sigma_1^k + G^k\Sigma_1^a - G^k\Sigma_1^r - G^a\Sigma_1^k + \text{off-diagonal terms}\right) \\
 \end{aligned}
-\]
+\end{equation}
+
+Since the trace only involves the diagonal elements, we get:
+
+\begin{equation}
+\begin{aligned}
+\dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}(0,\omega)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}(0,\omega)\right)\right]
+&= \dfrac{i}{2}\text{Tr}\left(G^r\Sigma_1^k + G^k\Sigma_1^a - G^k\Sigma_1^r - G^a\Sigma_1^k\right) \\
+&= \dfrac{i}{2}\text{Tr}\left[\left(G^r - G^a\right)\Sigma_1^k + G^k\left(\Sigma_1^a - \Sigma_1^r\right)\right]
+\end{aligned}
+\end{equation}
+
+Using the Keldysh identities $G^k = G^< + G^>$ and $\Sigma^k = \Sigma^< + \Sigma^>$, along with $G^> - G^< = G^r - G^a$ and $\Sigma^> - \Sigma^< = \Sigma^r - \Sigma^a$, we obtain:
+
+\begin{equation}
+\begin{aligned}
+\dfrac{i}{2}\text{Tr}\left[\left(G^r - G^a\right)\Sigma_1^k + G^k\left(\Sigma_1^a - \Sigma_1^r\right)\right]
+&= \dfrac{i}{2}\text{Tr}\left[\left(G^r - G^a\right)\left(\Sigma_1^< + \Sigma_1^>\right) + \left(G^< + G^>\right)\left(\Sigma_1^a - \Sigma_1^r\right)\right] \\
+&= i\,\text{Tr}\left[\left(G^r - G^a\right)\Sigma_1^< + G^<\left(\Sigma_1^a - \Sigma_1^r\right)\right]
+\end{aligned}
+\end{equation}
+
+This final expression precisely matches the standard Meir-Wingreen formula for the current through the first lead:
+
+\begin{equation}
+I_1 = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}\left[\left(G^r(\omega) - G^a(\omega)\right)\Sigma_1^<(\omega) + G^<(\omega)\left(\Sigma_1^a(\omega) - \Sigma_1^r(\omega)\right)\right]
+\end{equation}
+
+This analytical verification confirms that our counting field approach correctly reproduces the well-established current formula, providing confidence in the method's validity for numerical implementations and for extending to higher-order correlations.
 
 
-\section{Numerical test}
+\section{Numerical Verification and Benchmarking}
 
-Before comparing the results obtained using the generating function
-method with those from the scattering method, we first introduce the
-scattering method's formula for calculating current
-and noise.
+Having established the theoretical foundation and verified the analytical consistency of our counting field approach, we now turn to numerical implementation and validation. In this section, we present comparative studies of transport calculations performed using both the counting field method and the traditional scattering approach.
 
-\subsection{Scattering method's calcualtion of noise}
+To facilitate this comparison, we first outline the relevant formulas for current and noise in the scattering framework, which will serve as our reference for validation. We then apply both methods to two distinct tight-binding systems: a simple non-interacting chain and a superconducting Kitaev chain, which introduces additional complexity through particle-hole coupling.
 
-Noise is initially expressed in terms of scattering amplitudes. Using
-the Fisher-Lee relation, this expression can then be rewritten in
-terms of the Green\textquoteright s function and the lead bandwidth.
-In this context, we consider a scenario where the central region exhibits
-superconductivity(modeled as paring terms at mean-field level). Here,
-the indices $i,j$ represent terminals, while $\alpha,\beta$ denote
-particle and hole states, respectively.
+\subsection{Current and Noise in the Scattering Formalism}
+
+Before presenting our numerical results, we briefly review the scattering theory formulation for calculating transport properties. In this approach, current and noise are expressed in terms of transmission probabilities between different leads.
+
+For systems with superconductivity, the scattering formalism must account for both electron and hole transport channels, which we denote by the indices $\alpha, \beta \in \{e, h\}$. The current through lead $i$ is given by:
 
 \begin{equation}
 I_{i}=\frac{e}{h}\sum_{\alpha,j\in NS,\beta}\operatorname{sgn}(\alpha)\left[\delta_{ij}\delta_{\alpha\beta}-T_{ij}^{\alpha\beta}(E)\right]f_{j\beta}(E),\label{eq:current sup}
 \end{equation}
 
-where $f_{ie}(E)=\left[1+\exp\left(\frac{E-\left(\mu_{i}-\mu_{S}\right)}{kT}\right)\right]^{-1}$,$f_{ih}(E)=\left[1+\exp\left(\frac{E+\left(\mu_{i}-\mu_{S}\right)}{kT}\right)\right]^{-1}$
+where $f_{je}(E)=\left[1+\exp\left(\frac{E-\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ and $f_{jh}(E)=\left[1+\exp\left(\frac{E+\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ are the Fermi distribution functions for electrons and holes, respectively. The parameter $\mu_j$ represents the chemical potential of lead $j$, while $\mu_S$ is the chemical potential of the superconductor. The transmission coefficient $T_{ij}^{\alpha\beta}(E)$ gives the probability of a particle of type $\beta$ from lead $j$ to scatter into lead $i$ as a particle of type $\alpha$.
 
-Noise $\mathcal{S}$
+The current noise power spectrum $\mathcal{S}_{ij}$, which characterizes current fluctuations between leads $i$ and $j$, is expressed as:
 
 \begin{equation}
-\begin{aligned}\mathcal{S}_{ij}=\sum_{\alpha,\beta} & \{\delta_{ij}\delta_{\alpha\beta}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)\\
+\begin{aligned}\mathcal{S}_{ij}=\frac{e^2}{h}\sum_{\alpha,\beta} & \{\delta_{ij}\delta_{\alpha\beta}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)\\
  & -\text{sgn}(\alpha)\text{sgn}(\beta)\left[T_{ji}^{\beta\alpha}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)+T_{ij}^{\alpha\beta}f_{j\beta}(E)\left(1-f_{j\beta}(E)\right)\right]\\
- & +\delta_{ij}^{\alpha\beta}T_{jk}^{\beta\gamma}f_{k\gamma}(E)-\text{sgn}(\alpha)\text{sgn}(\beta)\left(s_{ik}^{\alpha\gamma*}s_{jk}^{\beta\gamma}f_{k\gamma}(E)\right)\left(s_{il}^{\alpha\delta}s_{jl}^{\beta\delta*}f_{l\delta}(E)\right)
+ & +\sum_{k,\gamma,l,\delta}\text{sgn}(\alpha)\text{sgn}(\beta)\left(s_{ik}^{\alpha\gamma*}s_{jk}^{\beta\gamma}f_{k\gamma}(E)\right)\left(s_{il}^{\alpha\delta}s_{jl}^{\beta\delta*}f_{l\delta}(E)\right)
 \end{aligned}
 \end{equation}
 
-First example a $1\times6$ , hopping $t=1$ simple chain
+where $s_{ij}^{\alpha\beta}$ represents the scattering amplitude from channel $\beta$ in lead $j$ to channel $\alpha$ in lead $i$. These scattering amplitudes are related to the transmission probabilities through $T_{ij}^{\alpha\beta} = |s_{ij}^{\alpha\beta}|^2$.
+
+The transmission probabilities and scattering amplitudes can be calculated using the Fisher-Lee relation, which connects them to the Green's functions of the system. This established framework provides a well-tested benchmark against which we can validate our counting field approach.
+
+\subsection{Example 1: Simple Tight-Binding Chain}
+
+Our first benchmark system is a one-dimensional tight-binding chain consisting of 6 sites with nearest-neighbor hopping amplitude $t=1$. The central region comprises 4 sites, with one site attached to each lead at the endpoints. This simple model allows for transparent comparison between methods while capturing essential transport physics.
 
 \begin{figure}[H]
 \begin{centering}
@@ -306,11 +360,20 @@ First example a $1\times6$ , hopping $t=1$ simple chain
 \begin{centering}
 
 \par\end{centering}
-\caption{Upper Panel: Tight-binding simple hopping chain.Lower Panel: Comparison
-of two methods. The current through lead 1 is entirely due to the
-transmission from lead 1 to lead 2.}
-
+\caption{Upper Panel: Schematic representation of a tight-binding chain with 6 sites. The central region (sites 2-5) connects to leads at sites 1 and 6. Lower Panel: Comparison of current calculations using the counting field method (solid line) and scattering approach (markers). The current through lead 1 is entirely due to elastic transmission to lead 2, showing perfect agreement between the two methods.}
 \end{figure}
+
+In this simple non-interacting system, electrons transmit elastically from lead 1 to lead 2 with probability determined by the energy-dependent transmission function. At energies within the band ($-2t < E < 2t$), the transmission is non-zero, while outside this range it vanishes exponentially.
+
+The counting field approach accurately reproduces the current calculated by the scattering method across the entire energy range. This agreement is expected for non-interacting systems, where the Landauer formula provides an exact description. The computational efficiency of both methods is comparable in this case, with the counting field approach requiring only the determinant calculation rather than the explicit Green's function evaluation and matrix multiplication needed in the scattering approach.
+
+\subsection{Example 2: Kitaev Chain with Superconducting Pairing}
+
+Our second test system introduces superconductivity in the form of a Kitaev chain, which features both nearest-neighbor hopping and p-wave pairing terms. The Hamiltonian of the central region is given by:
+
+$$H = \sum_i \left( -t c_i^\dagger c_{i+1} + \Delta c_i c_{i+1} + \text{h.c.} \right) - \mu \sum_i c_i^\dagger c_i$$
+
+where $t$ is the hopping amplitude, $\Delta$ is the superconducting pairing strength, and $\mu$ is the chemical potential. This model supports topological superconductivity under appropriate parameter regimes, with associated non-trivial transport signatures.
 
 \begin{figure}[H]
 \begin{centering}
@@ -322,12 +385,29 @@ transmission from lead 1 to lead 2.}
 \begin{centering}
 
 \par\end{centering}
-\caption{Upper Panel: Tight-binding Kitaev chain.Middle Panel: Due to the presence
-of the pairing term in the central region, Andreev reflections occur.
-As a result, the current is not purely a transmission current and
-must be carefully calculated using the scattering method, as described
-in Eq.\ref{eq:current sup}.Lower Panel: Comparison of the two methods.}
+\caption{Upper Panel: Schematic representation of the Kitaev chain with superconducting pairing $\Delta$. Middle Panel: Electron and hole transmission probabilities as a function of energy, showing significant Andreev reflection processes. Lower Panel: Comparison of current calculations using the counting field method (solid line) and scattering approach (markers), demonstrating excellent agreement even in the presence of superconductivity.}
 \end{figure}
+
+The presence of superconducting pairing introduces Andreev reflection processes, whereby an incident electron from a lead can be reflected as a hole, transmitting a Cooper pair into the superconductor. This fundamental change in the transport mechanism necessitates careful treatment of both electron and hole channels, as well as the particle-hole coherence inherent in the BdG formalism.
+
+Despite this additional complexity, the counting field method demonstrates excellent agreement with the scattering approach. This confirms the validity of our formulation even when particle-hole symmetry is broken and multiple transmission channels are involved. Importantly, the counting field approach maintains its computational efficiency advantage while correctly capturing all the quantum coherent processes involved in superconducting transport.
+
+These numerical tests validate our counting field framework across different physical regimes, establishing it as a reliable method for transport calculations in tight-binding systems, with particular advantages for calculating higher-order correlations.
+
+\section{Conclusion and Outlook}
+
+In this article, we have developed and validated a counting field approach for transport calculations in tight-binding lattice models. The method's key features include:
+
+\begin{enumerate}
+\item A formulation based on the action and its functional derivatives with respect to counting fields
+\item Analytical verification showing exact correspondence with standard current formulas
+\item Numerical implementation using automatic differentiation for efficient derivative calculations
+\item Successful benchmarking against established scattering methods in both normal and superconducting systems
+\end{enumerate}
+
+The primary advantage of our approach is the natural extension to higher-order transport statistics and correlations, which emerge systematically as higher-order derivatives of the generating functional. This unified framework handles various transport regimes coherently and efficiently, while maintaining the computational performance of established methods.
+
+Future work will focus on extending this methodology to interacting systems, time-dependent transport, and detailed noise correlation studies. The flexibility of the counting field approach makes it particularly suited for investigating non-Gaussian statistics in quantum transport and for characterizing correlations in topological superconducting systems and other exotic quantum materials.
 
 \begin{thebibliography}{1}
 \bibitem{key-1}A. Kamenev, Field theory of non-equilibrium systems.

@@ -1,0 +1,23 @@
+-------------------- Auto-Git Log --------------------
+Mon May 05 2025 16:26:50 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* doc/note/lattice_generating.log
+* doc/note/lattice_generating.synctex.gz
+* doc/note/lattice_generating.tex
+
+
+Created files:
+* doc/memo.md
+* doc/note/contour2.eps
+* doc/note/lattice_generating.aux
+* doc/note/lattice_generating.log
+* doc/note/lattice_generating.synctex.gz
+* doc/note/lattice_generating.tex
+
+
+Deleted files:
+
+
+Renamed files:
