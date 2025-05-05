@@ -1,0 +1,26 @@
+-------------------- Auto-Git Log --------------------
+Mon May 05 2025 17:27:04 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* calculations/__pycache__/calculation_cf_autograd.cpython-312.pyc
+* doc/note/lattice_generating.aux
+* doc/note/lattice_generating.log
+* doc/note/lattice_generating.synctex.gz
+* doc/note/lattice_generating.tex
+* greens_functions/__pycache__/__init__.cpython-312.pyc
+* greens_functions/__pycache__/add_ginv_leads.cpython-312.pyc
+* greens_functions/__pycache__/construct_ginv_tlc.cpython-312.pyc
+* greens_functions/__pycache__/construct_ginv_total.cpython-312.pyc
+* greens_functions/__pycache__/total_self_energy.cpython-312.pyc
+* test_kitaev.ipynb
+
+
+Created files:
+* .autogit/logs/log-5-4-2025-16-26-50.txt
+
+
+Deleted files:
+
+
+Renamed files:
