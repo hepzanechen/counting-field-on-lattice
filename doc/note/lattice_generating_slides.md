@@ -14,6 +14,8 @@ style: |
   h2 {
     font-size: 36px;
     color: #234E70;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
   img {
     display: block;
@@ -46,6 +48,13 @@ style: |
     width: 90%;
     max-height: 80vh;
     object-fit: contain;
+  }
+  .plot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
   }
 ---
 
@@ -319,9 +328,10 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## SSH Chain: Current Comparison
-
-![width:75%](figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png)
+<div class="plot-container">
+<h2>SSH Chain: Current Comparison</h2>
+<img width="65%" src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png">
+</div>
 
 ---
 
@@ -339,9 +349,10 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## SSH Chain: Noise Comparison
-
-![width:75%](figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png)
+<div class="plot-container">
+<h2>SSH Chain: Noise Comparison</h2>
+<img width="65%" src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png">
+</div>
 
 ---
 
@@ -359,9 +370,10 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Kitaev Chain: Current Comparison
-
-![width:75%](figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png)
+<div class="plot-container">
+<h2>Kitaev Chain: Current Comparison</h2>
+<img width="65%" src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png">
+</div>
 
 ---
 
@@ -379,9 +391,10 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Kitaev Chain: Noise Comparison
-
-![width:75%](figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png)
+<div class="plot-container">
+<h2>Kitaev Chain: Noise Comparison</h2>
+<img width="65%" src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png">
+</div>
 
 ---
 
@@ -428,27 +441,31 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Onsite Splitting: 1st Order (Current)
-
-![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png)
-
----
-
-## Onsite Splitting: 2nd Order (Noise)
-
-![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png)
+<div class="plot-container">
+<h2>Onsite Splitting: 1st Order (Current)</h2>
+<img width="65%" src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png">
+</div>
 
 ---
 
-## Onsite Splitting: 3rd Order (Skewness)
-
-![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png)
+<div class="plot-container">
+<h2>Onsite Splitting: 2nd Order (Noise)</h2>
+<img width="65%" src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png">
+</div>
 
 ---
 
-## Onsite Splitting: 4th Order (Kurtosis)
+<div class="plot-container">
+<h2>Onsite Splitting: 3rd Order (Skewness)</h2>
+<img width="65%" src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png">
+</div>
 
-![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png)
+---
+
+<div class="plot-container">
+<h2>Onsite Splitting: 4th Order (Kurtosis)</h2>
+<img width="65%" src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png">
+</div>
 
 ---
 
@@ -495,27 +512,31 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Lead Coupling: 1st Order (Current)
-
-![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png)
-
----
-
-## Lead Coupling: 2nd Order (Noise)
-
-![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png)
+<div class="plot-container">
+<h2>Lead Coupling: 1st Order (Current)</h2>
+<img width="65%" src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png">
+</div>
 
 ---
 
-## Lead Coupling: 3rd Order (Skewness)
-
-![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png)
+<div class="plot-container">
+<h2>Lead Coupling: 2nd Order (Noise)</h2>
+<img width="65%" src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png">
+</div>
 
 ---
 
-## Lead Coupling: 4th Order (Kurtosis)
+<div class="plot-container">
+<h2>Lead Coupling: 3rd Order (Skewness)</h2>
+<img width="65%" src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png">
+</div>
 
-![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png)
+---
+
+<div class="plot-container">
+<h2>Lead Coupling: 4th Order (Kurtosis)</h2>
+<img width="65%" src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png">
+</div>
 
 ---
 
@@ -524,10 +545,10 @@ These formulas provide our benchmark for validating the counting field approach.
 1. We start with the determinant representation of the generating function:
    $$Z(\boldsymbol{\lambda},\omega) = \mathcal{N} \det\mathcal{M}(\boldsymbol{\lambda},\omega)$$
 
-2. Using the block determinant formula:
-   $$\begin{aligned}\det\mathcal{M}(\boldsymbol{\lambda},\omega) & =\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}t_{CLi}\Lambda_{i}(\lambda_{i},\omega)g_{Leadi}^{-1}(\omega)\Lambda_{i}^{\dagger}(\lambda_{i},\omega)t_{CLi}^{\dagger}\right)\\
- & =\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(\lambda_{i},\omega\right)\right)
-\end{aligned}$$
+2. Using the block determinant formula (simplified form):
+   $$\det\mathcal{M}(\boldsymbol{\lambda},\omega) = \prod_{i=1}^{N_{L}}\det(g_{Leadi}^{-1}) \cdot \det(g_{Central}^{-1} - \sum_{i=1}^{N_{L}}\Sigma_{i}(\lambda_{i}))$$
+
+   where $\Sigma_{i}(\lambda_{i}) = t_{CLi}\Lambda_{i}(\lambda_{i})g_{Leadi}^{-1}\Lambda_{i}^{\dagger}(\lambda_{i})t_{CLi}^{\dagger}$
 
 ---
 
