@@ -42,6 +42,11 @@ style: |
     width: 90%;
     max-height: 75vh;
   }
+  .max-img {
+    width: 90%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
 ---
 
 <!-- _class: lead -->
@@ -62,6 +67,17 @@ style: |
   - Unified framework for transport statistics of all orders
   - Comparable computational efficiency to standard methods
   - Works for both normal and superconducting systems
+
+---
+
+## Keldysh Path Integral Contour
+
+![width:75%](figs/contour2.pdf)
+
+- Forward (upper) branch: time evolution
+- Backward (lower) branch: return to initial state
+- Non-equilibrium quantum systems require this closed-time contour
+- Different counting field phases on each branch
 
 ---
 
@@ -285,10 +301,7 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## SSH Chain: Current Comparison
-
-<div class="columns">
-<div>
+## SSH Chain: System Details
 
 - Su-Schrieffer-Heeger model:
   - Alternating hopping strengths
@@ -300,20 +313,19 @@ These formulas provide our benchmark for validating the counting field approach.
 - Inter-cell hopping $t_v=-5.0$
 - Lead coupling $t_{lc}=1.0$
 
-</div>
-<div>
-
-<img src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png" class="full-img">
-
-</div>
-</div>
+- Current peaks = coupled zero mode resonances
+- Split peaks indicate hybridization
+- Width reflects coupling to leads
 
 ---
 
-## SSH Chain: Noise Comparison
+## SSH Chain: Current Comparison
 
-<div class="columns">
-<div>
+![width:75%](figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png)
+
+---
+
+## SSH Chain: Noise Features
 
 - Second-order transport correlations:
   - Reveal quantum transport statistics
@@ -323,21 +335,17 @@ These formulas provide our benchmark for validating the counting field approach.
 **Key finding**:
 - Our method calculates noise with the same accuracy as current
 - Computational efficiency is maintained
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png" class="full-img">
-
-</div>
-</div>
+- Perfect agreement validates approach for higher-order statistics
 
 ---
 
-## Kitaev Chain: Current Comparison
+## SSH Chain: Noise Comparison
 
-<div class="columns">
-<div>
+![width:75%](figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png)
+
+---
+
+## Kitaev Chain: System Details
 
 - Kitaev model with superconductivity:
   - p-wave pairing terms
@@ -349,20 +357,15 @@ These formulas provide our benchmark for validating the counting field approach.
 - Pairing $\Delta=50.0$
 - Chemical potential $\mu_c=-50.0$
 
-</div>
-<div>
+---
 
-<img src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png" class="full-img">
+## Kitaev Chain: Current Comparison
 
-</div>
-</div>
+![width:75%](figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png)
 
 ---
 
-## Kitaev Chain: Noise Comparison
-
-<div class="columns">
-<div>
+## Kitaev Chain: Noise Features
 
 - Andreev reflection complicates transport:
   - Particle-hole mixing
@@ -374,17 +377,15 @@ These formulas provide our benchmark for validating the counting field approach.
   - Maintains computational efficiency
   - Works for all higher-order cumulants
 
-</div>
-<div>
+---
 
-<img src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png" class="full-img">
+## Kitaev Chain: Noise Comparison
 
-</div>
-</div>
+![width:75%](figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png)
 
 ---
 
-## Higher Order Correlations: Onsite Energy Splitting
+## Higher Order Correlations Overview: Onsite Energy Splitting
 
 <div class="grid-2x2">
 <div>
@@ -412,10 +413,7 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Onsite Splitting: 1st Order (Current)
-
-<div class="columns">
-<div>
+## Onsite Splitting: Effects on Transport
 
 - Vary coupling between zero modes:
   - Controls peak splitting in spectrum
@@ -426,94 +424,35 @@ These formulas provide our benchmark for validating the counting field approach.
 - Direct control of zero mode hybridization
 - Split resonance = finite coupling between edge modes
 - Energy separation directly reflects coupling strength
+- Higher orders reveal quantum signatures invisible in mean current
 
-</div>
-<div>
+---
 
-<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png" class="full-img">
+## Onsite Splitting: 1st Order (Current)
 
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png)
 
 ---
 
 ## Onsite Splitting: 2nd Order (Noise)
 
-<div class="columns">
-<div>
-
-- Second-order derivatives reveal:
-  - Quantum fluctuation characteristics
-  - Non-classical noise signatures
-  - Deviations from Poissonian statistics
-
-**Physical insights**:
-- Noise profile changes with mode hybridization
-- Complex correlation structure near resonances
-- Shot noise provides additional transport fingerprint
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png)
 
 ---
 
 ## Onsite Splitting: 3rd Order (Skewness)
 
-<div class="columns">
-<div>
-
-- Third-order correlations show:
-  - Asymmetry in fluctuation distribution
-  - Non-Gaussian transport statistics
-  - Quantum coherent effects in high-order moments
-
-**Physical significance**:
-- Unique "fingerprint" of zero mode transport
-- Features not captured by lower moments
-- Direct probe of non-equilibrium statistics
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png)
 
 ---
 
 ## Onsite Splitting: 4th Order (Kurtosis)
 
-<div class="columns">
-<div>
-
-- Fourth-order correlations reveal:
-  - Extreme value statistics in transport
-  - "Heavy-tailed" distributions
-  - Complex patterns of quantum coherence
-
-**Physical insights**:
-- Sharp features at resonances
-  - Evidence of non-classical transport
-  - Sensitive probe of topological transitions
-  - Challenging to measure but rich in information
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png)
 
 ---
 
-## Higher Order Correlations: Lead-System Coupling
+## Higher Order Correlations Overview: Lead-System Coupling
 
 <div class="grid-2x2">
 <div>
@@ -541,10 +480,7 @@ These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
-## Lead Coupling: 1st Order (Current)
-
-<div class="columns">
-<div>
+## Lead Coupling: Effects on Transport
 
 - Vary hybridization with leads:
   - Controls resonance broadening
@@ -555,90 +491,31 @@ These formulas provide our benchmark for validating the counting field approach.
 - Stronger coupling = broader peaks
 - Direct measure of lead-induced damping
 - Transition from coherent to incoherent transport
+- Higher orders show distinctive non-classical features
 
-</div>
-<div>
+---
 
-<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png" class="full-img">
+## Lead Coupling: 1st Order (Current)
 
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png)
 
 ---
 
 ## Lead Coupling: 2nd Order (Noise)
 
-<div class="columns">
-<div>
-
-- Noise characteristics evolve with coupling:
-  - Resonance widths directly reflect coupling strength
-  - Strength and profile controlled by hybridization
-  - Enhanced shot noise at intermediate coupling
-
-**Physical significance**:
-- Transition in transport regime
-- Quantum-to-classical crossover
-- Non-trivial relation to transmission probability
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png)
 
 ---
 
 ## Lead Coupling: 3rd Order (Skewness)
 
-<div class="columns">
-<div>
-
-- Third-order correlations with lead coupling:
-  - Asymmetric statistics change with coupling
-  - Complex dependence beyond simple broadening
-  - Crossover between different transport regimes
-
-**Key insights**:
-- Distinctive features at resonance
-- Unique signature of quantum coherent transport
-- Theoretical tool for identifying transport mechanisms
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png)
 
 ---
 
 ## Lead Coupling: 4th Order (Kurtosis)
 
-<div class="columns">
-<div>
-
-- Fourth-order correlations reveal:
-  - Extreme value transport statistics 
-  - Non-classical transport signatures
-  - Complex quantum interference effects
-
-**Physical insights**:
-- Enhanced "heavy-tail" statistics at resonance
-- Sensitive to lead-system hybridization
-- Rich structure reveals microscopic transport mechanisms
-- Currently inaccessible to experimental probes
-
-</div>
-<div>
-
-<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png" class="full-img">
-
-</div>
-</div>
+![width:75%](figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png)
 
 ---
 
@@ -651,6 +528,10 @@ These formulas provide our benchmark for validating the counting field approach.
    $$\begin{aligned}\det\mathcal{M}(\boldsymbol{\lambda},\omega) & =\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}t_{CLi}\Lambda_{i}(\lambda_{i},\omega)g_{Leadi}^{-1}(\omega)\Lambda_{i}^{\dagger}(\lambda_{i},\omega)t_{CLi}^{\dagger}\right)\\
  & =\prod_{i=1}^{N_{L}}\det\left(g_{Leadi}^{-1}(\omega)\right)\det\left(g_{Central}^{-1}(\omega)-\sum_{i=1}^{N_{L}}\Sigma_{i}\left(\lambda_{i},\omega\right)\right)
 \end{aligned}$$
+
+---
+
+## Current Formula Derivation: Continued
 
 3. For a single lead with counting field $\lambda_1$:
    $$\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} = \dfrac{1}{\lambda_{1}}\ln\det\left(\mathbb{I}+G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)-\Sigma_{1}\left(\lambda_{1},\omega\right)\right)\right)$$
