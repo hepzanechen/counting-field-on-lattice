@@ -298,8 +298,3 @@ def plot_comparison_from_files_vary_split_onsite(results_dir=None, plot_type="al
             plt.tight_layout()
             plt.savefig(os.path.join(results_dir, f"comparison_derivative_order{order}_split_onsite.png"), dpi=300)
             plt.show()
-
-if __name__ == "__main__":
-    # Automatically find and plot the most recent results
-    plot_comparison_from_files_vary_t_lead_central()
-    plot_comparison_from_files_vary_split_onsite() 
