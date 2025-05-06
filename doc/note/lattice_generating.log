@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.19)  5 MAY 2025 18:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.19)  6 MAY 2025 15:11
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -702,29 +702,103 @@ Overfull \hbox (28.60208pt too wide) detected at line 283
 [][][]
  []
 
-[5] [6] [7] [8] [9] (./lattice_generating.aux)
+[5] [6]
+<figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png, id=46, 722.7pt x 289.08pt>
+File: figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png Graphic file (type png)
+<use figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png>
+Package pdftex.def Info: figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png  used on input line 351.
+(pdftex.def)             Requested size: 476.03984pt x 190.41844pt.
+<figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png, id=48, 1084.05pt x 578.16pt>
+File: figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png Graphic file (type png)
+<use figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png>
+Package pdftex.def Info: figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png  used on input line 354.
+(pdftex.def)             Requested size: 476.03984pt x 253.88832pt.
+ [7] [8 <./figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png> <./figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png>]
+<figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png, id=58, 722.7pt x 289.08pt>
+File: figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png Graphic file (type png)
+<use figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png>
+Package pdftex.def Info: figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png  used on input line 373.
+(pdftex.def)             Requested size: 476.03984pt x 190.41844pt.
+<figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png, id=59, 1084.05pt x 578.16pt>
+File: figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png Graphic file (type png)
+<use figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png>
+Package pdftex.def Info: figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png  used on input line 376.
+(pdftex.def)             Requested size: 476.03984pt x 253.88832pt.
+ [9] [10 <./figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png> <./figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png>]
+<figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png, id=68, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png Graphic file (type png)
+<use figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png>
+Package pdftex.def Info: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png  used on input line 399.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+<figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png, id=69, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png Graphic file (type png)
+<use figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png>
+Package pdftex.def Info: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png  used on input line 402.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+ [11]
+Overfull \vbox (139.19263pt too high) has occurred while \output is active []
+
+ [12 <./figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png> <./figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png>]
+<figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png, id=78, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png Graphic file (type png)
+<use figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png>
+Package pdftex.def Info: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png  used on input line 409.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+<figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png, id=79, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png Graphic file (type png)
+<use figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png>
+Package pdftex.def Info: figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png  used on input line 412.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+
+Overfull \vbox (139.19263pt too high) has occurred while \output is active []
+
+ [13 <./figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png> <./figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png>]
+<figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png, id=86, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png Graphic file (type png)
+<use figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png>
+Package pdftex.def Info: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png  used on input line 423.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+<figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png, id=87, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png Graphic file (type png)
+<use figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png>
+Package pdftex.def Info: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png  used on input line 426.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+ [14]
+Overfull \vbox (139.19263pt too high) has occurred while \output is active []
+
+ [15 <./figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png> <./figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png>]
+<figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png, id=96, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png Graphic file (type png)
+<use figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png>
+Package pdftex.def Info: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png  used on input line 433.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+<figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png, id=97, 867.24pt x 578.16pt>
+File: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png Graphic file (type png)
+<use figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png>
+Package pdftex.def Info: figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png  used on input line 436.
+(pdftex.def)             Requested size: 476.03984pt x 317.36261pt.
+
+Overfull \vbox (151.19263pt too high) has occurred while \output is active []
+
+ [16 <./figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png> <./figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png>] [17] (./lattice_generating.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 7373 strings out of 474222
- 116076 string characters out of 5748732
+ 7456 strings out of 474222
+ 127877 string characters out of 5748732
  1951975 words of memory out of 5000000
- 29522 multiletter control sequences out of 15000+600000
+ 29605 multiletter control sequences out of 15000+600000
  574407 words of font info for 81 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,21n,65p,749b,416s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,21n,65p,788b,416s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on lattice_generating.pdf (9 pages, 338766 bytes).
+Output written on lattice_generating.pdf (17 pages, 5911509 bytes).
 PDF statistics:
- 160 PDF objects out of 1000 (max. 8388607)
- 98 compressed objects within 1 object stream
+ 211 PDF objects out of 1000 (max. 8388607)
+ 116 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
 

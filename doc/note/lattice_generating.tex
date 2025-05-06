@@ -348,12 +348,12 @@ Our first benchmark system is a one-dimensional tight-binding chain consisting o
 
 \begin{figure}[H]
 \begin{centering}
-
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png}
 \par\end{centering}
 \begin{centering}
-
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png}
 \par\end{centering}
-\caption{Upper Panel: Schematic representation of a tight-binding chain with 6 sites. The central region (sites 2-5) connects to leads at sites 1 and 6. Lower Panel: Comparison of current calculations using the counting field method (solid line) and scattering approach (markers). The current through lead 1 is entirely due to elastic transmission to lead 2, showing perfect agreement between the two methods.}
+\caption{Upper Panel: Current comparison between counting field method (solid line) and direct Green's function calculation (markers) for an SSH chain with 8 sites. The two peaks represent coupled Jackiw-Rebbi zero modes with finite coupling splitting. Lower Panel: Noise power comparison between the two methods showing perfect agreement. Parameters: Nx=8 sites, intra-cell hopping $t_u=-10.0$, inter-cell hopping $t_v=-5.0$, chemical potential $\mu_c=0.0$, lead-central coupling $t_{lc}=1.0$, and energy range $E \in [-1.0, 1.0]$ with 1000 points.}
 \end{figure}
 
 In this simple non-interacting system, electrons transmit elastically from lead 1 to lead 2 with probability determined by the energy-dependent transmission function. At energies within the band ($-2t < E < 2t$), the transmission is non-zero, while outside this range it vanishes exponentially.
@@ -370,15 +370,14 @@ where $t$ is the hopping amplitude, $\Delta$ is the superconducting pairing stre
 
 \begin{figure}[H]
 \begin{centering}
-
+\includegraphics[width=0.9\textwidth]{figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png}
 \par\end{centering}
 \begin{centering}
-
+\includegraphics[width=0.9\textwidth]{figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png}
 \par\end{centering}
 \begin{centering}
-
 \par\end{centering}
-\caption{Upper Panel: Schematic representation of the Kitaev chain with superconducting pairing $\Delta$. Middle Panel: Electron and hole transmission probabilities as a function of energy, showing significant Andreev reflection processes. Lower Panel: Comparison of current calculations using the counting field method (solid line) and scattering approach (markers), demonstrating excellent agreement even in the presence of superconductivity.}
+\caption{Upper Panel: Current comparison between counting field method (solid line) and direct Green's function calculation (markers) for a Kitaev superconducting chain with 8 sites. The two peaks represent Majorana zero modes (MZM) with finite coupling splitting. Lower Panel: Noise power comparison demonstrating excellent agreement between the two methods even with superconducting correlations. Parameters: Nx=8 (8 sites), hopping $t_c=-50.0$, superconducting pairing $\Delta=50.0$, chemical potential $\mu_c=-50.0$, lead coupling $t_{lc}=1.0$, and energy range $E \in [-1.0, 1.0]$ with 1000 points.}
 \end{figure}
 
 The presence of superconducting pairing introduces Andreev reflection processes, whereby an incident electron from a lead can be reflected as a hole, transmitting a Cooper pair into the superconductor. This fundamental change in the transport mechanism necessitates careful treatment of both electron and hole channels, as well as the particle-hole coherence inherent in the BdG formalism.
@@ -386,6 +385,58 @@ The presence of superconducting pairing introduces Andreev reflection processes,
 Despite this additional complexity, the counting field method demonstrates excellent agreement with the scattering approach. This confirms the validity of our formulation even when particle-hole symmetry is broken and multiple transmission channels are involved. Importantly, the counting field approach maintains its computational efficiency advantage while correctly capturing all the quantum coherent processes involved in superconducting transport.
 
 These numerical tests validate our counting field framework across different physical regimes, establishing it as a reliable method for transport calculations in tight-binding systems, with particular advantages for calculating higher-order correlations.
+
+\subsection{Parameter Dependence Studies}
+
+To further validate our counting field approach and explore the physics of these systems, we conducted systematic parameter variation studies. These studies reveal how transport properties are affected by key system parameters and demonstrate the method's ability to capture subtle quantum transport phenomena.
+
+\subsubsection{Effect of Onsite Energy Splitting}
+
+We first examine how the splitting of onsite energies affects the transport characteristics in the SSH chain. The onsite energy difference controls the coupling between the Jackiw-Rebbi modes at the edges of the chain, directly affecting the energy splitting of the transport resonances.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png}
+\par\end{centering}
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png}
+\par\end{centering}
+\caption{Effect of varying onsite energy splitting on transport properties in the SSH chain. Upper Panel: First-order derivatives (current) for different onsite energy splittings. As the splitting increases, the resonance peaks shift apart, demonstrating the control of Jackiw-Rebbi mode coupling. Lower Panel: Second-order derivatives (noise) showing corresponding changes in the correlation spectrum. Both quantities are calculated using the counting field method.}
+\end{figure}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png}
+\par\end{centering}
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png}
+\par\end{centering}
+\caption{Higher-order transport correlations as a function of onsite energy splitting. Upper Panel: Third-order derivatives showing skewness of transport fluctuations. Lower Panel: Fourth-order derivatives (kurtosis) revealing the non-Gaussian nature of transport statistics. These higher-order correlations, efficiently calculated with the counting field approach, provide additional signatures of quantum transport through coupled zero modes.}
+\end{figure}
+
+\subsubsection{Effect of Lead-System Coupling}
+
+The coupling between the leads and the central region plays a crucial role in determining the broadening of transport resonances and the overall conductance. We systematically vary this coupling to observe its effects on transport properties at multiple orders.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png}
+\par\end{centering}
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png}
+\par\end{centering}
+\caption{Effect of varying lead-central coupling on transport properties. Upper Panel: First-order derivatives (current) showing the broadening of resonance peaks with increasing coupling strength, reflecting the enhanced hybridization between the leads and the coupled zero modes. Lower Panel: Second-order derivatives (noise) demonstrating the evolution of transport fluctuations with coupling strength.}
+\end{figure}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png}
+\par\end{centering}
+\begin{centering}
+\includegraphics[width=0.9\textwidth]{figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png}
+\par\end{centering}
+\caption{Higher-order transport statistics as a function of lead-central coupling strength. Upper Panel: Third-order derivatives revealing how the asymmetry in transport fluctuations depends on coupling. Lower Panel: Fourth-order derivatives showing distinctive patterns in the extreme non-Gaussian statistics at resonance energies. These higher-order correlations capture the quantum coherent nature of transport through the system and showcase the power of the counting field approach for characterizing transport beyond the mean current and noise.}
+\end{figure}
 
 \section{Conclusion and Outlook}
 
