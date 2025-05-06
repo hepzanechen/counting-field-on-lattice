@@ -38,6 +38,10 @@ style: |
     grid-template-rows: repeat(2, auto);
     gap: 0.5rem;
   }
+  .full-img {
+    width: 90%;
+    max-height: 75vh;
+  }
 ---
 
 <!-- _class: lead -->
@@ -61,20 +65,44 @@ style: |
 
 ---
 
-## Core Idea: The Counting Field Method
+## Path Integral on Keldysh Contour
 
 <div class="columns">
 <div>
 
-- Insert counting fields into hopping terms of tight-binding Hamiltonian
-- Modify the action on Keldysh contour:
+![width:90%](contour2-eps-converted-to.pdf)
 
-$$S_0=\sum_{mn}\int dt\bar{\phi}_{m}^{+}(t)[\delta_{mn}i\partial_t - {\color{red}e^{i\lambda_{mn}/2}}t_{mn}]\phi_{n}^{+}(t) - ...$$
-
-- Derivatives of $\ln Z$ give transport properties
+- Forward and backward branches required for non-equilibrium problems
+- Time evolution on the contour preserves quantum correlations
+- Counting fields act differently on each branch
 
 </div>
 <div>
+
+- The counting field tracks particle transfers
+- Key idea: λ modifies hopping amplitudes
+- Different phases on forward/backward branches
+- λ serves as source field for generating function
+
+</div>
+</div>
+
+---
+
+## Core Idea: The Counting Field Method
+
+- Insert counting fields into hopping terms of tight-binding Hamiltonian
+- Modify the action on Keldysh contour:
+
+$$S_{0}=\sum_{mn}\left\{ \int dt\bar{\phi}_{m}^{+}(t)\left[\delta_{mn}i\partial_{t}\phi_{n}^{+}(t)-{\color{teal}e^{i\frac{\lambda_{mn}(t)}{2}}}\,t_{mn}\phi_{n}^{+}(t)\right]-\int dt\bar{\phi}_{m}^{-}(t)\left[\delta_{mn}i\partial_{t}\phi_{n}^{-}(t)-{\color{teal}e^{-i\frac{\lambda_{mn}(t)}{2}}}t_{mn}\phi_{n}^{-}(t)\right]\right\}$$
+
+- Here, $\phi^+$ and $\phi^-$ are fields on forward and backward branches
+- $\lambda_{mn}(t)$ counts particles hopping from site $n$ to site $m$
+- Antisymmetry: $\lambda_{mn}(t) = -\lambda_{nm}(t)$
+
+---
+
+## Transport Observables from Derivatives
 
 - Current = 1st-order derivative
 $$\left\langle I_{mn}(t)\right\rangle = \dfrac{\delta\ln Z}{\delta(i\lambda(t))}\bigg|_{\lambda=0}$$
@@ -82,10 +110,10 @@ $$\left\langle I_{mn}(t)\right\rangle = \dfrac{\delta\ln Z}{\delta(i\lambda(t))}
 - Noise = 2nd-order derivative
 $$\left\langle I_{mn}(t)I_{mn}(t^{\prime})\right\rangle = \dfrac{\delta^{2}\ln Z}{\delta(i\lambda(t))\delta(i\lambda(t^{\prime}))}\bigg|_{\lambda=0}$$
 
-- Higher cumulants = Higher derivatives
-
-</div>
-</div>
+- Higher-order cumulants = Higher-order derivatives
+  - 3rd order: Skewness (asymmetry in fluctuations)
+  - 4th order: Kurtosis (extent of the tails)
+  - All calculated through same computational framework
 
 ---
 
@@ -106,11 +134,7 @@ $$\mathcal{M}(\boldsymbol{\lambda})=\begin{pmatrix}
 
 ---
 
-## Keldysh Formalism and Counting Field
-
-<div class="small-text">
-<div class="columns">
-<div>
+## Keldysh Formalism: RAK Space (1/2)
 
 - Each matrix block in $\mathcal{M}$ has $2×2$ internal structure in RAK space:
 
@@ -126,8 +150,9 @@ t_{CL} & 0\\
 0 & t_{CL}
 \end{array}\right)$$
 
-</div>
-<div>
+---
+
+## Keldysh Formalism: RAK Space (2/2)
 
 - For a single lead, $\mathcal{M}(\lambda,\omega)$ expands to:
 
@@ -140,10 +165,6 @@ it_{LC}^{*}\sin(\frac{\lambda}{2}) & t_{CL}^{*}\cos(\frac{\lambda}{2}) & 0 & (g_
 
 - Simplified inverse Green's functions:
 $$(g_{C}^{r,a})^{-1} = \omega - H_{C} \pm i\eta$$
-
-</div>
-</div>
-</div>
 
 ---
 
@@ -167,14 +188,11 @@ Counting Field Method with PyTorch Autograd:
 ```
 
 - **Key advantage**: Derivatives computed automatically and efficiently
+- Time complexity comparable to standard Green's function methods
 
 ---
 
-## Analytical Derivation: Current Formula
-
-<div class="small-text">
-<div class="columns">
-<div>
+## Analytical Derivation: Current Formula (1/2)
 
 Starting with the logarithm of the generating functional:
 
@@ -190,8 +208,9 @@ Taking derivative at $\lambda_{1}=0$:
 
 $$\frac{\partial\ln Z}{\partial\lambda_{1}}\bigg|_{\lambda_{1}=0} = \frac{\partial}{\partial\lambda_{1}}\ln\det(G_{C}^{-1} - \Sigma(\lambda_{1}) + \Sigma(0) - \Sigma(0))\bigg|_{\lambda_{1}=0}$$
 
-</div>
-<div>
+---
+
+## Analytical Derivation: Current Formula (2/2)
 
 Simplifying further:
 
@@ -203,13 +222,38 @@ $$= \text{Tr}\left[G_{C}\frac{\partial}{\partial\lambda_{1}}(\Sigma(0) - \Sigma(
 
 $$= \frac{i}{2}\text{Tr}\left[G_{C}(\Sigma(0)\sigma_{x}^{RAK} - \sigma_{x}^{RAK}\Sigma(0))\right]$$
 
-This equals the standard current formula:
+This equals the standard Meir-Wingreen current formula:
 
 $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\Sigma^a-\Sigma^r)]$$
 
-</div>
-</div>
-</div>
+---
+
+## Transport Scattering Theory (1/2)
+
+For systems with superconductivity, the current through lead $i$ is given by:
+
+$$I_{i}=\frac{e}{h}\sum_{\alpha,j\in NS,\beta}\operatorname{sgn}(\alpha)\left[\delta_{ij}\delta_{\alpha\beta}-T_{ij}^{\alpha\beta}(E)\right]f_{j\beta}(E)$$
+
+where:
+- $\alpha, \beta \in \{e, h\}$ are electron/hole indices
+- $T_{ij}^{\alpha\beta}(E)$ is the transmission probability from channel $\beta$ in lead $j$ to channel $\alpha$ in lead $i$
+- $f_{je}(E)=\left[1+\exp\left(\frac{E-\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ is the electron Fermi distribution
+- $f_{jh}(E)=\left[1+\exp\left(\frac{E+\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ is the hole Fermi distribution
+
+---
+
+## Transport Scattering Theory (2/2)
+
+Current noise power is given by:
+
+$$\begin{aligned}\mathcal{S}_{ij}=\frac{e^2}{h}\sum_{\alpha,\beta} & \{\delta_{ij}\delta_{\alpha\beta}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)\\
+ & -\text{sgn}(\alpha)\text{sgn}(\beta)\left[T_{ji}^{\beta\alpha}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)+T_{ij}^{\alpha\beta}f_{j\beta}(E)\left(1-f_{j\beta}(E)\right)\right]\\
+ & +\sum_{k,\gamma,l,\delta}\text{sgn}(\alpha)\text{sgn}(\beta)\left(s_{ik}^{\alpha\gamma*}s_{jk}^{\beta\gamma}f_{k\gamma}(E)\right)\left(s_{il}^{\alpha\delta}s_{jl}^{\beta\delta*}f_{l\delta}(E)\right)
+\end{aligned}$$
+
+where $s_{ij}^{\alpha\beta}$ are scattering amplitudes related to transmission probabilities by $T_{ij}^{\alpha\beta} = |s_{ij}^{\alpha\beta}|^2$.
+
+These formulas provide our benchmark for validating the counting field approach.
 
 ---
 
@@ -241,7 +285,7 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 
 ---
 
-## SSH Chain Parameters
+## SSH Chain: Current Comparison
 
 <div class="columns">
 <div>
@@ -259,18 +303,38 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 </div>
 <div>
 
-- Current peaks = coupled zero mode resonances
-- Split peaks indicate hybridization
-- Width reflects coupling to leads
-- Perfect agreement validates our approach
-- Higher order correlations capture quantum statistical properties beyond mean values
+<img src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png" class="full-img">
 
 </div>
 </div>
 
 ---
 
-## Kitaev Chain Parameters
+## SSH Chain: Noise Comparison
+
+<div class="columns">
+<div>
+
+- Second-order transport correlations:
+  - Reveal quantum transport statistics
+  - Show shot noise characteristics
+  - Capture zero mode physics
+
+**Key finding**:
+- Our method calculates noise with the same accuracy as current
+- Computational efficiency is maintained
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/compare_generating_directGinv/results_20250506_1429_Nx8_tu-10.0+0.0j_tv-5.0+0.0j_muc0.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Kitaev Chain: Current Comparison
 
 <div class="columns">
 <div>
@@ -288,6 +352,18 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 </div>
 <div>
 
+<img src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_currents_comparison.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Kitaev Chain: Noise Comparison
+
+<div class="columns">
+<div>
+
 - Andreev reflection complicates transport:
   - Particle-hole mixing
   - Both electron and hole channels
@@ -297,6 +373,11 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
   - Correctly captures superconducting correlations
   - Maintains computational efficiency
   - Works for all higher-order cumulants
+
+</div>
+<div>
+
+<img src="figs/kitaev_chain/compare_generating_directGinv/results_20250506_1413_Nx8_tc-50.0+0.0j_Delta50.0+0.0j_muc-50.0+0.0j_tlc1.0_E-1.00_1.00_pts1000/comparison_plots/all_terminal_noise_comparison.png" class="full-img">
 
 </div>
 </div>
@@ -331,6 +412,107 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 
 ---
 
+## Onsite Splitting: 1st Order (Current)
+
+<div class="columns">
+<div>
+
+- Vary coupling between zero modes:
+  - Controls peak splitting in spectrum
+  - Modifies transport resonances
+  - Affects correlation strength
+
+**Physical significance**:
+- Direct control of zero mode hybridization
+- Split resonance = finite coupling between edge modes
+- Energy separation directly reflects coupling strength
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order1_split_onsite.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Onsite Splitting: 2nd Order (Noise)
+
+<div class="columns">
+<div>
+
+- Second-order derivatives reveal:
+  - Quantum fluctuation characteristics
+  - Non-classical noise signatures
+  - Deviations from Poissonian statistics
+
+**Physical insights**:
+- Noise profile changes with mode hybridization
+- Complex correlation structure near resonances
+- Shot noise provides additional transport fingerprint
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order2_split_onsite.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Onsite Splitting: 3rd Order (Skewness)
+
+<div class="columns">
+<div>
+
+- Third-order correlations show:
+  - Asymmetry in fluctuation distribution
+  - Non-Gaussian transport statistics
+  - Quantum coherent effects in high-order moments
+
+**Physical significance**:
+- Unique "fingerprint" of zero mode transport
+- Features not captured by lower moments
+- Direct probe of non-equilibrium statistics
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order3_split_onsite.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Onsite Splitting: 4th Order (Kurtosis)
+
+<div class="columns">
+<div>
+
+- Fourth-order correlations reveal:
+  - Extreme value statistics in transport
+  - "Heavy-tailed" distributions
+  - Complex patterns of quantum coherence
+
+**Physical insights**:
+- Sharp features at resonances
+  - Evidence of non-classical transport
+  - Sensitive probe of topological transitions
+  - Challenging to measure but rich in information
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_split_onsite_values/results_20250506_1105/comparison_derivative_order4_split_onsite.png" class="full-img">
+
+</div>
+</div>
+
+---
+
 ## Higher Order Correlations: Lead-System Coupling
 
 <div class="grid-2x2">
@@ -359,9 +541,109 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 
 ---
 
+## Lead Coupling: 1st Order (Current)
+
+<div class="columns">
+<div>
+
+- Vary hybridization with leads:
+  - Controls resonance broadening
+  - Modifies lifetime of quasiparticles
+  - Changes transport characteristics
+
+**Physical interpretation**:
+- Stronger coupling = broader peaks
+- Direct measure of lead-induced damping
+- Transition from coherent to incoherent transport
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order1_t_lead_central.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Lead Coupling: 2nd Order (Noise)
+
+<div class="columns">
+<div>
+
+- Noise characteristics evolve with coupling:
+  - Resonance widths directly reflect coupling strength
+  - Strength and profile controlled by hybridization
+  - Enhanced shot noise at intermediate coupling
+
+**Physical significance**:
+- Transition in transport regime
+- Quantum-to-classical crossover
+- Non-trivial relation to transmission probability
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order2_t_lead_central.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Lead Coupling: 3rd Order (Skewness)
+
+<div class="columns">
+<div>
+
+- Third-order correlations with lead coupling:
+  - Asymmetric statistics change with coupling
+  - Complex dependence beyond simple broadening
+  - Crossover between different transport regimes
+
+**Key insights**:
+- Distinctive features at resonance
+- Unique signature of quantum coherent transport
+- Theoretical tool for identifying transport mechanisms
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order3_t_lead_central.png" class="full-img">
+
+</div>
+</div>
+
+---
+
+## Lead Coupling: 4th Order (Kurtosis)
+
+<div class="columns">
+<div>
+
+- Fourth-order correlations reveal:
+  - Extreme value transport statistics 
+  - Non-classical transport signatures
+  - Complex quantum interference effects
+
+**Physical insights**:
+- Enhanced "heavy-tail" statistics at resonance
+- Sensitive to lead-system hybridization
+- Rich structure reveals microscopic transport mechanisms
+- Currently inaccessible to experimental probes
+
+</div>
+<div>
+
+<img src="figs/ssh_chain/vary_t_lead_central/results_20250506_1159/comparison_derivative_order4_t_lead_central.png" class="full-img">
+
+</div>
+</div>
+
+---
+
 ## Current Formula Derivation: Key Steps
 
-<div class="small-text">
 1. We start with the determinant representation of the generating function:
    $$Z(\boldsymbol{\lambda},\omega) = \mathcal{N} \det\mathcal{M}(\boldsymbol{\lambda},\omega)$$
 
@@ -378,32 +660,6 @@ $$I = \frac{e}{\hbar}\int\frac{d\omega}{2\pi}\text{Tr}[(G^r-G^a)\Sigma^< + G^<(\
 
 5. Taking the limit and expanding in Keldysh space:
    $$\lim_{\lambda_{1}\rightarrow 0}\dfrac{\ln Z(\lambda_{1},\omega)-\ln Z(0,\omega)}{\lambda_{1}} = \dfrac{i}{2}\text{Tr}\left[G_{Central}(\omega)\left(\Sigma_{1}\left(0,\omega\right)\sigma_{x}^{RAK}-\sigma_{x}^{RAK}\Sigma_{1}\left(0,\omega\right)\right)\right]$$
-</div>
-
----
-
-## Transport Scattering Theory
-
-<div class="small-text">
-For systems with superconductivity, the current through lead $i$ is given by:
-
-$$I_{i}=\frac{e}{h}\sum_{\alpha,j\in NS,\beta}\operatorname{sgn}(\alpha)\left[\delta_{ij}\delta_{\alpha\beta}-T_{ij}^{\alpha\beta}(E)\right]f_{j\beta}(E)$$
-
-where:
-- $\alpha, \beta \in \{e, h\}$ are electron/hole indices
-- $T_{ij}^{\alpha\beta}(E)$ is the transmission probability from channel $\beta$ in lead $j$ to channel $\alpha$ in lead $i$
-- $f_{je}(E)=\left[1+\exp\left(\frac{E-\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ is the electron Fermi distribution
-- $f_{jh}(E)=\left[1+\exp\left(\frac{E+\left(\mu_{j}-\mu_{S}\right)}{kT}\right)\right]^{-1}$ is the hole Fermi distribution
-
-Current noise power is given by:
-
-$$\begin{aligned}\mathcal{S}_{ij}=\frac{e^2}{h}\sum_{\alpha,\beta} & \{\delta_{ij}\delta_{\alpha\beta}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)\\
- & -\text{sgn}(\alpha)\text{sgn}(\beta)\left[T_{ji}^{\beta\alpha}f_{i\alpha}(E)\left(1-f_{i\alpha}(E)\right)+T_{ij}^{\alpha\beta}f_{j\beta}(E)\left(1-f_{j\beta}(E)\right)\right]\\
- & +\sum_{k,\gamma,l,\delta}\text{sgn}(\alpha)\text{sgn}(\beta)\left(s_{ik}^{\alpha\gamma*}s_{jk}^{\beta\gamma}f_{k\gamma}(E)\right)\left(s_{il}^{\alpha\delta}s_{jl}^{\beta\delta*}f_{l\delta}(E)\right)
-\end{aligned}$$
-
-where $s_{ij}^{\alpha\beta}$ are scattering amplitudes related to transmission probabilities by $T_{ij}^{\alpha\beta} = |s_{ij}^{\alpha\beta}|^2$.
-</div>
 
 ---
 
