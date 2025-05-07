@@ -2,8 +2,10 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict, Any
 import torch
+from matplotlib.patches import FancyArrowPatch
+from matplotlib.colors import to_rgba
 
 def plot_ldos_surface(
     E_values: Union[np.ndarray, torch.Tensor],
@@ -14,7 +16,8 @@ def plot_ldos_surface(
     Ny: int,
     num_orbitals: int = 1,
     plot_type: str = 'total',
-    save_path: Optional[str] = None
+    save_path: Optional[str] = None,
+    leads: Optional[List[Dict[str, Any]]] = None
 ) -> None:
     """Plot the Local Density of States (LDOS) surface.
     
@@ -28,6 +31,11 @@ def plot_ldos_surface(
         num_orbitals: Number of orbitals per site (default=1)
         plot_type: 'total' for summed LDOS, 'individual' for per-orbital, 'both' for both
         save_path: Optional path to save the plot
+        leads: Optional list of lead dictionaries, each containing:
+               - "name": Label for the lead
+               - "position": List of (x,y) coordinates for lead endpoints
+               - "direction": Direction of lead extension ("left_to_right", 
+                              "right_to_left", "top_to_bottom", "bottom_to_top")
     """
     # Convert to numpy if needed
     if isinstance(E_values, torch.Tensor):
@@ -71,6 +79,10 @@ def plot_ldos_surface(
         plt.text(arrow_pos_x, arrow_pos_y - arrow_length/2, 'x', 
                 color='b', ha='right', va='center', fontsize=12)
         
+        # Draw leads if provided
+        if leads:
+            _draw_leads(plt.gca(), leads, Nx, Ny)
+        
         plt.xlim(-0.5, Ny - 0.5)
         plt.ylim(-0.5, Nx - 0.5)
         plt.xlabel('x')
@@ -95,6 +107,10 @@ def plot_ldos_surface(
             axes[orb].set_title(f'Orbital {orb+1} LDOS')
             plt.colorbar(im, ax=axes[orb])
             
+            # Draw leads on each orbital plot if provided
+            if leads:
+                _draw_leads(axes[orb], leads, Nx, Ny)
+            
         plt.tight_layout()
         if save_path and plot_type == 'individual':
             plt.savefig(f"{save_path}_orbital.png")
@@ -106,6 +122,18 @@ def plot_ldos_surface(
             plt.savefig(f"{save_path}_combined.png")
         plt.show()
 
+def _draw_leads(ax, leads, Nx, Ny):
+    """Helper function to draw leads on a given axis.
+    
+    Args:
+        ax: Matplotlib axis to draw on
+        leads: List of lead dictionaries
+        Nx: Number of sites in x direction
+        Ny: Number of sites in y direction
+    """
+    # Use the generic helper function with 0 offset for imshow plots
+    _draw_leads_on_mesh(ax, leads, Nx, Ny, offset=0)
+
 def plot_ldos_energy_slice(
     E_values: Union[np.ndarray, torch.Tensor],
     rho_jj_values: Union[np.ndarray, torch.Tensor],
@@ -114,7 +142,8 @@ def plot_ldos_energy_slice(
     Ny: int,
     is_spin: bool = True,
     energy_tolerance: float = 1e-6,
-    save_path: Optional[str] = None
+    save_path: Optional[str] = None,
+    leads: Optional[List[Dict[str, Any]]] = None
 ) -> None:
     """Plot the LDOS at a specific energy.
     
@@ -127,6 +156,11 @@ def plot_ldos_energy_slice(
         is_spin: Whether the system includes spin
         energy_tolerance: Tolerance for finding the energy value
         save_path: Optional path to save the plot
+        leads: Optional list of lead dictionaries, each containing:
+               - "name": Label for the lead
+               - "position": List of (x,y) coordinates for lead endpoints
+               - "direction": Direction of lead extension ("left_to_right", 
+                              "right_to_left", "top_to_bottom", "bottom_to_top")
     """
     # Convert to numpy if needed
     if isinstance(E_values, torch.Tensor):
@@ -162,6 +196,11 @@ def plot_ldos_energy_slice(
         ax1.set_aspect('equal')
         plt.colorbar(im1, ax=ax1, label='LDOS')
         
+        # Draw leads on spin-up plot if provided
+        if leads:
+            # Adjust coordinates from 0-based to 1-based for pcolormesh
+            _draw_leads_on_mesh(ax1, leads, Nx, Ny, offset=1)
+        
         # Plot spin-down LDOS
         im2 = ax2.pcolormesh(X, Y, ldos_spindown, shading='auto')
         ax2.set_title(f'Spin-down LDOS at E = {E_values[idx]:.6f}')
@@ -169,6 +208,11 @@ def plot_ldos_energy_slice(
         ax2.set_ylabel('Y Coordinate')
         ax2.set_aspect('equal')
         plt.colorbar(im2, ax=ax2, label='LDOS')
+        
+        # Draw leads on spin-down plot if provided
+        if leads:
+            # Adjust coordinates from 0-based to 1-based for pcolormesh
+            _draw_leads_on_mesh(ax2, leads, Nx, Ny, offset=1)
         
     else:
         # Reshape and plot total LDOS
@@ -182,6 +226,11 @@ def plot_ldos_energy_slice(
         ax.set_ylabel('Y Coordinate')
         ax.set_aspect('equal')
         plt.colorbar(im, ax=ax, label='LDOS')
+        
+        # Draw leads if provided
+        if leads:
+            # Adjust coordinates from 0-based to 1-based for pcolormesh
+            _draw_leads_on_mesh(ax, leads, Nx, Ny, offset=1)
     
     plt.tight_layout()
     
@@ -191,6 +240,82 @@ def plot_ldos_energy_slice(
         plt.show()
     
     plt.close()
+
+def _draw_leads_on_mesh(ax, leads, Nx, Ny, offset=0):
+    """Helper function to draw leads on a pcolormesh plot.
+    
+    Args:
+        ax: Matplotlib axis to draw on
+        leads: List of lead dictionaries
+        Nx: Number of sites in x direction
+        Ny: Number of sites in y direction
+        offset: Coordinate offset (0 for imshow, 1 for pcolormesh)
+    """
+    lead_length = min(Nx, Ny) * 0.3  # Lead length as a fraction of system size
+    lead_width = lead_length * 0.15   # Lead width relative to length
+    
+    for lead in leads:
+        name = lead.get("name", "")
+        positions = lead.get("position", [])
+        direction = lead.get("direction", "")
+        
+        if not positions or not direction:
+            continue
+            
+        lead_color = 'black'
+        alpha_gradient_steps = 20
+        
+        for pos in positions:
+            if len(pos) != 2:
+                continue
+                
+            # Apply offset for proper coordinate system
+            x, y = pos[0] + offset, pos[1] + offset
+            
+            # Set direction vectors
+            dx, dy = 0, 0
+            if direction == "left_to_right":
+                dx = -lead_length
+                dy = 0
+                text_pos = (x + 0.5, y + 0.5)
+                ha, va = 'left', 'bottom'
+            elif direction == "right_to_left":
+                dx = lead_length
+                dy = 0
+                text_pos = (x - 0.5, y + 0.5)
+                ha, va = 'right', 'bottom'
+            elif direction == "top_to_bottom":
+                dx = 0
+                dy = lead_length
+                text_pos = (x + 0.5, y - 0.5)
+                ha, va = 'left', 'top'
+            elif direction == "bottom_to_top":
+                dx = 0
+                dy = -lead_length
+                text_pos = (x + 0.5, y + 0.5)
+                ha, va = 'left', 'bottom'
+                
+            # Draw lead with gradient effect
+            for i in range(alpha_gradient_steps):
+                alpha = 1 - (i / alpha_gradient_steps)
+                segment_length = lead_length / alpha_gradient_steps
+                
+                start_x = x + (dx * i / alpha_gradient_steps)
+                start_y = y + (dy * i / alpha_gradient_steps)
+                end_x = start_x + (dx / alpha_gradient_steps)
+                end_y = start_y + (dy / alpha_gradient_steps)
+                
+                color_with_alpha = to_rgba(lead_color, alpha)
+                
+                # Draw thick line segment with fading effect
+                ax.plot([start_x, end_x], [start_y, end_y], 
+                        color=color_with_alpha, 
+                        linewidth=lead_width * alpha * 5)
+            
+            # Add lead label
+            ax.text(text_pos[0], text_pos[1], name,
+                    color='black', fontsize=10, fontweight='bold',
+                    ha=ha, va=va, bbox=dict(facecolor='white', alpha=0.7, pad=2))
 
 def plot_total_dos(
     E_values: Union[np.ndarray, torch.Tensor],
