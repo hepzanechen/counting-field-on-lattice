@@ -63,7 +63,7 @@ style: |
 ## Noise evidence for detecting Majorana zero modes
 
 Transportation process of Majorana
-![height:280px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=828&width=983&top_left_y=416&top_left_x=138)
+![height:480px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=828&width=983&top_left_y=416&top_left_x=138)
 
 Majorana fermion induced resonant Andreev reflection (MFIRAR).
 
@@ -73,7 +73,7 @@ $$
 F_{i i}=1
 \end{gathered}
 $$
-
+## Noise evidence for detecting Majorana zero modes
 Crossed Andreev reflections dominate
 ![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=465&width=545&top_left_y=852&top_left_x=1752)
 
