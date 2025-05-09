@@ -40,3 +40,6 @@ eta value should fit in E numpoints, for e.g. when eta is small E numpoints shou
 Note for both augograd and direct inv G method, for BdG case, we should only include electron part, this is make sure by 1. only add couting field the electron section
 2. for direct inv G current only let current formula's $\alpha$ only loop e and noise $\alpha,\beta$ only loop 'e' 
 image.png
+
+# torch
+Though both using complex64, for eigenvectors cpu seems more accurate than gpu.
