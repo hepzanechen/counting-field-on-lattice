@@ -22,8 +22,17 @@ style: |
   img {
     display: block;
     margin: auto;
-    max-height: 450px;
-    max-width: 90%;
+    max-height: 350px;
+    max-width: 85%;
+  }
+  .img-sm {
+    max-height: 160px;
+  }
+  .img-md {
+    max-height: 220px;
+  }
+  .img-lg {
+    max-height: 300px;
   }
   .grid {
     display: grid;
@@ -54,7 +63,7 @@ style: |
 ## Noise evidence for detecting Majorana zero modes
 
 Transportation process of Majorana
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=828&width=983&top_left_y=416&top_left_x=138)
+![height:280px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=828&width=983&top_left_y=416&top_left_x=138)
 
 Majorana fermion induced resonant Andreev reflection (MFIRAR).
 
@@ -66,18 +75,18 @@ F_{i i}=1
 $$
 
 Crossed Andreev reflections dominate
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=465&width=545&top_left_y=852&top_left_x=1752)
+![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=465&width=545&top_left_y=852&top_left_x=1752)
 
 (a)
 <div class="grid">
 <div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=456&width=494&top_left_y=861&top_left_x=2292)
+![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=456&width=494&top_left_y=861&top_left_x=2292)
 
 </div>
 <div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=460&width=481&top_left_y=859&top_left_x=2779)
+![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=460&width=481&top_left_y=859&top_left_x=2779)
 
 </div>
 </div>
@@ -94,7 +103,7 @@ Nilsson J, Akhmerov A R, Beenakker C W J. Splitting of a Cooper pair by a pair o
 
 ## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-03.jpg?height=269&width=3058&top_left_y=384&top_left_x=138)
+![height:200px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-03.jpg?height=269&width=3058&top_left_y=384&top_left_x=138)
 
 Two Jackiw-Rebbi modes exists at the edge of the SSH chain
 
@@ -142,14 +151,14 @@ Transmission Coefficient $T$ for Fixed $\Delta / \varepsilon$ Ratios
 <div class="grid">
 <div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=898&width=1490&top_left_y=691&top_left_x=114)
+![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=898&width=1490&top_left_y=691&top_left_x=114)
 
 </div>
 <div>
 
 Noise $\partial S_{11} / \partial E(E)$
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=966&width=1485&top_left_y=640&top_left_x=1724)
+![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=966&width=1485&top_left_y=640&top_left_x=1724)
 
 </div>
 </div>
@@ -173,7 +182,7 @@ $$
 
 </div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-05.jpg?height=396&width=1069&top_left_y=389&top_left_x=1847)
+![height:240px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-05.jpg?height=396&width=1069&top_left_y=389&top_left_x=1847)
 
 When $\Delta=0$, A pair of Dirac modes decomposes into two majorana modes
 
@@ -220,7 +229,7 @@ $$
 <div class="grid">
 <div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=656&width=1026&top_left_y=272&top_left_x=2158)
+![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=656&width=1026&top_left_y=272&top_left_x=2158)
 
 </div>
 <div>
@@ -246,7 +255,7 @@ $$
 </div>
 </div>
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=634&width=1030&top_left_y=1112&top_left_x=2160)
+![height:180px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=634&width=1030&top_left_y=1112&top_left_x=2160)
 
 <div class="ref">
 Anantram M P, Datta S. Current fluctuations in mesoscopic systems with
@@ -254,7 +263,7 @@ Anantram M P, Datta S. Current fluctuations in mesoscopic systems with
 
 ## Numercial method for solving SSH-chain
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=239&width=1056&top_left_y=263&top_left_x=284)
+![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=239&width=1056&top_left_y=263&top_left_x=284)
 
 <div class="grid">
 <div>
@@ -280,14 +289,14 @@ $t_{1}=0.6 \quad t_{2}=1.2$
 
 Shot Noise vs $t_{\text {lead_c }}$
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=1000&width=1489&top_left_y=648&top_left_x=1705)
+![height:200px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=1000&width=1489&top_left_y=648&top_left_x=1705)
 
 </div>
 </div>
 
 ## Numercial method for solving SSH-chain
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=252&width=1060&top_left_y=265&top_left_x=282)
+![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=252&width=1060&top_left_y=265&top_left_x=282)
 
 $$
 \mathrm{T}(\mathrm{E}) \text { vs. } \Delta \quad t_{1}=0.6 \quad t_{2}=1.2
@@ -303,19 +312,19 @@ $$
 <div>
 
 $\Delta=0.02$
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=775&width=1047&top_left_y=850&top_left_x=34)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=775&width=1047&top_left_y=850&top_left_x=34)
 
 </div>
 <div>
 
 $\Delta=0.05$
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=771&width=1043&top_left_y=856&top_left_x=1120)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=771&width=1043&top_left_y=856&top_left_x=1120)
 
 </div>
 <div>
 
 $\Delta=0.1$
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=745&width=1017&top_left_y=852&top_left_x=2209)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=745&width=1017&top_left_y=852&top_left_x=2209)
 
 </div>
 </div>
@@ -324,7 +333,7 @@ The NEGF method is consistent with the results obtained by the S-matrix method
 
 ## ${ }_{t_{1}} \mathrm{NI}_{t_{2}} \mathrm{~m}_{2}$ orrinl mothnd for solving SSH-chain
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=231&width=1059&top_left_y=310&top_left_x=287)
+![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=231&width=1059&top_left_y=310&top_left_x=287)
 
 Shot noise vs. $\Delta$
 
@@ -341,7 +350,7 @@ $$
 \Delta=0.02
 $$
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=801&width=1089&top_left_y=922&top_left_x=55)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=801&width=1089&top_left_y=922&top_left_x=55)
 
 </div>
 <div>
@@ -350,7 +359,7 @@ $t_{0} \equiv \frac{t^{2}}{v_{f}}, \tilde{E} \equiv E / t_{0} \tilde{\epsilon} \
 
 $\Delta=0.05$
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=813&width=1073&top_left_y=912&top_left_x=1135)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=813&width=1073&top_left_y=912&top_left_x=1135)
 
 </div>
 <div>
@@ -361,7 +370,7 @@ $$
 \Delta=0.1
 $$
 
-![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=809&width=1106&top_left_y=918&top_left_x=2224)
+![height:150px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=809&width=1106&top_left_y=918&top_left_x=2224)
 
 </div>
 </div>
