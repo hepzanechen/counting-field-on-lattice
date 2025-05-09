@@ -1,0 +1,15 @@
+-------------------- Auto-Git Log --------------------
+Fri May 09 2025 20:33:32 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* doc/slides/simpled spliting zeromodes.md
+
+
+Created files:
+
+
+Deleted files:
+
+
+Renamed files:
