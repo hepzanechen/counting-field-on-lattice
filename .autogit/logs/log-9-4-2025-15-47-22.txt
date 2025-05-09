@@ -1,0 +1,31 @@
+-------------------- Auto-Git Log --------------------
+Fri May 09 2025 15:47:22 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+* genfunc_cf_deriv_method/calculations/__pycache__/__init__.cpython-312.pyc
+* genfunc_cf_deriv_method/calculations/__pycache__/calculation_cf_autograd.cpython-312.pyc
+* greens_functions_inv_method/__pycache__/__init__.cpython-312.pyc
+* greens_functions_inv_method/__pycache__/total_self_energy.cpython-312.pyc
+* greens_functions_inv_method/__pycache__/transport_calculation.cpython-312.pyc
+* memo.md
+* test2d_suschrifferhegger.ipynb
+* utils/__pycache__/__init__.cpython-312.pyc
+* utils/__pycache__/load_config.cpython-312.pyc
+
+
+Created files:
+* genfunc_cf_deriv_method/workflow/__pycache__/add_ginv_leads.cpython-312.pyc
+* genfunc_cf_deriv_method/workflow/__pycache__/construct_ginv_central.cpython-312.pyc
+* genfunc_cf_deriv_method/workflow/__pycache__/construct_ginv_tlc.cpython-312.pyc
+* genfunc_cf_deriv_method/workflow/__pycache__/construct_ginv_total.cpython-312.pyc
+* utils/batch/__pycache__/batch_kron.cpython-312.pyc
+* utils/batch/__pycache__/batch_trace.cpython-312.pyc
+* utils/physics/__pycache__/fermi_distribution.cpython-312.pyc
+* utils/physics/__pycache__/lead_decimation.cpython-312.pyc
+
+
+Deleted files:
+
+
+Renamed files:
