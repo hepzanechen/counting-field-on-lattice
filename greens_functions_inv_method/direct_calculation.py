@@ -1,10 +1,20 @@
 """Direct Green's function calculations using matrix inversion."""
 
 import torch
+import warnings
 from typing import Dict, List, Tuple, Optional
 from .total_self_energy import calculate_total_self_energy
-from utils.fermi_distribution import fermi_distribution
-from utils.batch_trace import batch_trace
+from utils.physics.fermi_distribution import fermi_distribution
+from utils.batch.batch_trace import batch_trace
+
+# Display deprecation warning
+warnings.warn(
+    "The direct_calculation module is deprecated and will be removed in a future version. "
+    "Please use transport_calculation.py instead, which provides improved implementation "
+    "with additional features.",
+    DeprecationWarning,
+    stacklevel=2
+)
 
 def calculate_transport_properties(
     E_batch: torch.Tensor,

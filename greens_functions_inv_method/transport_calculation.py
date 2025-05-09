@@ -3,8 +3,8 @@
 import torch
 from typing import Dict, List, Tuple, Optional, Literal
 from .total_self_energy import calculate_total_self_energy
-from utils.fermi_distribution import fermi_distribution
-from utils.batch_trace import batch_trace
+from utils.physics.fermi_distribution import fermi_distribution
+from utils.batch.batch_trace import batch_trace
 
 def recursive_greens(
     E_batch: torch.Tensor,
@@ -223,19 +223,21 @@ def calculate_current_density(
                 
                 base_idx2 = (ix2 * Ny + iy2) * site_size
                 
-                # Extract block matrices for the two sites
-                H_ij = H_total[base_idx1:base_idx1+site_size, base_idx2:base_idx2+site_size]
+                # Extract block matrices for the two sites, only hole part
+                H_ij = torch.zeros((site_size, site_size), dtype=torch.complex64, device=device)
+                H_ij[::2, ::2] = H_total[base_idx1:base_idx1+site_size:2, base_idx2:base_idx2+site_size:2]
                 G_lesser_ji = G_lesser[:, base_idx2:base_idx2+site_size, base_idx1:base_idx1+site_size]
                 H_ij_batched = H_ij.unsqueeze(0).expand(batch_size, -1, -1)
                 term1 = H_ij_batched @ G_lesser_ji
                
-                H_ji = H_total[base_idx2:base_idx2+site_size, base_idx1:base_idx1+site_size]
+                H_ji = torch.zeros((site_size, site_size), dtype=torch.complex64, device=device)
+                H_ji[::2, ::2] = H_total[base_idx2:base_idx2+site_size:2, base_idx1:base_idx1+site_size:2]
                 G_lesser_ij = G_lesser[:, base_idx1:base_idx1+site_size, base_idx2:base_idx2+site_size]
                 H_ji_batched = H_ji.unsqueeze(0).expand(batch_size, -1, -1)
                 term2 = H_ji_batched @ G_lesser_ij
 
                 # I_ij = -e/ħ × Tr[H_ij × G<_ji - H_ji × G<_ij]
-                current_batch = batch_trace(term1 - term2)
+                # current_batch = batch_trace(term1 - term2)
                 # Calculate trace for each batch element using the batch_trace helper
                 current_batch = 2*torch.real(batch_trace(term1))
                 # Apply prefactor and store in the appropriate directional array
@@ -254,7 +256,8 @@ def calculate_transport_properties(
     method: Literal["direct", "recursive"] = "direct",
     Nx: Optional[int] = None,
     Ny: Optional[int] = None,
-    orb_num: Optional[int] = None
+    orb_num: Optional[int] = None,
+    calculate_cd: bool = False
 ) -> Dict[str, torch.Tensor]:
     """
     Calculate transport properties using either direct matrix inversion or recursive method.
@@ -269,6 +272,7 @@ def calculate_transport_properties(
         Nx: Number of sites in x-direction (required for recursive method and current density)
         Ny: Number of sites in y-direction (required for current density)
         orb_num: Number of orbitals per site
+        calculate_cd: Whether to calculate current density (default: True)
         
     Returns:
         Dictionary containing transport properties
@@ -319,6 +323,7 @@ def calculate_transport_properties(
     else:
         raise ValueError(f"Unknown method: {method}. Choose either 'direct' or 'recursive'")
     
+                    
     # Calculate LDOS
     rho_jj_ee_and_hh = -torch.imag(torch.diagonal(G_retarded, dim1=1, dim2=2)) / torch.pi
     
@@ -336,18 +341,23 @@ def calculate_transport_properties(
     num_leads = len(leads_info)
     noise = torch.zeros((batch_size, num_leads, num_leads), dtype=torch.float32, device=device)
     current = torch.zeros((batch_size, num_leads), dtype=torch.float32, device=device)   
-    ptypes = ['h', 'e']  
+    ptypes = ['e', 'h']
+    etype=['e']  
     # Initialize 4D transmission tensor (batch, lead_i, lead_j, particle_type)
     T = torch.zeros((batch_size, num_leads, num_leads, 2, 2), 
                     dtype=torch.float32, device=device)
-
+    """
+    -------------Pre Computation, prepare common factors-------------
+    """
     # Calculate common sum for noise calculations
     common_sum = sum(
-        lead.Gamma[ptype] * torch.real(fermi_distribution(E_batch, lead.mu, temperature, ptype)).unsqueeze(-1).unsqueeze(-1)
+        lead.Gamma[ptype] * fermi_distribution(E_batch, lead.mu, temperature, ptype).unsqueeze(-1).unsqueeze(-1)
         for lead in leads_info
         for ptype in ptypes
     )
-    
+    """
+    ------------Transmission Calculation-------------
+    """
     # Calculate transmission coefficients T(i,j,alpha,beta)
     for i in range(num_leads):
         for j in range(num_leads):
@@ -370,26 +380,42 @@ def calculate_transport_properties(
                                 leads_info[j].Gamma[beta] @ G_retarded.conj().transpose(-1, -2)
                             )
                         )
-
+    """
+    -------------Current-------------
+    """
     for i in range(num_leads):
         for j in range(num_leads):
-            for alpha_idx, alpha in enumerate(ptypes):
+            for alpha_idx, alpha in enumerate(etype):
                 for beta_idx, beta in enumerate(ptypes):
                     # Sign factors
                     sign_alpha = 1 if alpha_idx == 1 else -1  # 1 for 'e', -1 for 'h'
                     sign_beta = 1 if beta_idx == 1 else -1
-                    f_i_alpha = torch.real(fermi_distribution(E_batch, leads_info[i].mu, temperature, alpha))
-                    f_j_beta = torch.real(fermi_distribution(E_batch, leads_info[j].mu, temperature, beta))
-                    
-                    # First term (diagonal terms)
+                    f_i_alpha = fermi_distribution(E_batch, leads_info[i].mu, temperature, alpha)
+                    f_j_beta = fermi_distribution(E_batch, leads_info[j].mu, temperature, beta)
+                    # First term delta function
                     if i == j and alpha == beta:
-                        # Convert to float by taking real part
-                        noise[:, i, j] += torch.real(leads_info[i].t.size(0) * f_i_alpha * (1 - f_i_alpha))
-                        current[:, i] += sign_alpha * torch.real(leads_info[i].t.size(0) * f_i_alpha)
+                        current[:, i] += sign_alpha * leads_info[i].t.size(0) * f_i_alpha
 
-                    # Second term (cross correlations)
+                    # Second term (T)
                     current[:, i] -= sign_alpha * T[:, i, j, alpha_idx, beta_idx] * f_j_beta
                     
+    """
+    -------------Noise-------------
+    """
+    for i in range(num_leads):
+        for j in range(num_leads):
+            for alpha_idx, alpha in enumerate(etype):
+                for beta_idx, beta in enumerate(etype):
+                    # Sign factors
+                    sign_alpha = 1 if alpha_idx == 1 else -1  # 1 for 'e', -1 for 'h'
+                    sign_beta = 1 if beta_idx == 1 else -1
+                    f_i_alpha = fermi_distribution(E_batch, leads_info[i].mu, temperature, alpha)
+                    f_j_beta = fermi_distribution(E_batch, leads_info[j].mu, temperature, beta)
+                    # First term (diagonal terms)
+                    if i == j and alpha == beta:
+                        noise[:, i, j] += leads_info[i].t.size(0) * f_i_alpha * (1 - f_i_alpha)
+
+                    # Second term (cross correlations)                  
                     noise[:, i, j] -= sign_alpha * sign_beta * (
                         T[:, j, i, beta_idx, alpha_idx] * f_i_alpha * (1 - f_i_alpha) +
                         T[:, i, j, alpha_idx, beta_idx] * f_j_beta * (1 - f_j_beta)
@@ -399,8 +425,8 @@ def calculate_transport_properties(
                     if i == j and alpha == beta:
                         for k in range(num_leads):
                             for gamma_idx, gamma in enumerate(ptypes):
-                                gamma_f = torch.real(fermi_distribution(E_batch, leads_info[k].mu, temperature, gamma))
-                                noise[:, i, j] += T[:, j, k, beta_idx, gamma_idx] * gamma_f
+                                noise[:, i, j] += T[:, j, k, beta_idx, gamma_idx] * \
+                                    fermi_distribution(E_batch, leads_info[k].mu, temperature, gamma)
 
                     # Fourth term calculation
                     if i == j and alpha == beta:
@@ -437,20 +463,22 @@ def calculate_transport_properties(
                         s_s_FermiProduct_ij @ s_s_FermiProduct_ji
                     ))
     
-    # Calculate directional current density if Nx and Ny are provided
-    # This returns a dictionary with direction keys, each containing a tensor (batch_size, Nx, Ny)
-    current_density = calculate_current_density(
-        G_retarded,
-        leads_info,
-        H_total,
-        E_batch,
-        temperature,
-        device,
-        Nx,
-        Ny,
-        orb_num
-    )
-
+    # Initialize current_density as an empty dictionary
+    current_density = {}
+    
+    # Calculate directional current density if requested and if Nx and Ny are provided
+    if calculate_cd and Nx is not None and Ny is not None:
+        current_density = calculate_current_density(
+            G_retarded,
+            leads_info,
+            H_total,
+            E_batch,
+            temperature,
+            device,
+            Nx,
+            Ny,
+            orb_num
+        )
     
     return {
         'rho_e_jj': rho_e,

@@ -1,7 +1,7 @@
 import torch
 from typing import List, Dict, Any
 from torch.func import jacrev
-from greens_functions.construct_ginv_total import construct_ginv_total
+from ..workflow.construct_ginv_total import construct_ginv_total
 
 def calculation_cf_autograd(
     H_BdG: torch.Tensor,

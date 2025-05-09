@@ -2,7 +2,7 @@
 
 import torch
 from typing import Dict, List, Tuple
-from utils.lead_decimation import lead_decimation
+from utils.physics.lead_decimation import lead_decimation
 
 def calculate_total_self_energy(
     E_batch: torch.Tensor,

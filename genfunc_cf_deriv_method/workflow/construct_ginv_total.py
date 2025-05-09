@@ -1,7 +1,7 @@
 import torch
-from greens_functions.construct_ginv_central import construct_ginv_central
-from greens_functions.add_ginv_leads import add_ginv_leads
-from greens_functions.construct_ginv_tlc import construct_ginv_tlc
+from .construct_ginv_central import construct_ginv_central
+from .add_ginv_leads import add_ginv_leads
+from .construct_ginv_tlc import construct_ginv_tlc
 
 def construct_ginv_total(H_BdG: torch.Tensor, E_batch: torch.Tensor, eta: float, leads_info: list) -> torch.Tensor:
     """

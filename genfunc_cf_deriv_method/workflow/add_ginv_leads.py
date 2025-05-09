@@ -1,5 +1,5 @@
 import torch
-from utils.lead_decimation import lead_decimation
+from utils.physics.lead_decimation import lead_decimation
 from hamiltonians.Lead import Lead
 
 def add_ginv_leads(Ginv_central: torch.Tensor, leads_info: list, E_batch: torch.Tensor) -> torch.Tensor:
