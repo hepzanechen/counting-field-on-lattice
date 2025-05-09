@@ -1,0 +1,203 @@
+## How to identify Majorana zero modes and Dirac fermionic modes in the transport experiment
+
+## Noise evidence for detecting Majorana zero modes
+
+Transportation process of Majorana
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=828&width=983&top_left_y=416&top_left_x=138)
+
+Majorana fermion induced resonant Andreev reflection (MFIRAR).
+
+$$
+\begin{gathered}
+\mathrm{eV}, \Gamma_{\mathrm{i}} \ll E_{M} \\
+F_{i i}=1
+\end{gathered}
+$$
+
+Crossed Andreev reflections dominate
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=465&width=545&top_left_y=852&top_left_x=1752)
+(a)
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=456&width=494&top_left_y=861&top_left_x=2292)
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=460&width=481&top_left_y=859&top_left_x=2779)
+an MBS/QMBS (a zero-bias dip) and ABS (a zero-bias peak) in current shot noise
+J.-S. Hong, T.-F. J. Poon, L. Zhang, and X.-J. Liu, Phys. Rev. B 105, 024503 (2022)
+
+Law K T, Lee P A, Ng T K. Majorana fermion induced resonant Andreev reflection[J]. Physical review letters, 2009, $103(23): 237001$.
+Nilsson J, Akhmerov A R, Beenakker C W J. Splitting of a Cooper pair by a pair of Majorana bound states[J]. Physical review letters, 2008 , $101(12)$ : 120403.
+
+## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-03.jpg?height=269&width=3058&top_left_y=384&top_left_x=138)
+
+Two Jackiw-Rebbi modes exists at the edge of the SSH chain
+
+$$
+S=\frac{1}{\left(\epsilon^{2}+\Delta^{2}+\frac{t_{0}^{2}}{4}-E^{2}\right)-i t_{0} E}\left(\begin{array}{cc}
+\left(\epsilon^{2}+\Delta^{2}-\frac{t_{0}^{2}}{4}-E^{2}\right)+i t_{0} \Delta & i \epsilon t_{0} \\
+i \epsilon t_{0} & \left(\epsilon^{2}+\Delta^{2}-\frac{t_{0}^{2}}{4}-E^{2}\right)-i t_{0} \Delta
+\end{array}\right)
+$$
+
+$H=H_{L 1}^{\prime}+H_{L 2}^{\prime}+H_{c}+H_{T 1}+H_{T 2}$
+$t_{0} \equiv t^{2} / v_{f}$
+$H_{L i}^{\prime}=-i v_{f} \int_{-\infty}^{\infty} d x^{\prime} \psi_{i}^{\dagger}\left(x^{\prime}\right) \partial_{x^{\prime}} \psi_{i}\left(x^{\prime}\right)$,
+$H_{c}=\left(\epsilon \varphi_{1}^{\dagger} \varphi_{2}+\right.$ h.c. $)+\Delta \varphi_{1}^{\dagger} \varphi_{1}-\Delta \varphi_{2}^{\dagger} \varphi_{2}$
+
+$$
+T(E)=\left|S_{12}\right|^{2}=\frac{1}{\frac{1}{\epsilon^{2} t_{0}^{2}}\left(E^{2}+\frac{1}{4} t_{0}^{2}-\epsilon^{2}-\Delta^{2}\right)^{2}+\left(1+\frac{\Delta^{2}}{\epsilon^{2}}\right)}
+$$
+
+$H_{T i}=-i t_{i} \varphi_{i}^{\dagger} \psi_{i}(x=0)+$ h.c.
+$2 \Delta$ are the energy difference $\left.\frac{\partial S_{11}}{\partial E}\right|_{E=E_{f}}=\left.\frac{e^{2}}{\pi \hbar} T(1-T)\right|_{E=E_{f}}$ between two Jackiw-Rebbi zeromodes
+
+$$
+F_{12}=\left.\frac{\partial S_{12}}{\partial I}\right|_{E=}=-\left.\frac{e}{\pi \hbar}(1-T)\right|_{E=E_{f}} \quad F_{11}=\left.\frac{\partial S_{11}}{\partial I}\right|_{E=E}=\left.\frac{e}{\pi \hbar}(1-T)\right|_{E=E_{f}}
+$$
+
+## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+
+Transmission coefficient $T(E)$
+
+Transmission Coefficient $T$ for Fixed $\Delta / \varepsilon$ Ratios
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=898&width=1490&top_left_y=691&top_left_x=114)
+
+Noise $\partial S_{11} / \partial E(E)$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-04.jpg?height=966&width=1485&top_left_y=640&top_left_x=1724)
+
+## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+
+In the Majorana representation
+
+$$
+\begin{gathered}
+\varphi_{1} \equiv \frac{\gamma_{1}^{a}+i \gamma_{1}^{b}}{2} \quad \varphi_{2} \equiv \frac{\gamma_{2}^{a}+i \gamma_{2}^{b}}{2} \\
+H_{\mathrm{c}} \equiv \\
+\equiv \frac{\varepsilon}{2}\left(i \gamma_{1}^{a} \gamma_{2}^{a}-i \gamma_{1}^{b} \gamma_{2}^{b}\right)+\frac{\Delta}{2}\left(i \gamma_{1}^{a} \gamma_{1}^{b}+i \gamma_{2}^{a} \gamma_{2}^{b}\right) \\
+H_{L i}^{\prime}= \\
+H_{T 1}=-i v_{f} \int_{-\infty}^{\infty} d x^{\prime} \psi_{i}^{\dagger}\left(x^{\prime}\right) \partial_{x^{\prime}} \psi_{i}\left(x^{\prime}\right): \\
+H_{T 2}=-\frac{i}{2} \tau_{1}^{a}\left[\psi_{2} \gamma_{2}^{a}(x=0)+\psi_{1}^{\dagger}(x=0)\right]-\frac{i}{2} t_{1} \gamma_{1}^{b}\left[\frac{\psi_{2}(x=0)-\psi_{2}^{\dagger}(x=0)}{i}\right]-\frac{i}{2} t_{2} \gamma_{2}^{b}\left[\psi_{2}(x=0)+\psi_{2}^{\dagger}(x=0)\right]
+\end{gathered}
+$$
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-05.jpg?height=396&width=1069&top_left_y=389&top_left_x=1847)
+
+When $\Delta=0$, A pair of Dirac modes decomposes into two majorana modes
+
+In the electron-hole representation
+$\left(\begin{array}{c}\psi_{1, E}\left(0^{+}\right) \\ \psi_{1,-E}^{\dagger}\left(0^{+}\right) \\ \psi_{2, E}\left(0^{+}\right) \\ \psi_{2,-E}^{\dagger}\left(0^{+}\right)\end{array}\right)=S\left(\begin{array}{c}\psi_{1, E}\left(0^{-}\right) \\ \psi_{1,-E}^{\dagger}\left(0^{-}\right) \\ \psi_{2, E}\left(0^{-}\right) \\ \psi_{2,-E}^{\dagger}\left(0^{-}\right)\end{array}\right)$
+
+## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+
+A pair of Majorana transport process
+$\gamma_{1}^{b}-\gamma_{2}^{b}$ channel
+
+$$
+S=\frac{1}{\left(\tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{4}\right)+i \tilde{E}}\left(\begin{array}{cccc}
+\tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{2} i \tilde{E} & \frac{1}{4}(1+2 i \tilde{E}) & \frac{1}{2} i \tilde{\epsilon} & \frac{1}{2} i \tilde{\epsilon} \\
+\frac{1}{4}(1+2 i \tilde{E}) & \tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{2} i \tilde{E} & -\frac{1}{2} i \tilde{\epsilon} & -\frac{1}{2} i \tilde{\epsilon} \\
+\frac{1}{2} i \tilde{\epsilon} & -\frac{1}{2} i \tilde{\epsilon} & \tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{2} i \tilde{E} & -\frac{1}{4}(1+2 i \tilde{\epsilon}) \\
+\frac{1}{2} i \tilde{\epsilon} & -\frac{1}{2} i \tilde{\epsilon} & -\frac{1}{4}(1+2 i \tilde{\epsilon}) & \tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{2} i \tilde{E}
+\end{array}\right)
+$$
+
+$t_{0} \equiv \frac{t^{2}}{v_{f}}, \tilde{E} \equiv E / t_{0} \quad \tilde{\epsilon} \equiv \epsilon / t_{0}$.
+
+## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+
+Shot noise and Fano factor for a single pair of Majorana
+
+$$
+\begin{aligned}
+& \left\langle I_{i}\right\rangle=\frac{e}{h} \sum_{j=1,2} \sum_{a, b=e, h} \operatorname{sgn}(a)\left[\delta_{i j} \delta_{a b}-\left|S_{i j}^{a b}(E)\right|^{2}\right] f_{j}^{b}(E) \\
+& S_{i j}=\frac{2 e^{2}}{h} \sum_{k, l=1,2, a, b, g, d=e, h} \sum_{c} \operatorname{sgn}(a) \operatorname{sgn}(b) A_{k g ; l d}(i, a, E) A_{l d ; k g}(j, b, E) f_{k}^{g}(E)\left[1-f_{l}^{d}(E)\right] \\
+& \quad A_{k g ; l d}(i, a, E)=\delta_{i k} \delta_{i l} \delta_{a g} \delta_{a d}-S_{i k}^{a \dagger}(E) S_{i l}^{S d}(E)
+\end{aligned}
+$$
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=656&width=1026&top_left_y=272&top_left_x=2158)
+
+The lowest point of the noise is suppressed to 0
+
+$$
+\begin{aligned}
+d S_{11} / d E & =\left[f_{1}^{e}\left(1-f_{1}^{h}\right)+f_{1}^{h}\left(1-f_{1}^{e}\right)\right] \cdot \frac{\tilde{E}^{2}\left[\tilde{\epsilon}^{2}-\tilde{E}^{2}-\frac{1}{4}\right]^{2}}{\left[\left(\tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{4}\right)^{2}+\tilde{E}^{2}\right]^{2}} \\
+& +\left[f_{1}^{e}\left(1-f_{2}^{e}\right)+f_{1}^{h}\left(1-f_{2}^{h}\right)+f_{1}^{h}\left(1-f_{2}^{e}\right)+f_{1}^{e}\left(1-f_{2}^{h}\right)+f_{2}^{e}\left(1-f_{1}^{e}\right)+f_{2}^{h}\left(1-f_{1}^{h}\right)\right. \\
+& \left.+f_{2}^{e}\left(1-f_{1}^{h}\right)+f_{2}^{h}\left(1-f_{1}^{e}\right)\right] \cdot \frac{\frac{1}{4} \tilde{\epsilon}^{2} \cdot\left[\tilde{\epsilon}^{2}-\tilde{E}^{2}-\frac{1}{4}\right]^{2}}{\left[\left(\tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{4}\right)^{2}+\tilde{E}^{2}\right]^{2}}
+\end{aligned}
+$$
+
+$$
+d\left\langle I_{1}\right\rangle / d E=\frac{e}{h}\left(f_{1}^{e}-f_{1}^{h}\right) \frac{\frac{1}{2}\left(\tilde{\epsilon}^{2}+\tilde{E}^{2}+\frac{1}{4}\right)}{\left(\tilde{\epsilon}^{2}-\tilde{E}^{2}+\frac{1}{4}\right)^{2}+\tilde{E}^{2}}
+$$
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-07.jpg?height=634&width=1030&top_left_y=1112&top_left_x=2160)
+
+Anantram M P, Datta S. Current fluctuations in mesoscopic systems with
+
+## Numercial method for solving SSH-chain
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=239&width=1056&top_left_y=263&top_left_x=284)
+$t_{1}<t_{2}$ topological nontrival
+on-site energy difference $\Delta=\left|\varepsilon_{A}-\varepsilon_{B}\right|$
+NEGF method
+$T(E)=\operatorname{Tr}\left[\Gamma_{L}(E) G^{r}(E) \Gamma_{R}(E) G^{a}(E)\right]$
+$I=\frac{e}{h} \int d E T(E)\left[f_{L}(E)-f_{R}(E)\right]$
+$S=\frac{2 e^{2}}{h} \int d E T(E)[1-T(E)]\left[f_{L}(E)-f_{R}(E)\right]^{2}$
+
+Shot noise vs. $t_{\text {lead-c }} \quad \Delta=0$
+$t_{1}=0.6 \quad t_{2}=1.2$
+
+Shot Noise vs $t_{\text {lead_c }}$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-08.jpg?height=1000&width=1489&top_left_y=648&top_left_x=1705)
+
+## Numercial method for solving SSH-chain
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=252&width=1060&top_left_y=265&top_left_x=282)
+
+$$
+\mathrm{T}(\mathrm{E}) \text { vs. } \Delta \quad t_{1}=0.6 \quad t_{2}=1.2
+$$
+
+Physical quantities vs. S-matrix $\quad t_{0} \equiv \frac{t^{2}}{v_{f}}, \tilde{E} \equiv E / t_{0} \tilde{\epsilon} \equiv \epsilon / t_{0}$.
+
+$$
+t_{\text {lead }-c} \sim t \quad t_{1}, t_{2} \sim \epsilon \quad \Delta \sim \Delta
+$$
+
+$\Delta=0.02$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=775&width=1047&top_left_y=850&top_left_x=34)
+$\Delta=0.05$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=771&width=1043&top_left_y=856&top_left_x=1120)
+$\Delta=0.1$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-09.jpg?height=745&width=1017&top_left_y=852&top_left_x=2209)
+
+The NEGF method is consistent with the results obtained by the S-matrix method
+
+## ${ }_{t_{1}} \mathrm{NI}_{t_{2}} \mathrm{~m}_{2}$ orrinl mothnd for solving SSH-chain
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=231&width=1059&top_left_y=310&top_left_x=287)
+
+Shot noise vs. $\Delta$
+
+$$
+t_{1}=0.6 \quad t_{2}=1.2
+$$
+
+Physical quantities vs. S-matrix
+
+$$
+\Delta=0.02
+$$
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=801&width=1089&top_left_y=922&top_left_x=55)
+$t_{0} \equiv \frac{t^{2}}{v_{f}}, \tilde{E} \equiv E / t_{0} \tilde{\epsilon} \equiv \epsilon / t_{0}$.
+$\Delta=0.05$
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=813&width=1073&top_left_y=912&top_left_x=1135)
+$t_{\text {lead-c }} \sim t \quad t_{1}, t_{2} \sim \epsilon \quad \Delta \sim \Delta$
+
+$$
+\Delta=0.1
+$$
+
+![](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-10.jpg?height=809&width=1106&top_left_y=918&top_left_x=2224)
+
