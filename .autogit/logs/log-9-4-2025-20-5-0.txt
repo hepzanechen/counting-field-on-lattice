@@ -1,0 +1,15 @@
+-------------------- Auto-Git Log --------------------
+Fri May 09 2025 20:05:00 GMT+0800 (China Standard Time)
+------------------------------------------------------
+
+Modified files:
+
+
+Created files:
+
+
+Deleted files:
+* doc/slides/simpledmzm.pptx
+
+
+Renamed files:
