@@ -123,51 +123,49 @@ $$
 2∆ are the energy difference between two Jackiw-Rebbi zero-modes 
 
 
-## S-matrix method for Jackiw-Rebbi modes and braiding
-
-
-$$
-\binom{\psi_{1, E}\left(0^{+}\right)}{\psi_{2, E}\left(0^{+}\right)}=S\binom{\psi_{1, E}\left(0^{-}\right)}{\psi_{2, E}\left(0^{-}\right)}
-$$
-
-
-
-<div class="math">
+# Scattering and Noise Properties
 
 $$
-S=\frac{1}{\left(\epsilon^{2}+\Delta^{2}+\frac{t_{0}^{2}}{4}-E^{2}\right)-i t_{0} E}\left(\begin{array}{cc}
-\left(\epsilon^{2}+\Delta^{2}-\frac{t_{0}^{2}}{4}-E^{2}\right)+i t_{0} \Delta & i \epsilon t_{0} \\
-i \epsilon t_{0} & \left(\epsilon^{2}+\Delta^{2}-\frac{t_{0}^{2}}{4}-E^{2}\right)-i t_{0} \Delta
-\end{array}\right)
+\begin{pmatrix}
+\psi_{1, E}\left(0^{+}\right) \\
+\psi_{2, E}\left(0^{+}\right)
+\end{pmatrix}
+=
+S
+\begin{pmatrix}
+\psi_{1, E}\left(0^{-}\right) \\
+\psi_{2, E}\left(0^{-}\right)
+\end{pmatrix}
 $$
 
-</div>
-
-## Jackiw-Rebbi modes Hamiltonian
-
-$H=H_{L 1}^{\prime}+H_{L 2}^{\prime}+H_{c}+H_{T 1}+H_{T 2}$
-
-$t_{0} \equiv t^{2} / v_{f}$
-
-$H_{L i}^{\prime}=-i v_{f} \int_{-\infty}^{\infty} d x^{\prime} \psi_{i}^{\dagger}\left(x^{\prime}\right) \partial_{x^{\prime}} \psi_{i}\left(x^{\prime}\right)$,
-
-$H_{c}=\left(\epsilon \varphi_{1}^{\dagger} \varphi_{2}+\right.$ h.c. $)+\Delta \varphi_{1}^{\dagger} \varphi_{1}-\Delta \varphi_{2}^{\dagger} \varphi_{2}$
-
-<div class="math">
-
 $$
-T(E)=\left|S_{12}\right|^{2}=\frac{1}{\frac{1}{\epsilon^{2} t_{0}^{2}}\left(E^{2}+\frac{1}{4} t_{0}^{2}-\epsilon^{2}-\Delta^{2}\right)^{2}+\left(1+\frac{\Delta^{2}}{\epsilon^{2}}\right)}
+S = \frac{1}{
+\left( \epsilon^{2} + \Delta^{2} + \frac{t_0^2}{4} - E^{2} \right) - i t_0 E
+}
+\begin{pmatrix}
+\left( \epsilon^{2} + \Delta^{2} - \frac{t_0^2}{4} - E^{2} \right) + i t_0 \Delta & i \epsilon t_0 \\
+i \epsilon t_0 & \left( \epsilon^{2} + \Delta^{2} - \frac{t_0^2}{4} - E^{2} \right) - i t_0 \Delta
+\end{pmatrix}
 $$
 
-</div>
-
-$H_{T i}=-i t_{i} \varphi_{i}^{\dagger} \psi_{i}(x=0)+$ h.c.
-
-$2 \Delta$ are the energy difference $\left.\frac{\partial S_{11}}{\partial E}\right|_{E=E_{f}}=\left.\frac{e^{2}}{\pi \hbar} T(1-T)\right|_{E=E_{f}}$ between two Jackiw-Rebbi zeromodes
-
 $$
-F_{12}=\left.\frac{\partial S_{12}}{\partial I}\right|_{E=}=-\left.\frac{e}{\pi \hbar}(1-T)\right|_{E=E_{f}} \quad F_{11}=\left.\frac{\partial S_{11}}{\partial I}\right|_{E=E}=\left.\frac{e}{\pi \hbar}(1-T)\right|_{E=E_{f}}
+\begin{aligned}
+T(E) &= |S_{12}|^2 = 
+\frac{1}{
+\frac{1}{\epsilon^2 t_0^2} \left( E^2 + \frac{1}{4} t_0^2 - \epsilon^2 - \Delta^2 \right)^2 + \left(1 + \frac{\Delta^2}{\epsilon^2}\right)
+} \\
+\left. \frac{\partial \mathcal{S}_{11}}{\partial E} \right|_{E = E_f} &= 
+\left. \frac{e^2}{\pi \hbar} T(1 - T) \right|_{E = E_f} \\
+\mathcal{S}_{12} = \left. \frac{\partial \mathcal{S}_{12}}{\partial I} \right|_{E = E_f} &= 
+- \left. \frac{e}{\pi \hbar}(1 - T) \right|_{E = E_f} \\
+\mathcal{S}_{11} = \left. \frac{\partial \mathcal{S}_{11}}{\partial I} \right|_{E = E_f} &= 
+\left. \frac{e}{\pi \hbar}(1 - T) \right|_{E = E_f}
+\end{aligned}
 $$
+
+> $S$ is the scattering matrix; $\mathcal{S}$ denotes noise spectrum.
+
+
 
 ## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
 
@@ -209,7 +207,7 @@ $$
 
 </div>
 
-![height:240px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-05.jpg?height=396&width=1069&top_left_y=389&top_left_x=1847)
+![height:200px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-05.jpg?height=396&width=1069&top_left_y=389&top_left_x=1847)
 
 When $\Delta=0$, A pair of Dirac modes decomposes into two majorana modes
 
