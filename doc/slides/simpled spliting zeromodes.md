@@ -73,25 +73,30 @@ $$
 F_{i i}=1
 \end{gathered}
 $$
-## Noise evidence for detecting Majorana zero modes
 Crossed Andreev reflections dominate
-![height:220px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=465&width=545&top_left_y=852&top_left_x=1752)
 
-(a)
-<div class="grid">
-<div>
+## Noise evidence for detecting Majorana zero modes
 
-![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=456&width=494&top_left_y=861&top_left_x=2292)
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+
+  <div style="text-align: center;">
+    <img src="./img/probe_two_gamma.png" style="height: 200px;" />
+    <p><em>Probing scheme for two Majorana modes</em></p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="./img/shot_noise_twogamma.png" style="width: 600px;" />
+    <p><em>an MBS/QMBS (a zero-bias dip) and ABS (a zero-bias peak) in current shot noise</em></p>
+  </div>
 
 </div>
-<div>
 
-![height:160px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-02.jpg?height=460&width=481&top_left_y=859&top_left_x=2779)
+
+
 
 </div>
 </div>
-
-an MBS/QMBS (a zero-bias dip) and ABS (a zero-bias peak) in current shot noise
 
 <div class="ref">
 J.-S. Hong, T.-F. J. Poon, L. Zhang, and X.-J. Liu, Phys. Rev. B 105, 024503 (2022)
@@ -101,11 +106,31 @@ Law K T, Lee P A, Ng T K. Majorana fermion induced resonant Andreev reflection[J
 Nilsson J, Akhmerov A R, Beenakker C W J. Splitting of a Cooper pair by a pair of Majorana bound states[J]. Physical review letters, 2008 , $101(12)$ : 120403.
 </div>
 
-## S-matrix method for judging if Jackiw rebbi modes can be used for braiding
+## Jackiw-Rebbi modes Hamiltonian
 
-![height:200px](https://cdn.mathpix.com/cropped/2025_05_09_77a2acaaea6dec30a1ecg-03.jpg?height=269&width=3058&top_left_y=384&top_left_x=138)
+![height:120px](./img/ssh_chain_two_leads.png)
 
 Two Jackiw-Rebbi modes exists at the edge of the SSH chain
+
+$$
+\begin{aligned}
+& H=H_{L 1}^{\prime}+H_{L 2}^{\prime}+H_c+H_{T 1}+H_{T 2} \\
+& H_{L i}^{\prime}=-i v_f \int_{-\infty}^{\infty} d x^{\prime} \psi_i^{\dagger}\left(x^{\prime}\right) \partial_{x^{\prime}} \psi_i\left(x^{\prime}\right) \\
+& H_c=\left(\epsilon \varphi_1^{\dagger} \varphi_2+h . c .\right)+\Delta \varphi_1^{\dagger} \varphi_1-\Delta \varphi_2^{\dagger} \varphi_2 \\
+& H_{T i}=-i t_i \varphi_i^{\dagger} \psi_i(x=0)+h . c .
+\end{aligned}
+$$
+2∆ are the energy difference between two Jackiw-Rebbi zero-modes 
+
+
+## S-matrix method for Jackiw-Rebbi modes and braiding
+
+
+$$
+\binom{\psi_{1, E}\left(0^{+}\right)}{\psi_{2, E}\left(0^{+}\right)}=S\binom{\psi_{1, E}\left(0^{-}\right)}{\psi_{2, E}\left(0^{-}\right)}
+$$
+
+
 
 <div class="math">
 
@@ -117,6 +142,8 @@ i \epsilon t_{0} & \left(\epsilon^{2}+\Delta^{2}-\frac{t_{0}^{2}}{4}-E^{2}\right
 $$
 
 </div>
+
+## Jackiw-Rebbi modes Hamiltonian
 
 $H=H_{L 1}^{\prime}+H_{L 2}^{\prime}+H_{c}+H_{T 1}+H_{T 2}$
 
