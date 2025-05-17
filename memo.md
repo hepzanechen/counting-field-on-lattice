@@ -43,3 +43,7 @@ image.png
 
 # torch
 Though both using complex64, for eigenvectors cpu seems more accurate than gpu.
+
+
+#---
+1. Thinking how to use block det to save mem.
