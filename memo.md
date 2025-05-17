@@ -47,3 +47,16 @@ Though both using complex64, for eigenvectors cpu seems more accurate than gpu.
 
 #---
 1. Thinking how to use block det to save mem.
+
+2. add suplead and add_ginv_lead will be changed:
+"note our formual will be :
+$$
+\hat{G}^{\mathrm{K}}=\hat{G}^{\mathrm{R}} \hat{F}-\hat{F} \hat{G}^{\mathrm{A}} .
+$$
+$$
+\hat{F}=\left(\begin{array}{cc}
+1-2 f_{e l} & 0 \\
+0 & 1-2 f_h
+\end{array}\right),
+$$
+next is in Lead.py add ginv lead and construct sns junstion, note current F has both longitudal(equlilibrum $tanh(E-\mu/T)$ term) and transverse term. which means the bias can be introduced.
