@@ -6,3 +6,4 @@ Miniconda3-latest-Linux-x86_64.sh
 *.ipynb_checkpoints/*
 *.mat
 data/
+.autogit/
