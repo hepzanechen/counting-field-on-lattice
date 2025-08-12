@@ -484,7 +484,7 @@ def calculate_transport_properties(
         'rho_e_jj': rho_e,
         'rho_electron': total_dos_e,
         'rho_hole': total_dos_h,
-        'transmission': T[:, :, :, 1, 1],  # Electron-electron transmission
+        'transmission': T[:, :, :, 0, 0],  # Electron-electron transmission
         'andreev': T[:, :, :, 0, 1],      # Hole-electron transmission (Andreev)
         'current': current,
         'noise': noise,
