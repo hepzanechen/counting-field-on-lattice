@@ -161,8 +161,7 @@ results = calculation_cf_autograd(
 For further theoretical background and detailed usage instructions, refer to:
 
 - `doc/note/lattice_generating_slides.md` - Theoretical introduction to the counting field method
-- `doc/memo.md` - Internal research notes
-- `doc/slides/` - Related academic presentations
+
 
 ## License
 

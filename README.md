@@ -163,8 +163,7 @@ results = calculation_cf_autograd(
 更多理论背景和详细使用方法请参考：
 
 - `doc/note/lattice_generating_slides.md` - 计数场方法理论介绍
-- `doc/memo.md` - 内部研究笔记
-- `doc/slides/` - 相关学术报告
+
 
 ## 许可证
 
