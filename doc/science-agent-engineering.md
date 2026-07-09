@@ -281,6 +281,38 @@ conventions:
 
 ## 6.5 LLM 集成(经 OpenCode CLI,权力边界焊死在代码里)
 
+### OpenCode-native agents
+
+项目根目录现在包含 `opencode.json`,定义了 4 个**原生 OpenCode primary agents**:
+
+| OpenCode agent | 责任 | 是否可裁决物理? |
+|---|---|---|
+| `science-intake` | 自然语言猜想 → 结构化假设候选(模型/信号/对照) | ❌ |
+| `experiment-designer` | 假设 + 模型目录 → positive/control 实验 + 预注册判据 | ❌ |
+| `evidence-reporter` | 证据账本 → 带 [E<n>] 引用的 markdown 报告 | ❌ |
+| `hypothesis-reviser` | FALSIFIED/INCONCLUSIVE 后提出更严格修正假设 | ❌ |
+
+可验证:
+
+```bash
+opencode agent list | grep -E "science-intake|experiment-designer|evidence-reporter|hypothesis-reviser"
+```
+
+Python orchestration 通过 `agent/llm.py` 调用:
+
+```bash
+opencode run --format json --agent science-intake
+opencode run --format json --agent experiment-designer
+opencode run --format json --agent evidence-reporter
+opencode run --format json --agent hypothesis-reviser
+```
+
+这使 repo 从「OpenCode-backed Python prototype」升级为:
+
+> **OpenCode-native science-agent architecture with deterministic physics tools.**
+
+仍然保持核心纪律:OpenCode agents 只**提议/叙述/修正**,物理计算和 verdict 只由 Python 确定性层产生。
+
 ```
 自然语言猜想
      │
@@ -308,6 +340,41 @@ conventions:
 **FALSIFIED 判决本身是诚实的**:LLM 按 cheapest-first 选了 Nx_cell=5,有限尺寸劈裂
 (t_v/t_u)^N·t ≈ 0.24 超过其自设阈值 0.01;且 Delta=0 时 Andreev 判据物理上不可能满足。
 系统没有为了讨好用户而软化判决——这正是证伪判据预注册的意义。修正需要假设修正循环(阶段 5)。
+
+### OpenCode-native 实测
+
+#### Happy path: Kitaev MZM
+
+```bash
+.venv/bin/python -m agent.demo_agentic \
+  "I conjecture that a Kitaev chain hosts Majorana zero modes when |mu| is smaller than 2|t|, and that those zero modes disappear when |mu| is larger than 2|t|."
+```
+
+实测结果:
+
+- `science-intake` 选择 `KitaevChain`
+- `experiment-designer` 设计 `kitaev_topological_sweet_spot` 与 `kitaev_trivial_large_mu`
+- topological: `min_abs_eigenvalue = 0.0`, `zero_bias_andreev = 0.9967`
+- trivial: `min_abs_eigenvalue = 1.2315`, `zero_bias_andreev ≈ 0`
+- 所有 physics gates 通过
+- deterministic verdict: **SUPPORTED**
+- `evidence-reporter` 输出带 [E1][E2] 引用的报告
+
+#### Revision path: SSH finite-size/admissibility
+
+```bash
+.venv/bin/python -m agent.demo_agentic
+```
+
+默认 SSH 猜想触发完整 native flow:
+
+- `science-intake` 选择 `SSHChainBdG`
+- `experiment-designer` 使用 `Nx_cell=10`,避免早期 Nx=5 的有限尺寸失败
+- topological 实验被 physics judge 标记 `INADMISSIBLE`(dual-path agreement fail)
+- deterministic verdict: **INCONCLUSIVE**
+- `hypothesis-reviser` 提出更严格修正:必须显式要求 admissibility、finite-size scaling、边界局域性,而不是只看单点 near-zero eigenvalue
+
+这展示了 native agents 的关键价值:不是永远给出 SUPPORTED,而是在失败时让失败**变成下一轮更精确科学假设的输入**。
 
 ---
 

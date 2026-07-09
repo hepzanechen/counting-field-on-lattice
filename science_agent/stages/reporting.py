@@ -9,9 +9,9 @@ import json
 import re
 from pathlib import Path
 
-from agent.llm import ask
+from science_agent.runtime.opencode_client import ask
 
-PROMPT_PATH = Path(__file__).parent / "prompts" / "report.md"
+PROMPT_PATH = Path(__file__).parents[1] / "prompts" / "evidence_reporter.md"
 
 
 def _format_ledger(evidence: list) -> str:
@@ -37,7 +37,7 @@ def report(evidence: list, verdict: str, max_retries: int = 1) -> str:
         full_prompt = prompt if attempt == 0 else (
             f"{prompt}\n\nYour previous report was rejected: {last_error}. "
             f"Write it again following the hard rules.")
-        text = ask(full_prompt)
+        text = ask(full_prompt, agent="evidence-reporter")
 
         cited = {int(m) for m in re.findall(r"\[E(\d+)\]", text)}
         valid = set(range(1, len(evidence) + 1))

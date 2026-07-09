@@ -11,7 +11,7 @@ deterministic physics judge -> pre-registered falsification criteria ->
 append-only evidence ledger. The agent tries to FALSIFY, not confirm:
 it also runs a control experiment in the trivial phase.
 
-Run:  .venv/bin/python -m agent.demo_kitaev_mzm
+Run:  .venv/bin/python -m examples.demo_kitaev_mzm
 """
 import json
 import sys
@@ -20,8 +20,8 @@ from pathlib import Path
 
 import torch
 
-from agent.hypothesis import Hypothesis, FalsificationCriterion
-from agent.executor import build_kitaev_system, run_dual_path, physics_judge
+from science_agent.core.hypothesis import Hypothesis, FalsificationCriterion
+from science_agent.physics.runner import build_kitaev_system, run_dual_path, physics_judge
 
 LEDGER_PATH = Path("data/agent_ledger")
 

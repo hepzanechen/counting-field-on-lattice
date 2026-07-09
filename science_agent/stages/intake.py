@@ -8,14 +8,17 @@ The LLM cannot invent observables, exceed bounds, or skip the control experiment
 """
 from pathlib import Path
 
-from agent.hypothesis import Hypothesis, FalsificationCriterion
-from agent.llm import ask_json
-from agent.model_catalog import CATALOG, OBSERVABLES, catalog_for_prompt
+from science_agent.core.hypothesis import Hypothesis, FalsificationCriterion
+from science_agent.core.model_catalog import CATALOG, OBSERVABLES, catalog_for_prompt
+from science_agent.runtime.opencode_client import ask_json
 
-PROMPT_PATH = Path(__file__).parent / "prompts" / "intake.md"
+INTAKE_PROMPT = Path(__file__).parents[1] / "prompts" / "science_intake.md"
+DESIGN_PROMPT = Path(__file__).parents[1] / "prompts" / "experiment_design.md"
 
-REQUIRED_KEYS = ["conjecture_restated", "model", "positive_experiment",
-                 "control_experiment", "criteria_positive", "criteria_control"]
+INTAKE_KEYS = ["conjecture_restated", "model", "signal_description",
+               "control_description", "candidate_observables"]
+DESIGN_KEYS = ["positive_experiment", "control_experiment",
+               "criteria_positive", "criteria_control"]
 
 
 def _gate_criteria(raw: list, side: str) -> list[FalsificationCriterion]:
@@ -36,15 +39,25 @@ def _gate_criteria(raw: list, side: str) -> list[FalsificationCriterion]:
 
 
 def intake(conjecture: str) -> tuple[Hypothesis, list[FalsificationCriterion], list[dict]]:
-    prompt = PROMPT_PATH.read_text().format(
+    intake_prompt = INTAKE_PROMPT.read_text().format(
         catalog=catalog_for_prompt(), conjecture=conjecture)
-    proposal = ask_json(prompt, required_keys=REQUIRED_KEYS)
+    intake_proposal = ask_json(
+        intake_prompt, required_keys=INTAKE_KEYS, agent="science-intake")
 
-    model_name = proposal["model"]
+    model_name = intake_proposal["model"]
     if model_name not in CATALOG:
         raise ValueError(f"LLM proposed unknown model {model_name!r} "
                          f"(allowed: {list(CATALOG)})")
     spec = CATALOG[model_name]
+
+    for obs in intake_proposal.get("candidate_observables", []):
+        if obs not in OBSERVABLES:
+            raise ValueError(f"intake proposed unknown observable {obs!r}")
+
+    design_prompt = DESIGN_PROMPT.read_text().format(
+        catalog=catalog_for_prompt(), intake=intake_proposal)
+    proposal = ask_json(
+        design_prompt, required_keys=DESIGN_KEYS, agent="experiment-designer")
 
     experiments = []
     for side in ("positive_experiment", "control_experiment"):
@@ -61,9 +74,9 @@ def intake(conjecture: str) -> tuple[Hypothesis, list[FalsificationCriterion], l
     criteria_control = _gate_criteria(proposal["criteria_control"], "control")
 
     hypothesis = Hypothesis(
-        conjecture=str(proposal["conjecture_restated"]),
+        conjecture=str(intake_proposal["conjecture_restated"]),
         model=model_name,
-        parameters={"source": "llm_intake_v1"},
+        parameters={"source": "native_opencode_agents_v1"},
         criteria=criteria_positive)
 
     return hypothesis, criteria_control, experiments

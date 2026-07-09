@@ -4,13 +4,13 @@ Conjecture: Kitaev chain hosts a near-zero BdG mode iff |mu| < 2|t|.
 With t=-5, the phase boundary is |mu| = 10. Every sweep point passes
 the deterministic physics judge before its measurement is admitted.
 
-Run:  .venv/bin/python -m agent.demo_mzm_phase_boundary
+Run:  .venv/bin/python -m examples.demo_mzm_phase_boundary
 """
 import sys
 
 import torch
 
-from agent.executor import build_kitaev_system, run_dual_path, physics_judge
+from science_agent.physics.runner import build_kitaev_system, run_dual_path, physics_judge
 
 T_HOP = -5.0
 DELTA = 1.0

@@ -10,8 +10,8 @@ Acceptance test: a conjecture about a model NO demo has ever hardcoded (SSH
 chain edge states) must run without any code change.
 
 Run:
-  .venv/bin/python -m agent.demo_agentic
-  .venv/bin/python -m agent.demo_agentic "your own conjecture here"
+  .venv/bin/python -m examples.demo_native_agentic
+  .venv/bin/python -m examples.demo_native_agentic "your own conjecture here"
 """
 import json
 import sys
@@ -20,10 +20,11 @@ from pathlib import Path
 
 import torch
 
-from agent.executor import run_dual_path, physics_judge
-from agent.llm_intake import intake
-from agent.llm_reporter import report
-from agent.model_catalog import build_system
+from science_agent.core.model_catalog import build_system
+from science_agent.physics.runner import run_dual_path, physics_judge
+from science_agent.stages.intake import intake
+from science_agent.stages.reporting import report
+from science_agent.stages.revision import revise
 
 LEDGER_PATH = Path("data/agent_ledger")
 ETA = 1e-4
@@ -106,12 +107,21 @@ def run(conjecture: str) -> int:
 
     print(f"\nDETERMINISTIC VERDICT: {hypothesis.status}")
 
+    revision = None
+    if hypothesis.status in ("FALSIFIED", "INCONCLUSIVE"):
+        print("\n" + "=" * 72)
+        print("STAGE 2.5 - HYPOTHESIS-REVISER (proposal only, no verdict changes)")
+        print("=" * 72)
+        revision = revise(hypothesis.conjecture, hypothesis.evidence)
+        print(json.dumps(revision, indent=2))
+
     LEDGER_PATH.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime("%Y%m%d_%H%M%S")
     ledger_file = LEDGER_PATH / f"agentic_{stamp}.json"
     ledger_file.write_text(json.dumps({
         "conjecture": hypothesis.conjecture, "model": hypothesis.model,
         "status": hypothesis.status, "evidence": hypothesis.evidence,
+        "revision_proposal": revision,
     }, indent=2, default=str))
 
     print("\n" + "=" * 72)
