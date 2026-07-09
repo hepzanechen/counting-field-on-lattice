@@ -272,11 +272,42 @@ conventions:
 
 | 阶段 | 目标 | 状态 |
 |---|---|---|
-| 0. 知识工程化（检查器 tool 层） | `utils/physics/invariants.py` | ✅ 已完成 |
-| 1. 认知循环（假设→实验→裁判→账本） | `agent/` | ✅ 已完成（demo） |
-| 2. LLM 入口 | 自然语言猜想 → 结构化 Hypothesis（模型选择、判据生成） | ⬜ |
-| 3. LLM 出口 | 证据账本 → 自然语言结论报告 | ⬜ |
-| 4. 泛化 | 从 KitaevChain 扩展到 hamiltonians/ 全部 8+ 模型 | ⬜ |
+| 0. 知识工程化(检查器 tool 层) | `utils/physics/invariants.py` | ✅ 已完成 |
+| 1. 认知循环(假设→实验→裁判→账本) | `agent/` | ✅ 已完成(demo) |
+| 2. LLM 入口 | 自然语言猜想 → 结构化 Hypothesis(模型选择、判据生成) | ✅ `agent/llm_intake.py` |
+| 3. LLM 出口 | 证据账本 → 自然语言结论报告(带引用校验) | ✅ `agent/llm_reporter.py` |
+| 4. 泛化 | 从 KitaevChain 扩展到 hamiltonians/ 全部 8+ 模型 | 🔶 目录制(2 个模型注册) |
+| 5. 假设修正循环 | FALSIFIED 后 LLM 提出修正猜想 → 重新进入循环 | ⬜ |
+
+## 6.5 LLM 集成(经 OpenCode CLI,权力边界焊死在代码里)
+
+```
+自然语言猜想
+     │
+┌────▼─────────────────────────┐   LLM 只能【提议】,不能【裁决】:
+│ STAGE 1: llm_intake.py       │   gate 1: 模型必须在 model_catalog.CATALOG 中
+│ LLM 提议模型/参数/判据          │   gate 2: 每个参数过 ParamSpec 边界校验
+│ + 强制对照组实验               │   gate 3: 判据只能引用可测 OBSERVABLES
+└────┬─────────────────────────┘   gate 4: JSON schema 校验 + 重试(llm.ask_json)
+     │
+┌────▼─────────────────────────┐
+│ STAGE 2: 确定性执行 + 裁判      │   零 LLM。双路径 + 8 项不变量 + 预注册判据
+│ 判决由代码计算                 │
+└────┬─────────────────────────┘
+     │
+┌────▼─────────────────────────┐   gate 5: 每个定量论断必须引用 [E<n>] 账本条目
+│ STAGE 3: llm_reporter.py     │   gate 6: 引用不存在的条目 → 报告被拒绝重写
+│ LLM 叙述证据                  │   gate 7: LLM 不能推翻代码算出的判决
+└──────────────────────────────┘
+```
+
+**验收测试(2026-07-09 实测)**:输入一个代码里从未硬编码过的猜想(SSH 链边缘态),
+系统不改一行代码完成:LLM 选择 `SSHChainBdG`、设计正反两组实验、生成判据 → 确定性
+执行+裁判全过 → 判决 **FALSIFIED** → LLM 输出带 [E1][E2] 引用的报告。
+
+**FALSIFIED 判决本身是诚实的**:LLM 按 cheapest-first 选了 Nx_cell=5,有限尺寸劈裂
+(t_v/t_u)^N·t ≈ 0.24 超过其自设阈值 0.01;且 Delta=0 时 Andreev 判据物理上不可能满足。
+系统没有为了讨好用户而软化判决——这正是证伪判据预注册的意义。修正需要假设修正循环(阶段 5)。
 
 ---
 
