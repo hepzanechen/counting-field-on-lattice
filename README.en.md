@@ -1,5 +1,12 @@
 # Counting Field on Lattice
 
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-red.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/hepzanechen/counting-field-on-lattice.svg?style=social&label=Star)](https://github.com/hepzanechen/counting-field-on-lattice)
+
+A PyTorch library for full counting statistics, non-equilibrium Green's functions (NEGF), counting-field derivatives, and lattice quantum transport calculations. Supports BdG Hamiltonians, Kitaev chains, SSH models, topological superconductivity, and Keldysh formalism.
+
 A tight-binding lattice quantum transport computation framework based on the Keldysh formalism and counting field method.
 
 ## Project Overview

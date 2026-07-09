@@ -1,6 +1,11 @@
-
-
 # Counting Field on Lattice
+
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-red.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/hepzanechen/counting-field-on-lattice.svg?style=social&label=Star)](https://github.com/hepzanechen/counting-field-on-lattice)
+
+基于 PyTorch 的全计数统计（full counting statistics）、非平衡格林函数（NEGF）、计数场导数和晶格量子输运计算库。支持 BdG 哈密顿量、Kitaev 链、SSH 模型、拓扑超导性和 Keldysh 形式主义。
 
 基于 Keldysh 形式主义和计数场方法的紧束缚晶格量子输运计算框架。
 

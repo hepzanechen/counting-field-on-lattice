@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "counting-field-on-lattice"
+version = "0.1.0"
+description = "PyTorch library for full counting statistics, NEGF transport, counting-field derivatives, and lattice quantum transport calculations"
+readme = "README.en.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Zane Chen", email = "hepzanechen@gmail.com"}
+]
+keywords = [
+    "quantum-transport",
+    "non-equilibrium-green-functions",
+    "negf",
+    "full-counting-statistics",
+    "counting-field",
+    "lattice-models",
+    "tight-binding",
+    "keldysh-formalism",
+    "kitaev-chain",
+    "ssh-model",
+    "topological-superconductivity",
+    "bogoliubov-de-gennes",
+    "majorana-zero-modes",
+    "pytorch",
+    "automatic-differentiation",
+    "condensed-matter",
+    "computational-physics",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "torch>=1.9.0",
+    "numpy>=1.19.0",
+    "matplotlib>=3.3.0",
+    "scipy>=1.6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/hepzanechen/counting-field-on-lattice"
+Repository = "https://github.com/hepzanechen/counting-field-on-lattice"
+Issues = "https://github.com/hepzanechen/counting-field-on-lattice/issues"
+Documentation = "https://github.com/hepzanechen/counting-field-on-lattice#readme"
+
+[tool.setuptools]
+packages = [
+    "hamiltonians",
+    "greens_functions_inv_method",
+    "genfunc_cf_deriv_method",
+    "dataplot",
+    "utils",
+]

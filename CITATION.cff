@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Counting Field on Lattice"
+abstract: "A PyTorch library for full counting statistics, NEGF transport, counting-field derivatives, and lattice quantum transport calculations."
+authors:
+  - family-names: "Chen"
+    given-names: "Zane"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "Your Institution"
+version: 0.1.0
+date-released: "2026-07-09"
+url: "https://github.com/hepzanechen/counting-field-on-lattice"
+repository-code: "https://github.com/hepzanechen/counting-field-on-lattice"
+license: MIT
+keywords:
+  - quantum-transport
+  - non-equilibrium-green-functions
+  - negf
+  - full-counting-statistics
+  - counting-field
+  - lattice-models
+  - tight-binding
+  - keldysh-formalism
+  - kitaev-chain
+  - ssh-model
+  - topological-superconductivity
+  - bogoliubov-de-gennes
+  - majorana-zero-modes
+  - pytorch
+  - automatic-differentiation
+references:
+  - type: generic
+    authors:
+      - family-names: "Chen"
+        given-names: "Zane"
+    title: "Counting Field on Lattice: A PyTorch framework for quantum transport in lattice systems"
+    url: "https://github.com/hepzanechen/counting-field-on-lattice"
