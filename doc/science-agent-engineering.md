@@ -244,7 +244,7 @@ conventions:
 ## 6. 已落地实现（可运行 Demo）
 
 ```
-.venv/bin/python -m agent.demo_kitaev_mzm
+.venv/bin/python -m examples.demo_kitaev_mzm
 ```
 
 **测试的真实物理猜想**：Kitaev 链在拓扑相（|μ|<2|t|）中承载 Majorana 零模，
@@ -255,9 +255,9 @@ conventions:
 | 文件 | 角色 | LLM? |
 |---|---|---|
 | `utils/physics/invariants.py` | 物理裁判 tool 层：8 个确定性检查器（厄米/p-h 谱对称/流守恒/透射界/噪声非负/双路径一致/eta 外推） | ❌ |
-| `agent/hypothesis.py` | 预注册假设 + 证伪判据 + 三态判定（SUPPORTED/FALSIFIED/INADMISSIBLE）+ 证据登记 | ❌ |
-| `agent/executor.py` | 双路径执行器（CF-autograd ∥ GF-inversion）+ 裁判编排 + eta 外推消歧 | ❌ |
-| `agent/demo_kitaev_mzm.py` | 完整认知循环：设计（cheapest-first + 对照组）→ 执行 → 裁判 → 判据 → 账本 | ❌ |
+| `science_agent/core/hypothesis.py` | 预注册假设 + 证伪判据 + 三态判定（SUPPORTED/FALSIFIED/INADMISSIBLE）+ 证据登记 | ❌ |
+| `science_agent/physics/runner.py` | 双路径执行器（CF-autograd ∥ GF-inversion）+ 裁判编排 + eta 外推消歧 | ❌ |
+| `examples/demo_kitaev_mzm.py` | 完整认知循环：设计（cheapest-first + 对照组）→ 执行 → 裁判 → 判据 → 账本 | ❌ |
 | `data/agent_ledger/*.json` | 追加式证据账本（可观测性） | ❌ |
 
 ### 实测运行结果（2026-07-09）
@@ -273,9 +273,9 @@ conventions:
 | 阶段 | 目标 | 状态 |
 |---|---|---|
 | 0. 知识工程化(检查器 tool 层) | `utils/physics/invariants.py` | ✅ 已完成 |
-| 1. 认知循环(假设→实验→裁判→账本) | `agent/` | ✅ 已完成(demo) |
-| 2. LLM 入口 | 自然语言猜想 → 结构化 Hypothesis(模型选择、判据生成) | ✅ `agent/llm_intake.py` |
-| 3. LLM 出口 | 证据账本 → 自然语言结论报告(带引用校验) | ✅ `agent/llm_reporter.py` |
+| 1. 认知循环(假设→实验→裁判→账本) | `science_agent/` + `examples/` | ✅ 已完成(demo) |
+| 2. LLM 入口 | 自然语言猜想 → 结构化 Hypothesis(模型选择、判据生成) | ✅ `science_agent/stages/intake.py` |
+| 3. LLM 出口 | 证据账本 → 自然语言结论报告(带引用校验) | ✅ `science_agent/stages/reporting.py` |
 | 4. 泛化 | 从 KitaevChain 扩展到 hamiltonians/ 全部 8+ 模型 | 🔶 目录制(2 个模型注册) |
 | 5. 假设修正循环 | FALSIFIED 后 LLM 提出修正猜想 → 重新进入循环 | ⬜ |
 
@@ -298,7 +298,7 @@ conventions:
 opencode agent list | grep -E "science-intake|experiment-designer|evidence-reporter|hypothesis-reviser"
 ```
 
-Python orchestration 通过 `agent/llm.py` 调用:
+Python orchestration 通过 `science_agent/runtime/opencode_client.py` 调用:
 
 ```bash
 opencode run --format json --agent science-intake
@@ -317,10 +317,10 @@ opencode run --format json --agent hypothesis-reviser
 自然语言猜想
      │
 ┌────▼─────────────────────────┐   LLM 只能【提议】,不能【裁决】:
-│ STAGE 1: llm_intake.py       │   gate 1: 模型必须在 model_catalog.CATALOG 中
+│ STAGE 1: stages/intake.py    │   gate 1: 模型必须在 core/model_catalog.CATALOG 中
 │ LLM 提议模型/参数/判据          │   gate 2: 每个参数过 ParamSpec 边界校验
 │ + 强制对照组实验               │   gate 3: 判据只能引用可测 OBSERVABLES
-└────┬─────────────────────────┘   gate 4: JSON schema 校验 + 重试(llm.ask_json)
+└────┬─────────────────────────┘   gate 4: JSON schema 校验 + 重试(opencode_client.ask_json)
      │
 ┌────▼─────────────────────────┐
 │ STAGE 2: 确定性执行 + 裁判      │   零 LLM。双路径 + 8 项不变量 + 预注册判据
@@ -328,25 +328,25 @@ opencode run --format json --agent hypothesis-reviser
 └────┬─────────────────────────┘
      │
 ┌────▼─────────────────────────┐   gate 5: 每个定量论断必须引用 [E<n>] 账本条目
-│ STAGE 3: llm_reporter.py     │   gate 6: 引用不存在的条目 → 报告被拒绝重写
+│ STAGE 3: stages/reporting.py │   gate 6: 引用不存在的条目 → 报告被拒绝重写
 │ LLM 叙述证据                  │   gate 7: LLM 不能推翻代码算出的判决
 └──────────────────────────────┘
 ```
 
 **验收测试(2026-07-09 实测)**:输入一个代码里从未硬编码过的猜想(SSH 链边缘态),
 系统不改一行代码完成:LLM 选择 `SSHChainBdG`、设计正反两组实验、生成判据 → 确定性
-执行+裁判全过 → 判决 **FALSIFIED** → LLM 输出带 [E1][E2] 引用的报告。
+执行+裁判 → 对失败证据给出 **INCONCLUSIVE/INADMISSIBLE** → `hypothesis-reviser` 输出更严格修正假设。
 
-**FALSIFIED 判决本身是诚实的**:LLM 按 cheapest-first 选了 Nx_cell=5,有限尺寸劈裂
-(t_v/t_u)^N·t ≈ 0.24 超过其自设阈值 0.01;且 Delta=0 时 Andreev 判据物理上不可能满足。
-系统没有为了讨好用户而软化判决——这正是证伪判据预注册的意义。修正需要假设修正循环(阶段 5)。
+**INCONCLUSIVE 判决本身是诚实的**:`experiment-designer` 选择了 Nx_cell=10,正向谱判据已经合理,
+但双路径裁判发现 topological 传输计算 `dual_path_agreement` 未过。因此证据被标记为不可采信,
+系统没有为了讨好用户而软化判决。`hypothesis-reviser` 随后建议把 admissibility、finite-size scaling、边界局域性写入下一轮假设。
 
 ### OpenCode-native 实测
 
 #### Happy path: Kitaev MZM
 
 ```bash
-.venv/bin/python -m agent.demo_agentic \
+.venv/bin/python -m examples.demo_native_agentic \
   "I conjecture that a Kitaev chain hosts Majorana zero modes when |mu| is smaller than 2|t|, and that those zero modes disappear when |mu| is larger than 2|t|."
 ```
 
@@ -355,7 +355,7 @@ opencode run --format json --agent hypothesis-reviser
 - `science-intake` 选择 `KitaevChain`
 - `experiment-designer` 设计 `kitaev_topological_sweet_spot` 与 `kitaev_trivial_large_mu`
 - topological: `min_abs_eigenvalue = 0.0`, `zero_bias_andreev = 0.9967`
-- trivial: `min_abs_eigenvalue = 1.2315`, `zero_bias_andreev ≈ 0`
+- trivial: `min_abs_eigenvalue ≈ 1.2-1.7`, `zero_bias_andreev ≈ 0`
 - 所有 physics gates 通过
 - deterministic verdict: **SUPPORTED**
 - `evidence-reporter` 输出带 [E1][E2] 引用的报告
@@ -363,7 +363,7 @@ opencode run --format json --agent hypothesis-reviser
 #### Revision path: SSH finite-size/admissibility
 
 ```bash
-.venv/bin/python -m agent.demo_agentic
+.venv/bin/python -m examples.demo_native_agentic
 ```
 
 默认 SSH 猜想触发完整 native flow:
