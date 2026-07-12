@@ -5,7 +5,7 @@
 [![OpenCode](https://img.shields.io/badge/OpenCode-native-purple.svg)](https://opencode.ai/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-一个 **OpenCode-native、证伪优先的 Science Agent Virtual Lab**。LLM agents 负责提出猜想、设计实验、审计、怀疑和综合；确定性的量子输运引擎负责构建哈密顿量、计算证据、检查物理不变量并约束最终结论。
+一个 **OpenCode-native、证伪优先的 Science Agent Virtual Lab**。LLM agents 负责提出猜想、设计实验、进行数值实验，提出怀疑和写综合报告；本项目原有的确定性的量子输运数值计算方法负责构建哈密顿量、数值计算、检查物理不变量等约束。
 
 > **LLM proposes; deterministic physics disposes.**
 
@@ -20,9 +20,9 @@ OpenCode agents 预注册证伪策略与 positive/control 实验
         ↓
 QuantumTransportDomain 确定性运行 CF + NEGF 双路径计算
         ↓
-Physics Judge 检查厄米性、粒子-空穴对称、流守恒、透射界、噪声与数值一致性
+Physics Judge 对非开放系统检查厄米性、需要满足的对称性如粒子-空穴对称、流守恒等其他数值一致性
         ↓
-Virtual Lab 独立 workcells：深度追踪、数值审计、怀疑性证伪、文献映射
+Virtual Lab 独立 workcells：深度追踪、数值结果审查、怀疑性证伪、文献检查
         ↓
 Integrator synthesis → deterministic gate → Discovery Ledger
 ```
@@ -68,7 +68,7 @@ python -m examples.demo_mzm_phase_boundary
                     Scientific Discovery Ledger
 ```
 
-Agent “personality”不是说话风格，而是可执行的认识论契约：
+Agent “personality”不仅仅是说话风格，而是可执行的认识论方法论约束：
 
 | Role | Scope | Memory | Evidence standard | Interaction |
 |---|---|---|---|---|
@@ -113,7 +113,7 @@ class ScienceDomain(Protocol):
 - CF 与 NEGF 双路径交叉验证；
 - 厄米性、粒子-空穴对称、流守恒、透射界、噪声非负、η→0 外推。
 
-未来可以在不修改 agent core 的情况下接入 molecular dynamics、materials science 或其他 domain adapter。
+期待的是未来可以在不修改 agent core 的情况下接入 molecular dynamics、materials science 或其他 domain adapter。
 
 ## 科学发现账本
 
