@@ -17,11 +17,16 @@ import json
 import sys
 import time
 from pathlib import Path
+from typing import Literal, TypedDict
 
 import torch
 
 from science_agent.core.hypothesis import Hypothesis, FalsificationCriterion
-from science_agent.physics.runner import build_kitaev_system, run_dual_path, physics_judge
+from quantum_transport.agent_runner import (
+    build_kitaev_system,
+    physics_judge,
+    run_dual_path,
+)
 
 LEDGER_PATH = Path("data/agent_ledger")
 
@@ -31,7 +36,15 @@ BIAS = 2.0
 ETA = 1e-4
 
 
-def design_experiments() -> list[dict[str, object]]:
+class Experiment(TypedDict):
+    label: str
+    Nx: int
+    mu: float
+    phase: Literal["topological", "trivial"]
+    purpose: str
+
+
+def design_experiments() -> list[Experiment]:
     return [
         {"label": "topological_small", "Nx": 8, "mu": -5.0,
          "phase": "topological", "purpose": "cheapest lattice that could falsify"},

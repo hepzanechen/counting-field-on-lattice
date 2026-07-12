@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Counting Field on Lattice"
-abstract: "A PyTorch library for full counting statistics, NEGF transport, counting-field derivatives, and lattice quantum transport calculations."
+title: "Quantum Transport Science Agent"
+abstract: "An OpenCode-native, falsification-first Virtual Lab that uses deterministic quantum-transport calculations as its scientific evidence engine."
 authors:
   - family-names: "Chen"
     given-names: "Zane"
@@ -28,10 +28,14 @@ keywords:
   - majorana-zero-modes
   - pytorch
   - automatic-differentiation
+  - science-agents
+  - multi-agent-systems
+  - falsification
+  - opencode
 references:
   - type: generic
     authors:
       - family-names: "Chen"
         given-names: "Zane"
-    title: "Counting Field on Lattice: A PyTorch framework for quantum transport in lattice systems"
+    title: "Quantum Transport Science Agent: A falsification-first Virtual Lab with deterministic quantum transport"
     url: "https://github.com/hepzanechen/counting-field-on-lattice"

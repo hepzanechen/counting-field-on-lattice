@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "counting-field-on-lattice"
+name = "quantum-transport-science-agent"
 version = "0.1.0"
-description = "PyTorch library for full counting statistics, NEGF transport, counting-field derivatives, and lattice quantum transport calculations"
+description = "OpenCode-native falsification-first Science Agent with a deterministic quantum-transport evidence engine"
 readme = "README.en.md"
 license = {text = "MIT"}
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     {name = "Zane Chen", email = "hepzanechen@gmail.com"}
 ]
@@ -30,6 +30,10 @@ keywords = [
     "automatic-differentiation",
     "condensed-matter",
     "computational-physics",
+    "science-agents",
+    "multi-agent-systems",
+    "opencode",
+    "falsification",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -59,10 +63,17 @@ Issues = "https://github.com/hepzanechen/counting-field-on-lattice/issues"
 Documentation = "https://github.com/hepzanechen/counting-field-on-lattice#readme"
 
 [tool.setuptools]
-packages = [
-    "hamiltonians",
-    "greens_functions_inv_method",
-    "genfunc_cf_deriv_method",
-    "dataplot",
-    "utils",
-]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+science_agent = ["prompts/*.md"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]

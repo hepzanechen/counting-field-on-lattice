@@ -20,16 +20,17 @@ from pathlib import Path
 
 import torch
 
-from science_agent.core.model_catalog import build_system
 from science_agent.core.ledger import Ledger, DiscoveryRecord
-from science_agent.physics.runner import run_dual_path, physics_judge
 from science_agent.stages.intake import intake
 from science_agent.stages.reporting import report
 from science_agent.stages.revision import revise
 from science_agent.stages.skeptical import assess as skeptical_assess
+from quantum_transport.agent_adapter import QuantumTransportDomain
+from quantum_transport.agent_runner import physics_judge, run_dual_path
 
 LEDGER_PATH = Path("data/agent_ledger")
 ETA = 1e-4
+DOMAIN = QuantumTransportDomain()
 
 DEFAULT_CONJECTURE = (
     "I conjecture that a dimerized SSH chain hosts zero-energy edge states "
@@ -38,7 +39,9 @@ DEFAULT_CONJECTURE = (
     "dimerization is reversed.")
 
 
-def measure(H_BdG: torch.Tensor, results: dict) -> dict:
+def measure(
+    H_BdG: torch.Tensor, results: dict[str, torch.Tensor]
+) -> dict[str, float]:
     ev = torch.linalg.eigvalsh(H_BdG)
     return {
         "min_abs_eigenvalue": ev.abs().min().item(),
@@ -54,7 +57,7 @@ def run(conjecture: str) -> int:
     print("=" * 72)
     print(f"conjecture: {conjecture}\n")
 
-    hypothesis, criteria_control, experiments = intake(conjecture)
+    hypothesis, criteria_control, experiments = intake(conjecture, DOMAIN)
 
     # Create initial discovery record
     record_id = f"disc_{int(time.time())}"
@@ -63,7 +66,8 @@ def run(conjecture: str) -> int:
         conjecture=hypothesis.conjecture,
         model=hypothesis.model,
         status="TESTING",
-        falsification_strategy=hypothesis.parameters.get("falsification_strategy", ""),
+        falsification_strategy=str(
+            hypothesis.parameters.get("falsification_strategy", "")),
     )
     ledger.add(discovery)
 
@@ -86,8 +90,8 @@ def run(conjecture: str) -> int:
     for exp in experiments:
         t0 = time.time()
         print(f"\n--- {exp['label']} ({exp['side']}) ---")
-        H_BdG, make_leads, temperature = build_system(hypothesis.model,
-                                                      exp["params"])
+        H_BdG, make_leads, temperature = DOMAIN.build_system(
+            hypothesis.model, exp["params"])
         results = run_dual_path(H_BdG, make_leads, temperature, E_batch, ETA)
 
         eta_check = ETA / 10

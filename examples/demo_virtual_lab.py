@@ -16,11 +16,12 @@ import sys
 
 import torch
 
-from science_agent.core.model_catalog import build_system, catalog_for_prompt
-from science_agent.physics.runner import run_dual_path, physics_judge
 from science_agent.orchestrator import run_full_cycle
+from quantum_transport.agent_adapter import QuantumTransportDomain
+from quantum_transport.agent_runner import physics_judge, run_dual_path
 
 ETA = 1e-4
+DOMAIN = QuantumTransportDomain()
 
 DEFAULT_CONJECTURE = (
     "I conjecture that a Kitaev chain hosts Majorana zero modes when |mu| is "
@@ -28,8 +29,8 @@ DEFAULT_CONJECTURE = (
     "larger than 2|t|.")
 
 
-def experiment_runner(model_name: str, params: dict):
-    H_BdG, make_leads, temperature = build_system(model_name, params)
+def experiment_runner(model_name: str, params: dict[str, float]):
+    H_BdG, make_leads, temperature = DOMAIN.build_system(model_name, params)
     E_batch = torch.linspace(0.0, 0.5, 4, dtype=torch.float32)
     results = run_dual_path(H_BdG, make_leads, temperature, E_batch, ETA)
 
@@ -52,8 +53,9 @@ def main():
     conjecture = " ".join(sys.argv[1:]).strip() or DEFAULT_CONJECTURE
     result = run_full_cycle(
         conjecture=conjecture,
+        domain=DOMAIN,
         experiment_runner=experiment_runner,
-        model_catalog_text=catalog_for_prompt())
+    )
     return result
 
 

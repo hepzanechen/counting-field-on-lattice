@@ -10,7 +10,11 @@ import sys
 
 import torch
 
-from science_agent.physics.runner import build_kitaev_system, run_dual_path, physics_judge
+from quantum_transport.agent_runner import (
+    build_kitaev_system,
+    physics_judge,
+    run_dual_path,
+)
 
 T_HOP = -5.0
 DELTA = 1.0
