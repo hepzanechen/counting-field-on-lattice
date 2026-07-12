@@ -87,7 +87,7 @@ Agent “personality”不仅仅是说话风格，而是可执行的认识论方
 - **Gated synthesis**：audit FAIL、skeptic WEAK 或 unresolved disagreement 都会阻止 `SUPPORTED`。
 - **Immutable history**：被证伪的假设不会被覆盖；修正产生新的 hypothesis lineage。
 
-## 通用 Agent Core 与领域引擎
+## 通用 Agent Core 与领域数值方法（形象化称为引擎）
 
 仓库现在明确包含两个 Python packages：
 
