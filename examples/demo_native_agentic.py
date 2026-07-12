@@ -21,10 +21,12 @@ from pathlib import Path
 import torch
 
 from science_agent.core.model_catalog import build_system
+from science_agent.core.ledger import Ledger, DiscoveryRecord
 from science_agent.physics.runner import run_dual_path, physics_judge
 from science_agent.stages.intake import intake
 from science_agent.stages.reporting import report
 from science_agent.stages.revision import revise
+from science_agent.stages.skeptical import assess as skeptical_assess
 
 LEDGER_PATH = Path("data/agent_ledger")
 ETA = 1e-4
@@ -46,12 +48,24 @@ def measure(H_BdG: torch.Tensor, results: dict) -> dict:
 
 
 def run(conjecture: str) -> int:
+    ledger = Ledger(path=LEDGER_PATH / "discoveries.json")
     print("=" * 72)
     print("STAGE 1 - LLM INTAKE (proposal) + DETERMINISTIC GATES (validation)")
     print("=" * 72)
     print(f"conjecture: {conjecture}\n")
 
     hypothesis, criteria_control, experiments = intake(conjecture)
+
+    # Create initial discovery record
+    record_id = f"disc_{int(time.time())}"
+    discovery = DiscoveryRecord(
+        id=record_id,
+        conjecture=hypothesis.conjecture,
+        model=hypothesis.model,
+        status="TESTING",
+        falsification_strategy=hypothesis.parameters.get("falsification_strategy", ""),
+    )
+    ledger.add(discovery)
 
     print(f"LLM restated: {hypothesis.conjecture}")
     print(f"LLM chose model: {hypothesis.model}  (passed catalog gate)")
@@ -97,6 +111,12 @@ def run(conjecture: str) -> int:
             entry = hypothesis.register_evidence(exp["label"], measured, judge_report)
         print(f"    verdict: {entry['verdict']}  ({time.time()-t0:.1f}s)")
 
+        ledger.update_status(record_id, "TESTING", evidence={
+            "experiment": exp["label"],
+            "verdict": entry["verdict"],
+            "measured": measured,
+        })
+
     verdicts = [e["verdict"] for e in hypothesis.evidence]
     if all(v == "SUPPORTED" for v in verdicts):
         hypothesis.status = "SUPPORTED"
@@ -105,34 +125,42 @@ def run(conjecture: str) -> int:
     else:
         hypothesis.status = "INCONCLUSIVE"
 
+    ledger.update_status(record_id, hypothesis.status)
     print(f"\nDETERMINISTIC VERDICT: {hypothesis.status}")
 
+    print("\n" + "=" * 72)
+    print("STAGE 2.5 - SKEPTICAL PhD (confounder analysis)")
+    print("=" * 72)
+    skeptical = skeptical_assess(hypothesis.evidence, hypothesis.status)
+    print(json.dumps(skeptical, indent=2))
+    ledger.update_status(record_id, hypothesis.status, evidence={
+        "stage": "skeptical_assessment",
+        "assessment": skeptical["overall_assessment"],
+        "confounders": skeptical["confounders_considered"],
+    })
+
+    # Revision stage if needed
     revision = None
     if hypothesis.status in ("FALSIFIED", "INCONCLUSIVE"):
         print("\n" + "=" * 72)
-        print("STAGE 2.5 - HYPOTHESIS-REVISER (proposal only, no verdict changes)")
+        print("STAGE 3 - HYPOTHESIS-REVISER (proposal only, no verdict changes)")
         print("=" * 72)
         revision = revise(hypothesis.conjecture, hypothesis.evidence)
         print(json.dumps(revision, indent=2))
+        ledger.add_revision(record_id, revision)
 
-    LEDGER_PATH.mkdir(parents=True, exist_ok=True)
-    stamp = time.strftime("%Y%m%d_%H%M%S")
-    ledger_file = LEDGER_PATH / f"agentic_{stamp}.json"
-    ledger_file.write_text(json.dumps({
-        "conjecture": hypothesis.conjecture, "model": hypothesis.model,
-        "status": hypothesis.status, "evidence": hypothesis.evidence,
-        "revision_proposal": revision,
-    }, indent=2, default=str))
+    ledger.save()
 
     print("\n" + "=" * 72)
-    print("STAGE 3 - LLM REPORTER (narration) + CITATION GATE (validation)")
+    print("STAGE 4 - LLM REPORTER (narration) + CITATION GATE (validation)")
     print("=" * 72)
 
     md = report(hypothesis.evidence, hypothesis.status)
+    stamp = time.strftime("%Y%m%d_%H%M%S")
     report_file = LEDGER_PATH / f"agentic_{stamp}_report.md"
     report_file.write_text(md)
     print(md)
-    print(f"\nledger:  {ledger_file}")
+    print(f"\nledger:  {LEDGER_PATH / 'discoveries.json'}")
     print(f"report:  {report_file}")
     return 0 if hypothesis.status in ("SUPPORTED", "FALSIFIED") else 1
 

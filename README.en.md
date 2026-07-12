@@ -13,6 +13,119 @@ A tight-binding lattice quantum transport computation framework based on the Kel
 
 This project implements an efficient quantum transport computational tool for studying electronic transport properties in lattice systems. The core methodology is based on the counting field (Counting Field) technique within the Keldysh path integral framework, and leverages PyTorch's automatic differentiation capabilities to compute high-order transport quantities.
 
+## Science Agent Design
+
+This project is being extended from a numerical physics library into an **OpenCode-native science-agent architecture with deterministic physics tools**. The central idea is not to let an LLM decide physical truth directly, but to let LLM agents organize scientific reasoning while deterministic Python tools generate and judge evidence.
+
+### Current implementation: OpenCode-native evidence pipeline
+
+The root `opencode.json` defines five native OpenCode agents:
+
+- `science-intake`: translates a natural-language physics conjecture into a structured hypothesis candidate, **must include a falsification strategy**.
+- `experiment-designer`: designs positive/control experiments and pre-registered falsification criteria from the model catalog.
+- `evidence-reporter`: turns the structured evidence ledger into a cited report using `[E<n>]` references.
+- `hypothesis-reviser`: proposes stricter revised hypotheses after `FALSIFIED` or `INCONCLUSIVE` outcomes.
+- `skeptical-phd`: **skeptical review**, searches for alternative explanations ONLY from a known confounder catalog (finite-size, eta broadening, trivial ABS, disorder zero modes, etc.).
+
+These agents may **propose, narrate, and revise**. They do not compute Hamiltonians, decide invariant checks, or override verdicts. Hamiltonian construction, CF/GF dual-path execution, physics invariant checks, and final verdicts are deterministic:
+
+```text
+science_agent/
+  core/        # Hypothesis, model catalog, verdict schema, discovery ledger
+  runtime/     # OpenCode client wrapper
+  stages/      # LLM-facing science stages (intake, reporting, revision, skeptical)
+  physics/     # deterministic runner + physics judge
+  prompts/     # versioned agent prompts (falsification-first)
+
+utils/physics/invariants.py  # hermiticity, p-h symmetry, current conservation, etc.
+examples/                    # runnable demos
+data/science_ledger/         # structured discovery records
+```
+
+### Falsification-First Principle
+
+LLMs are naturally sycophantic. Our design forces all agents to **target falsification**:
+- `science-intake` must output a `falsification_strategy`
+- `experiment-designer` must define a `falsification_criterion` for each experiment
+- `hypothesis-reviser` cannot weaken criteria, only tighten assumptions
+- `skeptical-phd` only searches for alternatives from a known confounder catalog
+
+### Structured Scientific Discovery Ledger
+
+Every conjecture is tracked from proposal through validation:
+- `INITIAL` → `TESTING` → `SUPPORTED`/`FALSIFIED`/`INCONCLUSIVE`/`REFINED`
+- Includes falsification strategy, experimental evidence, revision history, skeptical assessment
+- Supports status queries, markdown summaries, append-only tamper-evident logging
+
+```python
+from science_agent.core.ledger import Ledger
+ledger = Ledger(path="data/science_ledger/discoveries.json")
+ledger.add(discovery_record)
+ledger.update_status(record_id, "SUPPORTED", evidence={...})
+```
+
+Design principle:
+
+> **LLM proposes; deterministic physics disposes.**
+
+In other words, LLM agents can suggest models, parameters, controls, and revised hypotheses, but they cannot override the physics judge. Every number must come from reproducible computation, and every conclusion must cite the evidence ledger.
+
+### Advanced: Virtual Lab / research-group science agent
+
+We further evolve the agent architecture from a linear pipeline into an **epistemic workcell architecture**: agents are not just playing different roles, their "personality" is modeled as an **enforceable cognitive contract** — scope, time horizon, novelty, evidence threshold, interaction policy — not theatrical dialogue.
+
+| Role | scope | time | novelty | evidence | interaction |
+|---|---|---|---|---|---|
+| `deep-specialist` | narrow | persistent | low | high | isolated |
+| `creative-explorer` | broad | single | very_high | low | sandbox |
+| `numerical-auditor` | narrow | single | very_low | very_high | readonly |
+| `skeptical-falsifier` | medium | single | medium | high | isolated |
+| `literature-cartographer` | broad | periodic | medium | citation | readonly |
+| `integrator` | global | periodic | low | synthesis | hub |
+
+**Key constraints** (each is code-enforced, not a prompt plea):
+
+1. **Context isolation + persistent scoped memory**: `deep-specialist` sees only its own track and the corresponding ledger entry — never `data/proposals/` or `data/audits/`, preventing contamination by other agents' opinions
+2. **Two-buffer architecture**: `creative-explorer` proposals go to `data/proposals/` (status `PROPOSED`); only the `integrator` may promote them to ledger `INITIAL` after gating
+3. **File-based blackboard**: agents never talk to each other directly — each writes structured outputs to isolated directories; only the `integrator` reads all
+4. **Gated synthesis**: after the `integrator` proposes a decision, deterministic gates check (a) audit PASS, (b) skepticism not WEAK, (c) no unresolved disagreements — otherwise `SUPPORTED` is downgraded to `INCONCLUSIVE` or `NEEDS_MORE_DATA`
+5. **Structured disagreement**: disagreements are recorded as `Disagreement{dimension, position_a, position_b, resolution}`, not LLM prose
+6. **Hypothesis immutability**: the `Hypothesis` class is frozen; the reviser can only propose new hypotheses, never modify existing criteria
+
+```text
+                         Integrator / PI
+              assigns problems, sets checkpoints, synthesizes
+                               │
+      ┌────────────┬───────────┼───────────┬────────────┐
+      ▼            ▼           ▼           ▼            ▼
+Deep Specialist  Creative   Numerical   Skeptical   Literature
+                  Explorer    Auditor     Falsifier   Cartographer
+      │            │           │           │            │
+ track.json   proposal.json audit.json skeptic.json literature.json
+      └────────────┴───────────┴───────────┴────────────┘
+                               │
+                   deterministic synthesis gate
+                               │
+                       discovery ledger
+
+  data/virtual_lab/
+    tracks/        deep-specialist persistent state
+    proposals/     creative-explorer sandbox
+    audits/        numerical-auditor reports
+    skepticism/    skeptical-falsifier reports
+    literature/    literature-cartographer maps
+    synthesis/     integrator synthesis reports
+    ledger.json    master discovery ledger
+```
+
+These PhD agents are not named after fixed observables (spectrum/transport/scaling), but after **cognitive roles**: depth, exploration, audit, skepticism, literature, integration. This mirrors real scientific organizations: discovery is not a single LLM's inference, but a synthesis of independent evidence streams after deterministic gating.
+
+**Running the Virtual Lab demo**:
+
+```bash
+.venv/bin/python -m examples.demo_virtual_lab
+```
+
 ## Main Features
 
 ### 1. Transport Calculation Methods

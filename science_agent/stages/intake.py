@@ -16,7 +16,7 @@ INTAKE_PROMPT = Path(__file__).parents[1] / "prompts" / "science_intake.md"
 DESIGN_PROMPT = Path(__file__).parents[1] / "prompts" / "experiment_design.md"
 
 INTAKE_KEYS = ["conjecture_restated", "model", "signal_description",
-               "control_description", "candidate_observables"]
+               "control_description", "falsification_strategy", "candidate_observables"]
 DESIGN_KEYS = ["positive_experiment", "control_experiment",
                "criteria_positive", "criteria_control"]
 
@@ -76,7 +76,10 @@ def intake(conjecture: str) -> tuple[Hypothesis, list[FalsificationCriterion], l
     hypothesis = Hypothesis(
         conjecture=str(intake_proposal["conjecture_restated"]),
         model=model_name,
-        parameters={"source": "native_opencode_agents_v1"},
+        parameters={
+            "source": "native_opencode_agents_v1",
+            "falsification_strategy": str(intake_proposal.get("falsification_strategy", "")),
+        },
         criteria=criteria_positive)
 
     return hypothesis, criteria_control, experiments

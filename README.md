@@ -13,6 +13,119 @@
 
 本项目实现了一套高效的量子输运计算工具，用于研究晶格系统中的电子输运性质。核心方法基于 Keldysh 路径积分框架下的计数场（Counting Field）技术，并通过 PyTorch 实现自动微分功能，能够计算高阶输运相关量。
 
+## Science Agent 设计理解
+
+本项目正在从「数值计算库」扩展为一个 **OpenCode-native science-agent architecture with deterministic physics tools**。核心思想不是让 LLM 直接判断物理真假，而是让 LLM 组织科研推理，让确定性 Python 工具产生和裁决证据。
+
+### 当前已实现：OpenCode-native 证据流水线
+
+项目根目录的 `opencode.json` 定义了五个原生 OpenCode agents：
+
+- `science-intake`：把自然语言物理猜想转成结构化假设候选，**必须包含证伪策略**。
+- `experiment-designer`：根据模型目录设计 positive/control 实验和预注册证伪判据。
+- `evidence-reporter`：把结构化证据账本写成带 `[E<n>]` 引用的报告。
+- `hypothesis-reviser`：在 `FALSIFIED` 或 `INCONCLUSIVE` 后提出更严格的修正猜想。
+- `skeptical-phd`：**怀疑性审查**，只从已知 confounder catalog 中找替代解释（有限尺寸、eta 展宽、平凡 ABS、无序零模等）。
+
+这些 agents **只能提议、叙述和修正**。真正的哈密顿量构造、CF/GF 双路径计算、物理不变量检查和最终 verdict 都由确定性代码完成：
+
+```text
+science_agent/
+  core/        # Hypothesis, model catalog, verdict schema, discovery ledger
+  runtime/     # OpenCode client wrapper
+  stages/      # LLM-facing science stages (intake, reporting, revision, skeptical)
+  physics/     # deterministic runner + physics judge
+  prompts/     # versioned agent prompts (falsification-first)
+
+utils/physics/invariants.py  # hermiticity, p-h symmetry, current conservation, etc.
+examples/                    # runnable demos
+data/science_ledger/         # structured discovery records
+```
+
+### 证伪优先原则 (Falsification-First)
+
+LLM 天生具有谄媚倾向。我们的设计强制所有 agents **以证伪为目标**：
+- `science-intake` 必须输出 `falsification_strategy`
+- `experiment-designer` 必须为每个实验设计 `falsification_criterion`
+- `hypothesis-reviser` 不能弱化判据，只能收紧假设
+- `skeptical-phd` 只从已知 confounder catalog 中找替代解释
+
+### 结构化科学发现账本 (Discovery Ledger)
+
+每个猜想从提出到验证的全过程都被结构化记录：
+- `INITIAL` → `TESTING` → `SUPPORTED`/`FALSIFIED`/`INCONCLUSIVE`/`REFINED`
+- 包含证伪策略、实验证据、修正历史、怀疑性审查结果
+- 支持按状态查询、生成 markdown 摘要、追加式不可篡改
+
+```python
+from science_agent.core.ledger import Ledger
+ledger = Ledger(path="data/science_ledger/discoveries.json")
+ledger.add(discovery_record)
+ledger.update_status(record_id, "SUPPORTED", evidence={...})
+```
+
+设计原则：
+
+> **LLM proposes; deterministic physics disposes.**
+
+也就是说，LLM 可以提出模型、参数、控制实验和修正假设，但不能覆盖物理裁判。每个数字都必须来自可复现计算，每个结论都必须引用 evidence ledger。
+
+### 进阶：Virtual Lab / 课题组式 Science Agent
+
+我们进一步把 agent 架构从「线性流水线」升级为**认识论工作单元**：不只是让 agents 扮演不同角色，而是把 personality 变成**可执行的认知契约**——scope、time horizon、novelty、evidence threshold、interaction policy——而不是剧本台词。
+
+| 角色 | scope | time | novelty | evidence | interaction |
+|---|---|---|---|---|---|
+| `deep-specialist` | narrow | persistent | low | high | isolated |
+| `creative-explorer` | broad | single | very_high | low | sandbox |
+| `numerical-auditor` | narrow | single | very_low | very_high | readonly |
+| `skeptical-falsifier` | medium | single | medium | high | isolated |
+| `literature-cartographer` | broad | periodic | medium | citation | readonly |
+| `integrator` | global | periodic | low | synthesis | hub |
+
+**关键约束**（每条都是代码强制执行，不是 prompt 里的恳求）：
+
+1. **Context isolation + persistent scoped memory**: `deep-specialist` 只看自己的 track 和对应 ledger entry，看不到 `data/proposals/` 或 `data/audits/`，也不会被其他 agents 的观点污染
+2. **Two-buffer architecture**: `creative-explorer` 提案进入 `data/proposals/` (状态 `PROPOSED`)，只有经过 gate 后才能由 `integrator` 提升为 ledger 中的 `INITIAL`
+3. **File-based blackboard**: agents 互不直接对话，各自把结构化产物写入独立目录，只有 `integrator` 汇总
+4. **Gated synthesis**: `integrator` 提出综合后，确定性 gate 检查 (a) audit 是否 PASS、(b) skepticism 是否非 WEAK、(c) 是否存在 unresolved disagreement——否则 `SUPPORTED` 被降级为 `INCONCLUSIVE` 或 `NEEDS_MORE_DATA`
+5. **结构化分歧**: disagreements 通过 `Disagreement{dimension, position_a, position_b, resolution}` 结构记录，而非 LLM 散文
+6. **Hypothesis immutability**: `Hypothesis` class 是 frozen，reviser 不能修改既有判据，只能提出新假设
+
+```text
+                         Integrator / PI
+              分配问题、设置 checkpoint、综合证据
+                               │
+      ┌────────────┬───────────┼───────────┬────────────┐
+      ▼            ▼           ▼           ▼            ▼
+Deep Specialist  Creative   Numerical   Skeptical   Literature
+                  Explorer    Auditor     Falsifier   Cartographer
+      │            │           │           │            │
+ track.json   proposal.json audit.json skeptic.json literature.json
+      └────────────┴───────────┴───────────┴────────────┘
+                               │
+                   deterministic synthesis gate
+                               │
+                       discovery ledger
+
+  data/virtual_lab/
+    tracks/        deep-specialist persistent state
+    proposals/     creative-explorer sandbox
+    audits/        numerical-auditor reports
+    skepticism/    skeptical-falsifier reports
+    literature/    literature-cartographer maps
+    synthesis/     integrator synthesis reports
+    ledger.json    master discovery ledger
+```
+
+这些 PhD agents 不按 spectrum/transport/scaling 这种固定观测量命名，而按**认知角色**命名：专注、探索、审计、怀疑、文献、综合。这更接近真实科研组织：科学发现不是单个 LLM 推理，而是多个独立证据流经过确定性 gate 后的综合。
+
+**运行 Virtual Lab demo**:
+
+```bash
+.venv/bin/python -m examples.demo_virtual_lab
+```
+
 ## 主要功能
 
 ### 1. 输运计算方法
