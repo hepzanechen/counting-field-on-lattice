@@ -34,6 +34,9 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
 
+# Autonomous mode: the agent generates its own conjectures and runs the full Virtual Lab
+python -m examples.demo_auto_experiments --max 2
+
 # Native agentic pipeline: conjecture in, cited report out
 python -m examples.demo_native_agentic \
   "I conjecture that a Kitaev chain hosts Majorana zero modes when |mu| < 2|t|."
@@ -154,6 +157,74 @@ doc/agent/              # agent engineering design
 doc/physics/            # counting-field and lattice-physics notes
 opencode.json           # native OpenCode agent definitions
 ```
+
+## Engineering Metrics (Verified)
+
+| Metric | Value |
+|---|---:|
+| OpenCode native agents | 11 |
+| Virtual Lab cognitive roles | 6 |
+| Versioned prompt files | 11 |
+| Contract dataclasses | 8 |
+| Physics invariant checkers | 8 |
+| Deterministic gates | 7 |
+| Falsification-first constraints | 4 |
+| Registered domain models | 2 |
+| Available Hamiltonian classes | 14 |
+| Test functions | 5 |
+| Python source lines | 5,831 |
+| Prompt contract lines | 476 |
+
+### Experiment Run Statistics
+
+| Metric | Value |
+|---|---:|
+| Virtual Lab full cycles | 4 |
+| Native agentic pipeline runs | 4 |
+| Deterministic demo runs | 11 |
+| Total experiments executed | 19 |
+
+### Gate Enforcement Statistics
+
+| Metric | Value |
+|---|---:|
+| Numerical audit reports | 8 |
+| Audit FAIL blocks | 8/8 (100%) |
+| Dual-path detection failures | 5/8 |
+| Skepticism reports | 8 |
+| Total confounders checked | 48 |
+| Confounders ruled out by evidence | 6 |
+| `SUPPORTED` downgraded by gate | 4 |
+| Literature refs (supporting + contradicting) | 14 + 15 |
+| Knowledge gaps identified | 10 |
+
+### Discovery Ledger
+
+| Metric | Value |
+|---|---:|
+| Ledger records | 7 |
+| Total evidence entries | 18 |
+| Avg evidence per record | 2.57 |
+
+### Verdict Distribution
+
+| Run type | SUPPORTED | FALSIFIED | NEEDS_MORE_DATA | INCONCLUSIVE |
+|---|---:|---:|---:|---:|
+| Virtual Lab (LLM) | 0 | 0 | 4 | 0 |
+| Native agentic (LLM) | 2 | 1 | 0 | 1 |
+| Deterministic (zero LLM) | 10 | 1 | 0 | 0 |
+
+### Timing
+
+| Metric | Value |
+|---|---|
+| pytest all pass | 2.4 s |
+| Deterministic Kitaev MZM demo | 4.0 s |
+| Deterministic Phase Boundary demo | 5.1 s |
+| Virtual Lab full cycle (6 LLM calls) | ~4 min |
+| Native agentic pipeline (3 LLM calls) | ~30 s |
+
+> Full metrics JSON: `data/metrics/engineering_metrics.json`
 
 ## Tests
 

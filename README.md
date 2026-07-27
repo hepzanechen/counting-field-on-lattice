@@ -34,6 +34,9 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
 
+# 自主实验模式：agent 自己生成猜想并运行完整 Virtual Lab
+python -m examples.demo_auto_experiments --max 2
+
 # OpenCode-native pipeline：猜想输入，带引用报告输出
 python -m examples.demo_native_agentic \
   "I conjecture that a Kitaev chain hosts Majorana zero modes when |mu| < 2|t|."
@@ -154,6 +157,74 @@ doc/agent/              # agent engineering design
 doc/physics/            # counting-field and lattice physics notes
 opencode.json           # native OpenCode agent definitions
 ```
+
+## 工程指标（已验证）
+
+| 指标 | 数值 |
+|---|---:|
+| OpenCode native agents | 11 |
+| Virtual Lab 认知角色 | 6 |
+| 版本化 prompt 文件 | 11 |
+| 认知契约 dataclass | 8 |
+| 物理不变量检查器 | 8 |
+| 确定性 gate 数量 | 7 |
+| 证伪优先约束 | 4 |
+| 注册 domain 模型 | 2 |
+| 可用哈密顿量类 | 14 |
+| 测试函数 | 5 |
+| Python 源代码行 | 5,831 |
+| Prompt 契约行 | 476 |
+
+### 实验运行统计
+
+| 指标 | 数值 |
+|---|---:|
+| Virtual Lab 完整 cycle | 4 次 |
+| Native agentic pipeline | 4 次 |
+| 确定性 demo 运行 | 11 次 |
+| 总实验执行次数 | 19 |
+
+### Gate 执行统计
+
+| 指标 | 数值 |
+|---|---:|
+| 数值审计报告 | 8 |
+| 审计 FAIL 拦截 | 8/8 (100%) |
+| 双路径检测 fail | 5/8 |
+| 怀疑性报告 | 8 |
+| 检查的 confounder 总数 | 48 |
+| 被 evidence 排除的 confounder | 6 |
+| `SUPPORTED` 被 gate 降级 | 4 次 |
+| 文献引用（支持 + 反对） | 14 + 15 |
+| 知识 gap 识别 | 10 |
+
+### Discovery Ledger
+
+| 指标 | 数值 |
+|---|---:|
+| Ledger 记录数 | 7 |
+| 证据条目总数 | 18 |
+| 平均每记录证据数 | 2.57 |
+
+### 判决分布
+
+| 运行类型 | SUPPORTED | FALSIFIED | NEEDS_MORE_DATA | INCONCLUSIVE |
+|---|---:|---:|---:|---:|
+| Virtual Lab (LLM) | 0 | 0 | 4 | 0 |
+| Native agentic (LLM) | 2 | 1 | 0 | 1 |
+| Deterministic (零 LLM) | 10 | 1 | 0 | 0 |
+
+### 耗时
+
+| 指标 | 数值 |
+|---|---|
+| pytest 全部通过 | 2.4 秒 |
+| 确定性 Kitaev MZM demo | 4.0 秒 |
+| 确定性 Phase Boundary demo | 5.1 秒 |
+| Virtual Lab 完整 cycle（含 6 次 LLM 调用） | ~4 分钟 |
+| Native agentic pipeline（含 3 次 LLM 调用） | ~30 秒 |
+
+> 完整 metrics JSON: `data/metrics/engineering_metrics.json`
 
 ## 测试
 
