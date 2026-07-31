@@ -596,3 +596,19 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   `FALSIFIED` once real `Nx` scaling data exists, since `Delta≠0` at `mu=0` maps onto the
   Kitaev sweet spot where the gap is exponentially small, not power-law). No code
   changes this iteration.
+
+- **2026-08-01, iteration 11** (`AUTO-20260801_072912-1`): another Kitaev critical-point
+  gap-scaling exponent conjecture (`|mu|=2|t|`). Model: `KitaevChain`,
+  `Nx=20, mu=2.0, t=1, Delta=0.5`. **Result: `NEEDS_MORE_DATA`, no timeout, 589.3s total**
+  — eleventh consecutive clean run (11/11 since the fix). `dual_path_agreement` fails at
+  the critical point again, but at a **new magnitude: 13.2%**, roughly double the
+  `~6.05%` value seen repeatedly at the same `Nx=20, mu=2.0` with `Delta=1.0`. **This is
+  a new, useful data point for the still-open Kitaev critical-point investigation**:
+  unlike the SSH dual-path issue (confirmed `Delta`-independent, iteration 4), the
+  Kitaev critical-point disagreement magnitude *does* appear to scale with `Delta`
+  (`13.2%` at `Delta=0.5` vs. `~6.05%` at `Delta=1.0`, same `Nx`/`mu`) — another concrete
+  distinguishing fact between the two open dual-path threads, worth keeping in the
+  eventual root-cause investigation. Good literature engagement again: strong consensus
+  (6 sources, relevance 0.8-0.95) against a `z=2` exponent at this transition, and the
+  synthesis explicitly declined to falsify on literature priors alone, correctly waiting
+  for a clean deterministic sweep. No code changes this iteration.
