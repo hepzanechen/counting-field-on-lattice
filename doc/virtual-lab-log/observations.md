@@ -504,3 +504,12 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   with an obvious correct answer, and ledger history is meant to be immutable regardless.
   Flagging prominently for the user's judgment in the morning rather than guessing at a
   fix or attempting to alter the ledger entry.
+
+- **2026-08-01, iteration 7** (`AUTO-20260801_052900-1`): conjecture about oscillatory
+  Majorana splitting scaling near `mu=0.5` (topological) vs. `mu=3` (trivial). Model:
+  `KitaevChain`. **Result: `NEEDS_MORE_DATA`, no timeout, 607.2s total** — seventh
+  consecutive clean run, fastest yet. Routine, solid iteration: both experiments PASS
+  cleanly (`dual_path_agreement` 0.21% and an `atol_dominated=True` 18.6% pass, correctly
+  handled — second confirmation of the iteration-5 finding). Correctly held at
+  `NEEDS_MORE_DATA` for sound reasons (single-point scaling claim, no boundary-approach
+  sweep, WEAK skepticism). Nothing novel or concerning this iteration — no code changes.

@@ -11,3 +11,4 @@ Auto-appended by `examples.benchmark_virtual_lab --append`. Each row is a cumula
 | 2026-08-01 04:17:33 | 4/4 (1.0) | 702.0s / Nones | {} | {'NEEDS_MORE_DATA': 4} | {'KitaevChain': 2, 'SSHChainBdG': 2} |
 | 2026-08-01 04:43:32 | 5/5 (1.0) | 701.2s / Nones | {} | {'NEEDS_MORE_DATA': 5} | {'KitaevChain': 3, 'SSHChainBdG': 2} |
 | 2026-08-01 05:18:17 | 6/6 (1.0) | 711.8s / Nones | {} | {'NEEDS_MORE_DATA': 5, 'FALSIFIED': 1} | {'KitaevChain': 4, 'SSHChainBdG': 2} |
+| 2026-08-01 05:40:16 | 7/7 (1.0) | 686.3s / Nones | {} | {'NEEDS_MORE_DATA': 6, 'FALSIFIED': 1} | {'KitaevChain': 5, 'SSHChainBdG': 2} |
