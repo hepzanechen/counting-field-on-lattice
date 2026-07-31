@@ -513,3 +513,14 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   handled — second confirmation of the iteration-5 finding). Correctly held at
   `NEEDS_MORE_DATA` for sound reasons (single-point scaling claim, no boundary-approach
   sweep, WEAK skepticism). Nothing novel or concerning this iteration — no code changes.
+
+- **2026-08-01, iteration 8** (`AUTO-20260801_060316-1`): conjecture claimed Majorana
+  splitting oscillates in `mu` with a period persisting *throughout* the whole
+  topological region `|mu|<2|t|`. Model: `KitaevChain`. **Result: `NEEDS_MORE_DATA`, no
+  timeout, 580.1s total** — eighth consecutive clean run. Both experiments clean
+  (`dual_path_agreement` 0.22% and a third `atol_dominated=True` correctly-handled pass).
+  Good literature engagement: the cartographer correctly narrowed the claim, citing that
+  established literature (Hegde & Vishveshwara 2016; Kao 2014) confines the oscillation
+  to a specific sub-region (`mu²+(2·Delta)²<(2t)²`), not the full topological phase as
+  the hypothesis over-broadly claimed — a legitimate, specific scope correction, not just
+  generic hedging. Nothing novel or concerning — no code changes.
