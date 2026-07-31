@@ -401,3 +401,33 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   is a physics judgment call, not a computable metric. Recording as an open question
   rather than a fix; genuinely unclear which convention is right without more context on
   this project's SSH conventions, and not confident enough to file it as a bug.
+
+- **2026-08-01, iteration 4** (`AUTO-20260801_040304-1`): conjecture predicted the SSH
+  edge-mode localization length `xi ~ A/|1-r|` (`r=t_v/t_u`) diverging at the critical
+  point `r=1`, maximized there for any accessible `Nx_cell`. Model: `SSHChainBdG`,
+  `Delta=0` (pure SSH, no pairing). **Result: `NEEDS_MORE_DATA`, no timeout, 686.8s
+  total** — fourth consecutive clean-completing run. **A precise structural pattern is
+  now visible across this and iteration 3's data** (4 points, 2 independent runs):
+
+  | experiment | `t_u` | `t_v` | `Delta` | `dual_path max_rel_error` | verdict |
+  |---|---|---|---|---|---|
+  | iter4 `ssh_critical_gap_closing` | 1.0 | 1.0 | 0.0 | **0.011** (PASS) | r=1, gapless |
+  | iter3 `ssh_trivial_pairing_control` | 0.2 | 1.0 | 0.2 | 1.33 | r=5 |
+  | iter4 `ssh_deep_topological_control` | 1.0 | 0.2 | 0.0 | **346.7** | r=0.2 |
+  | iter3 `ssh_topo_pairing_split` | 1.0 | 0.2 | 0.2 | **369.7** | r=0.2 |
+
+  Two things stand out: (1) `Delta` doesn't matter much — the two `t_u=1.0, t_v=0.2` rows
+  give ~347 and ~370 regardless of `Delta=0` vs `0.2`, so this failure is **not** about
+  pairing at all, unlike the (already-fixed) Hermiticity bug; it's about strongly
+  asymmetric dimerization specifically producing near-machine-zero transmission. (2) the
+  failure is **not symmetric under `t_u↔t_v` relabeling**: `t_u=1.0,t_v=0.2` (`r=0.2`)
+  gives ~350-370x, while the physically-mirrored `t_u=0.2,t_v=1.0` (`r=5`) gives only
+  1.33x — a ~250-fold difference for what should be an equivalent dimerization strength
+  by symmetry. That asymmetry is a real clue: something in the transport-path code (lead
+  coupling convention, which end couples to which sublattice, or similar) treats `t_u`
+  and `t_v` differently, not just "small transmission is numerically noisy" in a
+  symmetric way. **Not root-caused, not fixed this iteration** — this needs actual
+  investigation into `methods/counting_field` vs `methods/negf` internals, which is a
+  larger, riskier change than the bar set for autonomous fixes tonight. Recording the
+  precise pattern here so whoever picks this up next doesn't have to rediscover it.
+  Hermiticity again clean (`Delta=0`, trivially expected but confirms nothing regressed).
