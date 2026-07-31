@@ -457,3 +457,50 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   raw JSON. Correcting the record: the prompt-update follow-up may not be necessary after
   all; recommend not bothering unless a *future* iteration shows the misreading
   recurring despite the field being present.
+
+- **2026-08-01, iteration 6** (`AUTO-20260801_050302-1`): conjecture claimed the smallest
+  *non-zero* Kitaev BdG eigenvalue decays exponentially with system size,
+  `E_j(N)=A·exp(-N/xi)`, over `N∈[4,40]`, at the special point `mu=0, t=Delta=1`. Model:
+  `KitaevChain`. **Result: `FALSIFIED`, no timeout, 781.8s total** — sixth consecutive
+  clean-completing run, and **the first `FALSIFIED` verdict in this project's entire
+  history** (9 prior hypotheses from before the fixes + 5 post-fix runs tonight had all
+  landed on `TESTING`/`NEEDS_MORE_DATA`, none ever `SUPPORTED` or `FALSIFIED`).
+
+  **The physics reasoning behind it is genuinely sound**: the literature-cartographer
+  cited Kitaev 2001 itself (plus Leumer 2020, Kawabata 2017, relevance 0.9-1.0) for the
+  well-known fact that at this exact "sweet spot" (`mu=0, Delta=t`), the Kitaev chain's
+  Majorana representation fully dimerizes into decoupled pairs, giving an *exactly flat*
+  bulk band at `E=±2t` — the non-zero eigenvalues are analytically **N-independent**, not
+  exponentially decaying, at this specific point. The synthesis correctly distinguished
+  this from a different, correct claim about a different observable ([L1]-[L3], lower
+  relevance 0.3-0.4): exponential decay *does* apply to the Majorana **splitting**
+  (the zero-mode pair energy) away from this special point — the hypothesis conflated the
+  two, and the reviewers caught it. This is a well-reasoned, correctly-cited falsification
+  on its physics merits.
+
+  **However, a real methodological gap sits underneath it, worth flagging explicitly**:
+  the *deterministic* evidence backing this `FALSIFIED` status doesn't actually test the
+  claim. (1) The hypothesis's own `falsification_strategy` calls for a semi-log fit of
+  `|E_min(N)|` vs. `N` over `N∈[4,40]` — no such sweep was ever run; only a single point
+  at `Nx=40` exists in the evidence log. (2) That single point's `min_abs_eigenvalue`
+  observable is `ev.abs().min()` (confirmed: `examples/demo_auto_experiments.py:72`) —
+  at `mu=0` this is *exactly* the zero mode (`0.0`), not the "smallest non-zero
+  eigenvalue" the hypothesis is actually about. The fixed observable set
+  (`min_abs_eigenvalue`, `zero_bias_andreev`, `zero_bias_transmission`) has **no way to
+  report a second-smallest/smallest-non-zero eigenvalue at all**, so the deterministic
+  runner is structurally incapable of testing this specific hypothesis as posed. The
+  `FALSIFIED` status was reached by the integrator's own literature-based analytical
+  argument (correctly applied, but still LLM reasoning about a known exact solution) laid
+  on top of a measurement that doesn't match the claimed observable — not by
+  deterministic Python numerics directly falsifying the claim, which is the stated
+  design principle in `CLAUDE.md` ("deterministic physics disposes"). Nothing in
+  `run_full_cycle`/`orchestrator.py` currently checks whether a hypothesis's requested
+  observable is even measurable before running it, or whether the falsification strategy's
+  requested sweep actually happened before allowing a terminal verdict.
+
+  **Not fixed, not reversed** — this is a design/process question (should `FALSIFIED`
+  require the deterministic runner to have measured the literally-claimed quantity, or is
+  literature-supported analytical falsification an acceptable path?) rather than a bug
+  with an obvious correct answer, and ledger history is meant to be immutable regardless.
+  Flagging prominently for the user's judgment in the morning rather than guessing at a
+  fix or attempting to alter the ledger entry.
