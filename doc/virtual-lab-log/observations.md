@@ -431,3 +431,29 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   larger, riskier change than the bar set for autonomous fixes tonight. Recording the
   precise pattern here so whoever picks this up next doesn't have to rediscover it.
   Hermiticity again clean (`Delta=0`, trivially expected but confirms nothing regressed).
+
+- **2026-08-01, iteration 5** (`AUTO-20260801_042915-1`): conjecture proposed an
+  oscillatory MZM-splitting envelope `exp(-Nx/xi)·cos(2·k_F·Nx+phi)` with
+  `k_F=arccos(mu/2t)/2`, framing the oscillation period as an independent measurement of
+  `mu`. Model: `KitaevChain`, `Nx=20, t=1, Delta=0.5`. **Result: `NEEDS_MORE_DATA`, no
+  timeout, 722.8s total** — fifth consecutive clean-completing run (5/5 since the timeout
+  fix landed). Both experiments PASS deterministically; skepticism **STRONG** on both
+  (the falsifier explicitly ruled out all six catalogued confounders for [E1] — the
+  strongest skeptical assessment logged all night). Correctly held at `NEEDS_MORE_DATA`
+  purely because the quantitative functional form was never actually measured (only two
+  static points, no `Nx`/`mu` sweep) — not because of any flaw in what was measured.
+
+  **Notable validation of the `atol_dominated` fix (commit `7af1a2c`)**: the `mu=3`
+  trivial experiment has `dual_path_agreement: passed=True, max_rel_error=0.20,
+  atol_dominated=True` — exactly the pattern that caused a false "audit FAIL" claim in
+  iteration 2 and in the 2026-07-17 ledger. This time the `numerical-auditor`'s own audit
+  report (`data/virtual_lab/audits/kitaev_trivial_no_edge_mode.json`) reads: *"Dual-path
+  agreement passed via absolute-tolerance gate (atol_dominated=true). 20% relative error
+  is expected and acceptable for near-zero transport signals... absolute deviations
+  remain below 1e-5 threshold."* — correct reasoning, and it explicitly names the new
+  field. **This happened without updating `numerical_auditor.md`** (that prompt update
+  was flagged as a "not done yet" follow-up in the `7af1a2c` commit message) — the
+  self-descriptive field name alone was enough for the LLM to reason correctly from the
+  raw JSON. Correcting the record: the prompt-update follow-up may not be necessary after
+  all; recommend not bothering unless a *future* iteration shows the misreading
+  recurring despite the field being present.

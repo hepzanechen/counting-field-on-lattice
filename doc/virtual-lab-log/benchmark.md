@@ -9,3 +9,4 @@ Auto-appended by `examples.benchmark_virtual_lab --append`. Each row is a cumula
 | 2026-08-01 03:16:11 | 2/2 (1.0) | 734.5s / Nones | {} | {'NEEDS_MORE_DATA': 2} | {'KitaevChain': 2} |
 | 2026-08-01 03:42:55 | 3/3 (1.0) | 707.0s / Nones | {} | {'NEEDS_MORE_DATA': 3} | {'KitaevChain': 2, 'SSHChainBdG': 1} |
 | 2026-08-01 04:17:33 | 4/4 (1.0) | 702.0s / Nones | {} | {'NEEDS_MORE_DATA': 4} | {'KitaevChain': 2, 'SSHChainBdG': 2} |
+| 2026-08-01 04:43:32 | 5/5 (1.0) | 701.2s / Nones | {} | {'NEEDS_MORE_DATA': 5} | {'KitaevChain': 3, 'SSHChainBdG': 2} |

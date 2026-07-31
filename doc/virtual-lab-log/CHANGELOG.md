@@ -36,12 +36,14 @@ key-set validation (checked `agent_runner.py`, `orchestrator.py`,
 `core/contracts.py::AuditReport` — the latter is the LLM auditor's own output schema, a
 separate structure, not a parser of the raw judge_report dict) — adding a key is safe.
 
-**Not done yet**: `src/science_agent/prompts/numerical_auditor.md` doesn't currently
-explain this field to the `numerical-auditor` role, so the LLM auditor still won't
-*use* it without a prompt update — that's a natural follow-up, deliberately left out of
-this change to keep it small and independently verifiable (prompt changes affect LLM
-behavior in ways `pytest` can't check). Whether the recurring misreading stops should be
-observable in future loop iterations' synthesis memos once/if the prompt is updated.
+**Update (loop iteration 5, same day)**: the predicted prompt-update follow-up turned out
+to be unnecessary. `numerical_auditor.md` was never updated, but iteration 5's audit
+report (`data/virtual_lab/audits/kitaev_trivial_no_edge_mode.json`) correctly reasoned
+*"Dual-path agreement passed via absolute-tolerance gate (atol_dominated=true). 20%
+relative error is expected and acceptable..."* — the self-descriptive field name in the
+raw JSON was sufficient for the LLM to use it correctly without explicit prompt
+instructions. Leaving the prompt unchanged; revisit only if the misreading is observed
+recurring in a later iteration despite the field being present.
 
 ---
 
