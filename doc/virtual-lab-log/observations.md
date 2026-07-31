@@ -524,3 +524,56 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   to a specific sub-region (`mu²+(2·Delta)²<(2t)²`), not the full topological phase as
   the hypothesis over-broadly claimed — a legitimate, specific scope correction, not just
   generic hedging. Nothing novel or concerning — no code changes.
+
+- **2026-08-01, iteration 9** (`AUTO-20260801_062911-1`): conjecture about the Kitaev
+  critical-point gap-scaling exponent at `mu=2|t|`. Model: `KitaevChain`,
+  `Nx=20, mu=2.0, t=1, Delta=1`. **Result: `NEEDS_MORE_DATA`, no timeout, 436.4s total** —
+  ninth consecutive clean run, fastest yet. `dual_path_agreement` fails genuinely at the
+  critical point (`max_rel_error=0.0605`) — a numerically *identical* value to every
+  prior occurrence of this exact parameter combination going back to the original
+  2026-07-31 findings, since it's deterministic. This is now well past enough repetition
+  to just be "another Kitaev critical-point sample" — see the structural finding below
+  instead, which is the substantive result of this iteration's deeper pass.
+
+  **Deeper pass — a likely structural explanation for why nothing has ever reached
+  `SUPPORTED`.** All 23 hypotheses across this project's entire recorded history (14
+  pre-fix + 9 tonight) have landed on `NEEDS_MORE_DATA` or `FALSIFIED`, never
+  `SUPPORTED`. Checked why: `src/science_agent/orchestrator.py::run_full_cycle` calls
+  `ledger.add(record)` unconditionally at the start of *every* invocation, constructing a
+  brand-new `DiscoveryRecord` with empty evidence. `Ledger.add()`
+  (`src/science_agent/core/ledger.py:69-71`) does `self.records[record.id] = record` — a
+  full dict-assignment overwrite, not a merge. `examples/demo_auto_experiments.py` mints
+  a fresh `hypothesis_id` (`f"AUTO-{stamp}-{i+1}"`) every cycle. Net effect: **every
+  autonomous cycle is a self-contained unit that always produces exactly 2 experiments
+  (1 positive + 1 control) and can never accumulate more** — there is no code path by
+  which a hypothesis gets a 3rd, 4th, 5th piece of evidence across multiple invocations.
+  Confirmed directly: every one of tonight's 9 ledger records has exactly 3 `evidence`
+  entries (2 real experiments + 1 synthesis-stage entry, which isn't independent
+  evidence in the `CLAUDE.md` sense).
+
+  This matters because `CLAUDE.md`'s own `ROLE_DIMENSIONS` table specifies
+  `deep-specialist` needs "≥3 independent evidence entries" — a bar the current
+  `demo_auto_experiments` operational mode can *structurally never reach*. Meanwhile the
+  creative-explorer keeps generating quantitative, multi-point claims (scaling exponents,
+  oscillation periods, localization lengths) that *require* a sweep to establish, and the
+  skeptical-falsifier correctly and consistently marks single-point evidence as WEAK for
+  exactly this reason (its stated top confounder nearly every iteration tonight:
+  "finite-size artifact — only one Nx/mu tested"). WEAK skepticism unconditionally caps
+  the gate below `SUPPORTED` (`orchestrator.py`'s `skeptic_weak` check). So the pattern
+  isn't "the science agent keeps failing to find support" — it's "the current tooling
+  makes finding support close to structurally impossible for the kind of hypotheses
+  being generated," a distinct and more actionable diagnosis. (Iteration 6's `FALSIFIED`
+  bypassed this entirely via literature-based analytical reasoning, which explains why
+  reaching *that* status turned out to be "easier" than `SUPPORTED` in this architecture
+  — a related asymmetry already flagged in iteration 6's entry.)
+
+  **Not fixed.** A real fix (e.g., `run_full_cycle` checking whether `record_id` already
+  exists and extending rather than recreating it, plus a `demo_auto_experiments` mode
+  that revisits existing `TESTING`/`NEEDS_MORE_DATA` hypotheses with additional sweep
+  points instead of always generating new ones) is exactly the kind of "sweeping" change
+  explicitly out of scope for tonight's autonomous fixes — it touches core hypothesis
+  lifecycle semantics, not an isolated bug. Also worth flagging precisely:
+  **naively calling `run_full_cycle` twice with the same `hypothesis_id` would not
+  accumulate evidence — it would silently destroy the prior evidence**, since `add()`
+  overwrites rather than merges. Any future fix needs to handle that explicitly, not just
+  reuse IDs. Promoting this to `improvements.md` as a new top-priority item.

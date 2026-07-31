@@ -1,12 +1,16 @@
 # What to improve — distilled from the 2026-07-31 Virtual Lab run
 
 Digest of `observations.md` in this folder, reduced to actionable engineering items,
-ranked by leverage (cost to fix vs. how much verdict-yield it unblocks). Nothing here has
-been fixed — this is a punch list for whenever the corresponding area is back in scope.
-`src/quantum_transport/hamiltonians` and `methods` changes need the author's sign-off per
-standing project convention.
+ranked by leverage (cost to fix vs. how much verdict-yield it unblocks). Items marked
+**[FIXED]** below were addressed during the 2026-08-01 overnight `science-agent-infra`
+loop (see `CHANGELOG.md` for commits/verification); everything else is still a punch
+list for whenever the corresponding area is back in scope. `src/quantum_transport/
+hamiltonians` and `methods` changes need the author's sign-off per standing project
+convention — items #2 and #7 touch that area; #2 was judged small/root-caused enough to
+qualify under the explicit overnight authorization, #7 was deliberately left alone as
+too large a change to make unsupervised.
 
-## 1. LLM-call timeout is the dominant failure mode (highest leverage)
+## 1. [FIXED 2026-08-01] LLM-call timeout is the dominant failure mode (highest leverage)
 
 **Symptom**: of 10 full Virtual Lab cycles run this session (1 standalone `demo_virtual_lab`
 run + `--max 3` batch + 6 loop iterations, each `demo_auto_experiments` batch generating
@@ -37,6 +41,12 @@ forever. That's the most expensive possible place to lose a cycle.
   safety-critical — losing a literature map is less costly than losing a verdict) so a
   slow literature call doesn't block reaching `integrator` at all.
 
+**Fixed 2026-08-01** (commit `1e9e507`): timeout raised 300s→600s, `TimeoutExpired`
+converted to `LLMError` so the existing retry loop covers it, and
+`generate_conjectures()` wrapped in try/except. Result: **9/9 (100%) cycles completed
+without a timeout** in the following overnight loop (iterations 1-9), vs. 70% failure
+before. Completion rate, not just theory — see `benchmark.md`.
+
 ## 2. `SSHChainBdG` pairing term is non-Hermitian whenever `Delta != 0` (root-caused)
 
 **Location**: `src/quantum_transport/hamiltonians/Central.py:951-963`,
@@ -66,6 +76,13 @@ showed a genuine, separate `dual_path_agreement` failure in the topological regi
 alone will not make `SSHChainBdG` fully clean; expect a second, distinct dual-path issue
 to surface once this one is fixed.
 
+**Fixed 2026-08-01** (commit `1e9e507`): confirmed the caveat above was correct —
+hermiticity now verified clean across **4 independent `Delta` values** in the following
+overnight loop (`0.2`, `0.2` again, `0.0`×2), but the predicted second dual-path issue is
+real: it's `Delta`-independent (not a pairing effect) and asymmetric under `t_u↔t_v`
+relabeling, characterized precisely in loop iterations 3-4 of `observations.md`. Still
+open — see the "second SSH dual-path issue" thread there.
+
 ## 3. Kitaev dual-path (NEGF vs. counting-field) disagreement at the critical point
 
 **Symptom**: `check_dual_path_agreement` fails specifically at/near `|mu|=2|t|`
@@ -79,7 +96,7 @@ matrix inversion right at the gap-closing point for one of the two paths (NEGF o
 counting-field) — worth a targeted convergence study (finer eta/grid at fixed `mu=2t`,
 compare against known-analytic behavior) before touching any code.
 
-## 4. `check_dual_path_agreement`'s `max_rel_error` metric is misleading near zero
+## 4. [FIXED 2026-08-01, validated in production] `check_dual_path_agreement`'s `max_rel_error` metric is misleading near zero
 
 **Location**: `src/quantum_transport/utils/physics/invariants.py:49-58`. The reported
 `max_rel_error` uses a denominator floored at `atol` (`obs_b.abs().clamp(min=atol)`), while
@@ -93,6 +110,12 @@ inspection, a correct pass. **Suggested fix**: either don't surface `max_rel_err
 when the check passes via the `atol` floor, or report a second field
 (e.g. `atol_dominated: bool`) so downstream LLM roles don't have to reverse-engineer
 whether a large-looking relative error was actually gated by `atol`.
+
+**Fixed 2026-08-01** (commit `7af1a2c`): added exactly the suggested `atol_dominated`
+field. Better than hoped: it worked *without* updating `numerical_auditor.md` to explain
+it — the field name alone was self-descriptive enough for the LLM auditor to reason
+correctly from raw JSON (loop iteration 5, corroborated again iterations 7-9). No
+recurrence of the misreading since. Consider this fully resolved, not just patched.
 
 ## 5. Process risk: LLM auditor claims about the deterministic gate aren't checked
 
@@ -114,11 +137,52 @@ larger `--max 3` batch. The registered `CATALOG` in
 how much `creative-explorer` can diversify. Not urgent, but worth remembering if/when a
 third domain model is added — it would directly widen the exploration space.
 
+## 7. No mechanism exists for a hypothesis to accumulate ≥3 evidence entries — likely
+explains why `SUPPORTED` has never once been reached
+
+**Found**: 2026-08-01, loop iteration 9's deeper pass (see `observations.md` for full
+derivation). All 23 hypotheses across the project's entire recorded history (14 pre-fix +
+9 in the overnight loop, after items #1/#2/#4 above were fixed) landed on
+`NEEDS_MORE_DATA` or `FALSIFIED` — never `SUPPORTED`.
+
+**Root cause**: `orchestrator.py::run_full_cycle` calls `ledger.add(record)`
+unconditionally at the top of every invocation, constructing a fresh `DiscoveryRecord`
+with empty evidence. `Ledger.add()` (`core/ledger.py:69-71`) is `self.records[record.id]
+= record` — full overwrite, not merge. `demo_auto_experiments.py` mints a new
+`hypothesis_id` every cycle. Result: every autonomous cycle produces exactly 2
+experiments (1 positive + 1 control) and there is no code path to add a 3rd, 4th, 5th
+across separate invocations — directly contradicting `CLAUDE.md`'s own
+`ROLE_DIMENSIONS` spec of "≥3 independent evidence entries" for `deep-specialist`.
+Meanwhile the creative-explorer consistently proposes quantitative, multi-point claims
+(scaling exponents, oscillation periods) that structurally require a sweep, and the
+skeptical-falsifier correctly marks single-point evidence WEAK for exactly that reason —
+which unconditionally caps the gate below `SUPPORTED`. The system isn't failing to find
+support; the tooling makes finding it close to structurally impossible for the
+hypotheses being generated.
+
+**Danger for any future fix**: naively reusing a `hypothesis_id` across calls would not
+accumulate evidence — `Ledger.add()`'s overwrite semantics mean it would **silently
+destroy** the prior evidence. A real fix needs `run_full_cycle` to check for an existing
+record and extend it (or a new function/mode entirely), not just pass the same ID twice.
+
+**Not fixed** — deliberately, this is core hypothesis-lifecycle logic, not an isolated
+bug, and is explicitly the kind of "sweeping" change kept out of scope for autonomous
+overnight fixes. Likely the single highest-value fix for actually producing supported
+scientific claims, but needs deliberate design (does re-running an existing hypothesis
+still respect "cheapest falsifying experiment"? does the deep-specialist track file
+need to drive which follow-up experiment gets proposed? etc.), not a quick patch.
+
 ## Priority order if picking one thing to fix next
 
-1. Timeout/retry handling (§1) — unblocks the other findings from ever being reachable at
-   scale; currently ~70% of cycles this session produced zero verdict.
-2. SSHChainBdG Hermiticity (§2) — root-caused, small, well-isolated fix.
-3. `max_rel_error` reporting (§4) — small, prevents future misdiagnosis by LLM roles.
-4. Kitaev critical-point dual-path conditioning (§3) — needs investigation, not just a fix.
-5. Diversity / auditor-claim-checking (§5, §6) — longer-horizon, more design work.
+1. ~~Timeout/retry handling (§1)~~ — **done 2026-08-01**, 100% completion rate since.
+2. ~~SSHChainBdG Hermiticity (§2)~~ — **done 2026-08-01**, verified across 4 `Delta` values.
+3. ~~`max_rel_error` reporting (§4)~~ — **done 2026-08-01**, validated working in production.
+4. **Evidence-accumulation mechanism (§7) — now the top open item.** Highest remaining
+   leverage: everything else in this list only affects reliability/correctness of
+   individual cycles, but this is the one thing structurally preventing the science
+   agent from ever reaching a positive result at all. Needs careful design, not a quick
+   patch — recommend treating as its own planning session, not an autonomous fix.
+5. Kitaev critical-point dual-path conditioning (§3) — needs investigation, not just a fix.
+6. Second SSHChainBdG dual-path issue (§2's caveat, now precisely characterized in
+   `observations.md` loop iterations 3-4: `Delta`-independent, `t_u/t_v`-asymmetric).
+7. Diversity / auditor-claim-checking (§5, §6) — longer-horizon, more design work.
