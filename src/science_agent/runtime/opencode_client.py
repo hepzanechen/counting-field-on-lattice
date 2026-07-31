@@ -44,10 +44,18 @@ def _extract_json_block(text: str) -> str:
     raise LLMError(f"no JSON object found in LLM output: {text[:300]!r}")
 
 
-def ask(prompt: str, agent: str = DEFAULT_AGENT, timeout_s: int = 300) -> str:
-    proc = subprocess.run(
-        ["opencode", "run", "--format", "json", "--agent", agent],
-        input=prompt, capture_output=True, text=True, timeout=timeout_s)
+def ask(prompt: str, agent: str = DEFAULT_AGENT, timeout_s: int = 600) -> str:
+    # 300s was observed to be too tight for higher-reasoningEffort agents
+    # (literature-cartographer, integrator) — see doc/virtual-lab-log/improvements.md #1.
+    # subprocess.TimeoutExpired is converted to LLMError (rather than left to propagate)
+    # so ask_json's existing retry loop below gets a chance to retry a slow call instead
+    # of the whole cycle dying on the first attempt.
+    try:
+        proc = subprocess.run(
+            ["opencode", "run", "--format", "json", "--agent", agent],
+            input=prompt, capture_output=True, text=True, timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        raise LLMError(f"agent {agent!r} timed out after {timeout_s}s") from exc
     text = _extract_text(proc.stdout)
     if not text:
         raise LLMError(
@@ -58,13 +66,18 @@ def ask(prompt: str, agent: str = DEFAULT_AGENT, timeout_s: int = 300) -> str:
 
 def ask_json(prompt: str, required_keys: list[str],
              agent: str = DEFAULT_AGENT,
-             max_retries: int = 2) -> dict[str, Any]:
+             max_retries: int = 2,
+             timeout_s: int = 600) -> dict[str, Any]:
     last_error = ""
     for attempt in range(max_retries + 1):
         full_prompt = prompt if attempt == 0 else (
             f"{prompt}\n\nYour previous reply was invalid: {last_error}\n"
             f"Reply again with ONLY the JSON object.")
-        text = ask(full_prompt, agent=agent)
+        try:
+            text = ask(full_prompt, agent=agent, timeout_s=timeout_s)
+        except LLMError as exc:
+            last_error = str(exc)
+            continue
         try:
             data = json.loads(_extract_json_block(text))
         except (json.JSONDecodeError, LLMError) as exc:

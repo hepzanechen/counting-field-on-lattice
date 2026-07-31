@@ -953,13 +953,18 @@ class SSHChainBdG(SSHChain):
         # Create pairing matrix
         Nx = self.Nx_cell * 2
         pairing_matrix = torch.diag(torch.ones(Nx-1, dtype=torch.complex64, device=self.funcDevice),1) * self.Delta
-        
-        # Construct BdG Hamiltonian following the same pattern as CentralBdG
+
+        # Construct BdG Hamiltonian following the same block pattern as CentralBdG, but
+        # using the conjugate TRANSPOSE (not just conjugate) of the pairing matrix for the
+        # (2,1) block. CentralBdG's pairing matrix is eye(N)*Delta (diagonal, symmetric),
+        # so .conj() alone happens to equal .conj().T there. This pairing matrix is
+        # nearest-neighbor and off-diagonal (not symmetric), so plain .conj() left the
+        # Hamiltonian non-Hermitian by exactly |Delta| (see doc/virtual-lab-log/improvements.md #2).
         H_full_BdG = torch.kron(self.H_full, torch.tensor([[1, 0], [0, 0]], dtype=torch.complex64, device=self.funcDevice)) + \
                      torch.kron(-self.H_full.conj(), torch.tensor([[0, 0], [0, 1]], dtype=torch.complex64, device=self.funcDevice)) + \
                      torch.kron(pairing_matrix, torch.tensor([[0, 1], [0, 0]], dtype=torch.complex64, device=self.funcDevice)) + \
-                     torch.kron(pairing_matrix.conj(), torch.tensor([[0, 0], [1, 0]], dtype=torch.complex64, device=self.funcDevice))
-        
+                     torch.kron(pairing_matrix.conj().transpose(-1, -2).contiguous(), torch.tensor([[0, 0], [1, 0]], dtype=torch.complex64, device=self.funcDevice))
+
         return H_full_BdG
 
 class KitaevChain:

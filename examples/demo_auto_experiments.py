@@ -20,7 +20,7 @@ import torch
 
 from science_agent.core.ledger import Ledger
 from science_agent.orchestrator import run_full_cycle
-from science_agent.runtime.opencode_client import ask_json
+from science_agent.runtime.opencode_client import LLMError, ask_json
 from quantum_transport.agent_adapter import QuantumTransportDomain
 from quantum_transport.agent_runner import physics_judge, run_dual_path
 
@@ -89,7 +89,26 @@ def run_auto_experiment(max_conjectures: int = 3) -> dict:
 
     print("\n[STEP 1] creative-explorer generating conjectures...")
     t0 = time.time()
-    conjectures = generate_conjectures(max_conjectures)
+    try:
+        conjectures = generate_conjectures(max_conjectures)
+    except LLMError as exc:
+        # Previously uncaught: a slow/failed creative-explorer call here crashed the
+        # whole script with no ledger record at all (see improvements.md #1). Degrade
+        # to an empty, clearly-labeled session instead.
+        gen_time = time.time() - t0
+        print(f"  creative-explorer FAILED after {gen_time:.1f}s: {exc}")
+        summary = {
+            "session_id": stamp,
+            "total_conjectures": 0,
+            "total_time_s": round(gen_time, 1),
+            "conjecture_generation_time_s": round(gen_time, 1),
+            "results": [],
+            "decision_distribution": {f"ERROR: {exc}": 1},
+        }
+        (summary_dir / "session_summary.json").write_text(
+            json.dumps(summary, indent=2, default=str))
+        print(f"\n{'=' * 72}\nAUTONOMOUS SESSION FAILED AT GENERATION STEP\n{'=' * 72}")
+        return summary
     gen_time = time.time() - t0
     print(f"  generated {len(conjectures)} conjectures in {gen_time:.1f}s")
     for c in conjectures:
