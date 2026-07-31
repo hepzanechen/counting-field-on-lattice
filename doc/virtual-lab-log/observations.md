@@ -367,3 +367,37 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   call on its own merits even setting the audit-memo confusion aside. No SSHChainBdG
   touched. No code changes this iteration (nothing new found beyond the corroboration of
   finding #4).
+
+- **2026-08-01, iteration 3** (`AUTO-20260801_032856-1`): conjecture predicted a linear
+  `|E_min(Delta)|=alpha·|Delta|` splitting of the SSH zero-mode doublet under weak s-wave
+  pairing, with `alpha` bounded in `[(t_u-t_v)/(t_u+t_v), 1]`. Model: `SSHChainBdG`,
+  `Nx_cell=10, t_u=1.0, t_v=0.2, Delta=0.2` (topological) vs. `t_u=0.2, t_v=1.0`
+  (trivial). **Result: `NEEDS_MORE_DATA`, no timeout, 688.6s total** — third consecutive
+  clean-completing run. **Hermiticity passed cleanly (`max_deviation=0.0`) for a third
+  independent `Delta` value (`0.2`, vs. earlier-verified `0.4`/`0.5`)** — the fix
+  continues to hold. `dual_path_agreement` failed genuinely this time (not
+  `atol_dominated`): `max_rel_error=369.7` (topological) and `1.33` (trivial), both with
+  observables near machine precision (`~1e-8`). The auditor correctly attributed this to
+  near-zero-signal numerical instability rather than claiming a Hamiltonian bug — sound
+  reasoning, and consistent with `improvements.md`'s prediction that a second, distinct
+  SSH dual-path issue exists independent of the (now-fixed) Hermiticity bug. This
+  specific manifestation (catastrophic disagreement only when signal is near-zero) is a
+  new data point for that investigation, not yet root-caused.
+
+  **Qualitative pass** (this being iteration 3): the literature-cartographer flagged the
+  hypothesis as "internally inconsistent" — computing
+  `gap/(t_u+t_v) = 2·(1-0.2)/(1+0.2) = 1.33 > 1`, i.e. claiming the stated alpha bounds
+  are an empty interval. Initially read as a genuinely sophisticated catch (a formal
+  consistency check going beyond citation-matching). **On closer inspection this itself
+  looks questionable**: the conjecture's own falsification section explicitly defines
+  `topological_gap=|t_u-t_v|=0.8`, giving `0.8/1.2=0.667` — a perfectly valid, non-empty
+  bound — whereas the cartographer used `gap=2(t_u-t_v)=1.6` (a different, also-plausible
+  convention: full bandgap vs. half-gap). Nothing downstream (the integrator's synthesis)
+  cross-checked this claim against the hypothesis's own stated definition before folding
+  it into the final memo as a required fix for the next cycle. This is the same class of
+  issue as finding #4 (`atol_dominated`): a confidently-asserted technical claim from one
+  role, plausible-sounding, entering the permanent record without verification — except
+  here there's no simple code-level flag to add, since "which gap convention is correct"
+  is a physics judgment call, not a computable metric. Recording as an open question
+  rather than a fix; genuinely unclear which convention is right without more context on
+  this project's SSH conventions, and not confident enough to file it as a bug.
