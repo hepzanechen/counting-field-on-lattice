@@ -322,3 +322,27 @@ slow call: (2) fix the diagnosed `SSHChainBdG` Hermiticity bug at
 `Central.py:951-963`; (3) investigate the Kitaev dual-path conditioning issue at
 `|mu|=2|t|`. None of these were fixed in this session per instructions — this is a
 prioritized punch list for whenever `src/quantum_transport` work is back in scope.
+
+---
+
+## Post-fix loop iterations (2026-08-01, `science-agent-infra` worktree)
+
+Recommended next steps #1 and #2 above are now fixed (see `CHANGELOG.md`, commit
+`1e9e507`). This section logs cycles run *after* those fixes, from the
+`science-agent-infra` git worktree (`/home/kt/calc/countingFieldOnLattice-infra`), which
+has its own fresh `data/` (gitignored, not shared with the main worktree) — so
+`total_cycles` in `benchmark.md` from here on counts only post-fix runs, not conflated
+with last night's pre-fix history above. A session-bound cron loop continues this
+section automatically every 45 min (see `CHANGELOG.md` for why session-bound, not cloud).
+
+- **2026-08-01, iteration 1** (`AUTO-20260801_021139-1`, run manually as a live
+  validation of the fixes before setting up the recurring loop): conjecture proposed an
+  oscillating Majorana splitting vs. `mu` with period `~1/Nx`, amplitude peaking near
+  `|mu|=2|t|`. Model: `KitaevChain`. **Result: `NEEDS_MORE_DATA`, no timeout, 795.3s
+  total** — the fix's first real-world test succeeded cleanly. Audit `FAIL` on the
+  near-boundary experiment (`mu=1.9`): dual-path disagreement `3.01%` vs `rtol=2%` —
+  consistent with the still-open Kitaev critical-point dual-path pattern extending
+  somewhat off the exact critical point too (`mu=1.9`, not just `mu=2.0`), worth folding
+  into finding #3's investigation once there's more data. Skepticism WEAK on both
+  entries (standard confounder list, nothing new). Literature review cited 5 real,
+  relevant sources. No SSHChainBdG touched this iteration.
