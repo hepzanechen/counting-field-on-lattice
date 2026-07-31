@@ -6,6 +6,45 @@ finding it addresses in `observations.md` / `improvements.md`.
 
 ---
 
+## 2026-08-01 (loop iteration 2) — `atol_dominated` flag on `dual_path_agreement`
+
+**Context**: `improvements.md` #4 documented that `check_dual_path_agreement`'s
+`max_rel_error` metric can read as a large percentage even when `passed=True` is the
+numerically correct call (the pass criterion is atol+rtol combined; `max_rel_error`'s
+denominator is only atol-floored), and that this had already fooled an LLM
+`numerical-auditor` into writing a false "explicit false positive" claim into a permanent
+ledger memo (`AUTO-20260717_000343-2`, 2026-07-17). Tonight's loop iteration 2
+(`AUTO-20260801_030302-1`) independently reproduced the *exact same* misreading — the
+raw judge report correctly passed `dual_path_agreement` at `mu=3`
+(`max_rel_error=0.186`, atol-dominated), but the integrator's synthesis memo again
+asserted an "audit FAIL... 9.3x over tolerance" based on the same metric,
+without accounting for the atol floor. Two independent occurrences of the same
+misinterpretation meets the bar for "small, well-isolated, verified fix."
+
+**Fix**: `src/quantum_transport/utils/physics/invariants.py`,
+`check_dual_path_agreement`: added an `atol_dominated: bool` field to the returned dict,
+computed as `passed and max_rel_error > rtol` — i.e. exactly the confusing case where the
+check legitimately passed but the reported relative error looks alarming next to `rtol`.
+This does not change any pass/fail logic, only adds a diagnostic field.
+
+**Verified**: constructed a synthetic case with `obs_b` below `atol` and `diff` between
+the atol-only and atol+rtol thresholds — confirmed `atol_dominated=True` exactly in that
+case and `False` for a genuine large disagreement and for a clean low-error pass. Full
+`pytest -q` (5 tests) and both deterministic Kitaev demos (`demo_kitaev_mzm`,
+`demo_mzm_phase_boundary`) unaffected. No consumer of `judge_report` dicts does strict
+key-set validation (checked `agent_runner.py`, `orchestrator.py`,
+`core/contracts.py::AuditReport` — the latter is the LLM auditor's own output schema, a
+separate structure, not a parser of the raw judge_report dict) — adding a key is safe.
+
+**Not done yet**: `src/science_agent/prompts/numerical_auditor.md` doesn't currently
+explain this field to the `numerical-auditor` role, so the LLM auditor still won't
+*use* it without a prompt update — that's a natural follow-up, deliberately left out of
+this change to keep it small and independently verifiable (prompt changes affect LLM
+behavior in ways `pytest` can't check). Whether the recurring misreading stops should be
+observable in future loop iterations' synthesis memos once/if the prompt is updated.
+
+---
+
 ## 2026-08-01 — Baseline fixes: LLM timeout retry + SSHChainBdG Hermiticity
 
 **Context**: previous session (2026-07-31) ran the Virtual Lab extensively in read-only

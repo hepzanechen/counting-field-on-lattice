@@ -6,3 +6,4 @@ Auto-appended by `examples.benchmark_virtual_lab --append`. Each row is a cumula
 |---|---|---|---|---|---|
 | 2026-08-01 02:11:16 | 0/0 (None) | Nones / Nones | {} | {} | {} |
 | 2026-08-01 02:25:26 | 1/1 (1.0) | 763.5s / Nones | {} | {'NEEDS_MORE_DATA': 1} | {'KitaevChain': 1} |
+| 2026-08-01 03:16:11 | 2/2 (1.0) | 734.5s / Nones | {} | {'NEEDS_MORE_DATA': 2} | {'KitaevChain': 2} |

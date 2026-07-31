@@ -346,3 +346,24 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   into finding #3's investigation once there's more data. Skepticism WEAK on both
   entries (standard confounder list, nothing new). Literature review cited 5 real,
   relevant sources. No SSHChainBdG touched this iteration.
+
+- **2026-08-01, iteration 2** (`AUTO-20260801_030302-1`, first automated cron fire of the
+  post-fix loop): conjecture proposed oscillatory Majorana splitting `E_split(mu)` with
+  ≥2 local minima in `mu∈(-2,2)`, framed as Fabry-Perot-like end-Majorana interference.
+  Model: `KitaevChain`, `Nx=20, t=1, Delta=1`. **Result: `NEEDS_MORE_DATA`, no timeout,
+  742.2s total** — second consecutive clean post-fix run. Both experiments passed
+  deterministically (hermiticity, current conservation clean). The `mu=3` trivial
+  experiment's raw judge report has `dual_path_agreement: passed=True` with
+  `max_rel_error=0.186` (the same atol-floored-legitimate-pass pattern documented in Run
+  A/finding #4 from 2026-07-31), yet the LLM `numerical-auditor`'s synthesis memo again
+  states *"Deterministic audit FAIL on [E2]... 9.3x over tolerance... bars SUPPORTED"* —
+  the exact same misreading finding #4 predicted would recur. This is now corroborated
+  independently (not the same run being re-described), strengthening the case that
+  finding #4's fix (don't surface a bare `max_rel_error` next to `rtol` when the check
+  actually passed via the `atol` floor) is worth doing, not a one-off. Substantively, the
+  reviewers' critique was sound regardless: the hypothesis (an `E_split(mu)` functional
+  form with local minima) was never actually measured — only two isolated `mu` points
+  exist, one of them outside the claimed interval — so `NEEDS_MORE_DATA` is the right
+  call on its own merits even setting the audit-memo confusion aside. No SSHChainBdG
+  touched. No code changes this iteration (nothing new found beyond the corroboration of
+  finding #4).

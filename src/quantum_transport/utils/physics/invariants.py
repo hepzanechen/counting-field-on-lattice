@@ -52,8 +52,16 @@ def check_dual_path_agreement(obs_a: torch.Tensor, obs_b: torch.Tensor,
     denom = obs_b.abs().clamp(min=atol)
     rel = (diff / denom).max().item()
     passed = bool((diff < atol + rtol * obs_b.abs()).all())
+    # max_rel_error uses an atol-floored denominator, so it can read as a large
+    # percentage even when `passed` is correctly True (diff is small in absolute terms,
+    # obs_b is near the noise floor). Flag that case explicitly: reviewers (including
+    # LLM roles) have repeatedly misread a large max_rel_error next to a small rtol as a
+    # failure without checking atol dominance, and asserted so in a permanent ledger memo
+    # (see doc/virtual-lab-log/observations.md, 2026-07-31 and 2026-08-01 entries).
+    atol_dominated = passed and rel > rtol
     return {"invariant": "dual_path_agreement", "passed": passed,
             "max_rel_error": rel, "rtol": rtol, "atol": atol,
+            "atol_dominated": atol_dominated,
             "caveat": "paths share Green's-function construction inputs; "
                       "agreement rules out method-level bugs, not shared-input bugs"}
 
