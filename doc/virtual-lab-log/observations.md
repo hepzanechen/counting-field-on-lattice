@@ -577,3 +577,22 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   accumulate evidence — it would silently destroy the prior evidence**, since `add()`
   overwrites rather than merges. Any future fix needs to handle that explicitly, not just
   reuse IDs. Promoting this to `improvements.md` as a new top-priority item.
+
+- **2026-08-01, iteration 10** (`AUTO-20260801_070307-1`): conjecture about SSH
+  finite-size gap scaling at the critical point `|t_u|=|t_v|`, comparing `1/Nx²` (Delta=0)
+  vs. `1/Nx³` (Delta≠0) crossover. Model: `SSHChainBdG`, `Nx_cell=15, t_u=t_v=1.0`,
+  `Delta=0.5` and `Delta=0.0`. **Result: `NEEDS_MORE_DATA`, no timeout, 569.0s total** —
+  tenth consecutive clean run. **Both experiments pass `dual_path_agreement` genuinely**
+  (1.3%, 1.7%, neither atol-dominated) at the SSH critical point `r=t_v/t_u=1`, with
+  `Delta=0.5` — a first for that specific `Delta` value post-fix, and a useful data
+  point: **this confirms the still-open SSH dual-path issue is tied to strong
+  dimerization (`r` far from 1), not the critical point itself** — the exact opposite of
+  Kitaev, where the critical point (`|mu|=2|t|`) is specifically *where* the dual-path
+  issue appears. Worth keeping distinct: two different models, two different (and
+  seemingly unrelated) dual-path failure regimes, not the same underlying bug. Good
+  skeptical catch this iteration too: the falsifier flagged `[E1]`'s observable pattern
+  (Andreev=0.936, transmission=1.5e-4) as "textbook trivial ABS," and the
+  literature-cartographer gave a specific, falsifiable physics prediction (expects
+  `FALSIFIED` once real `Nx` scaling data exists, since `Delta≠0` at `mu=0` maps onto the
+  Kitaev sweet spot where the gap is exponentially small, not power-law). No code
+  changes this iteration.
