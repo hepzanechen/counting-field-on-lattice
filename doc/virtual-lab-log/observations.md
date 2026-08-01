@@ -882,3 +882,37 @@ Nothing else to investigate; this is now a fully closed diagnosis.
   retries happened too close to/before the boundary). Next iteration (~09:12 UTC cron
   fire) should be the first one clearly entirely past the reset — that's the real test.
   No code changes.
+
+## Recovery confirmed (2026-08-01, iteration 24, ~09:10 UTC)
+
+**The outage is over.** Iteration 24 (`AUTO-20260801_171012-1`) completed cleanly — real
+verdict (`NEEDS_MORE_DATA`), no timeout, 741.9s cycle time, well within normal range. The
+predicted reset ETA (~09:08 UTC, from the 429 error message's "Resets in 1hr 14min" seen
+at 07:54 UTC) was essentially exact — recovery landed within ~2 minutes of prediction.
+
+**Outage summary**: 11 consecutive failures, iterations 13-23, spanning ~00:28-09:08 UTC
+(~8.7 hours). Root cause: `opencode-go`'s monthly usage quota for `glm-5.2` (and likely
+`glm-5.1`) exhausted; confirmed via an actual `429` error surfaced in iteration 21's raw
+log after 8 iterations of only seeing silent timeouts. Nothing in this repository was
+broken or changed during the outage — every failure degraded exactly as designed (clean
+`ERROR:` strings, no crashes, no corrupted ledger entries, both timeout-handling code
+paths from the original fix got real-world exercise). A server restart (user-authorized)
+and a parallel-worker test both correctly showed no effect, consistent with an
+account-level constraint rather than anything fixable locally.
+
+**Iteration 24's actual result**: another confirmation of the well-established Kitaev
+critical-point `dual_path_agreement` pattern — `Nx=40, mu=2.0, Delta=1.0` gives
+`max_rel_error=0.106` (genuine FAIL, not atol-dominated), matching the identical value
+seen at this exact parameter combination in iteration 9. Literature-cartographer gave a
+strong, well-cited rebuttal of the hypothesis's `Delta`-independent `1/Nx²` scaling claim
+(six sources, unanimous), correctly distinguishing it from the `Delta→0` normal-chain
+limit where `1/Nx²` *would* apply — good, specific physics reasoning, not generic
+hedging. Correctly held at `NEEDS_MORE_DATA` (not `FALSIFIED`) since the actual `Nx`
+sweep needed to test the exponent was never run — same falsification-discipline pattern
+as iteration 6, applied correctly this time.
+
+**Running total after the outage**: 13/24 cycles reached a real verdict (54%); of the 11
+outage failures, all degraded cleanly via the fixed timeout-handling code with zero data
+loss. The parallel-worker infrastructure, the `demo_virtual_lab.py` crash fix, and the
+definitive root-cause diagnosis are all durable value produced *during* the outage, even
+though no new physics evidence came out of those ~8.7 hours.
