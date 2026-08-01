@@ -811,3 +811,11 @@ unresponsiveness via the `opencode-go` route) — nothing further to investigate
 from inside this repo or this local installation. Resuming the loop per user instruction
 ("keep iterating as you wish") — cycles will keep degrading cleanly via the existing
 retry/graceful-degrade logic until the upstream issue clears on its own.
+
+- **2026-08-01, iteration 18** (retroactive log entry — this cycle ran and completed
+  during the interactive root-cause-investigation detour above, but was never given its
+  own dated bullet at the time): sixth consecutive timeout, `creative-explorer` again,
+  same failure shape (~1734.5s). This is the same run later reused as "worker 1" in the
+  parallel-infrastructure test. Its `.loop.lock` was left stale (never cleaned up mid-
+  interrupt) and was correctly identified and removed as stale (>40min old) at the start
+  of iteration 19 below.
