@@ -6,6 +6,55 @@ finding it addresses in `observations.md` / `improvements.md`.
 
 ---
 
+## 2026-08-01 (mid-session, user-requested) — Parallel worker infrastructure + `demo_virtual_lab.py` crash fix
+
+**Context**: user woke up mid-outage (see iteration 13-18 entries in `observations.md`),
+asked for a findings summary and whether parallel runs were feasible to accelerate
+throughput, with the explicit requirement that workers be atomic and non-interfering.
+
+**Investigated and confirmed unsafe as naive concurrency**: `Ledger.add()`/`save()`
+(`core/ledger.py`) load-the-whole-file-then-write-the-whole-file with no locking. Two
+processes writing the same `data/virtual_lab/ledger.json` concurrently would race and
+silently lose records — real corruption risk, not hypothetical.
+
+**Built instead**: 3 additional git worktrees (`countingFieldOnLattice-infra-w2/w3/w4`),
+each `--detach`ed at the same commit as this branch (avoids git's "branch already
+checked out" restriction on checking out one branch in multiple worktrees), each with
+its own independently-synced `.venv` and, critically, its own private `data/`
+(gitignored, never shared between worktrees) — genuinely cannot interfere since they're
+separate files on separate filesystem paths, not a locking scheme layered on shared
+state. Added `examples/merge_parallel_ledgers.py`: read-only aggregation that unions
+each worker's `ledger.json` records by ID into the primary worktree's ledger, asserting
+(not silently resolving) on any ID collision with differing content. Run only after all
+workers have exited, so there's no write-race in the merge step either.
+
+**Verified**: ran all 4 workers concurrently for one real round. Merge script produced a
+correct union with zero errors. Infrastructure itself is validated and ready to use.
+
+**Unexpected but important finding from the live test**: all 4 parallel workers hit the
+*identical* `creative-explorer` timeout simultaneously — strong evidence the current
+degraded stretch (see `observations.md` iterations 13-18) is a genuine account/service
+outage, not per-request bad luck, since 4 independent concurrent requests failed
+identically rather than some succeeding. A follow-up diagnostic (`demo_virtual_lab.py`
+with a manual conjecture, which bypasses `creative-explorer` entirely) showed
+`science-intake` (`glm-5.1` — a *different* model from `creative-explorer`'s `glm-5.2`)
+timing out identically too, widening the diagnosis from "one route down" to "at least
+two GLM-family models down, possibly broader." **Practical implication**: parallelism
+doesn't help increase yield *during* an outage — all workers fail together at the same
+wall-clock cost as one — though it doesn't hurt either (each worker still degrades
+cleanly), and it's fully validated and ready for whenever the backend recovers or for
+other bursty workloads.
+
+**Bonus fix found via the diagnostic**: `demo_virtual_lab.py` had no `try/except` at all
+around its `run_full_cycle` call (unlike `demo_auto_experiments.py`, which was fixed
+earlier tonight) — the `science-intake` timeout crashed it with an uncaught traceback
+(exit code 1). Added the same try/except pattern, verified via a monkeypatched `LLMError`
+test (didn't want to wait another ~29 min for a second real timeout to confirm) plus the
+full `pytest -q` suite. Small, isolated, directly analogous to the already-established
+fix pattern.
+
+---
+
 ## 2026-08-01 (loop iteration 2) — `atol_dominated` flag on `dual_path_agreement`
 
 **Context**: `improvements.md` #4 documented that `check_dual_path_agreement`'s

@@ -17,6 +17,7 @@ import sys
 import torch
 
 from science_agent.orchestrator import run_full_cycle
+from science_agent.runtime.opencode_client import LLMError
 from quantum_transport.agent_adapter import QuantumTransportDomain
 from quantum_transport.agent_runner import physics_judge, run_dual_path
 
@@ -51,11 +52,18 @@ def experiment_runner(model_name: str, params: dict[str, float]):
 
 def main():
     conjecture = " ".join(sys.argv[1:]).strip() or DEFAULT_CONJECTURE
-    result = run_full_cycle(
-        conjecture=conjecture,
-        domain=DOMAIN,
-        experiment_runner=experiment_runner,
-    )
+    try:
+        result = run_full_cycle(
+            conjecture=conjecture,
+            domain=DOMAIN,
+            experiment_runner=experiment_runner,
+        )
+    except LLMError as exc:
+        # Unlike demo_auto_experiments.py, this script previously had no try/except
+        # around run_full_cycle at all, so an LLM timeout crashed with a raw traceback
+        # instead of degrading gracefully (see doc/virtual-lab-log/CHANGELOG.md).
+        print(f"\nVirtual Lab cycle FAILED: {exc}")
+        return {"decision": f"ERROR: {exc}", "synthesis": {}, "ledger": None}
     return result
 
 
