@@ -871,3 +871,7 @@ apparently-limited monthly balance.
 **Going forward**: expect continued failures until ~09:08 UTC, then recovery. No code
 or config changes indicated — this is an account/plan-level constraint, not a bug.
 Nothing else to investigate; this is now a fully closed diagnosis.
+
+- **2026-08-01, iteration 22** (08:08 UTC, ~1hr before expected reset): `creative-explorer`
+  timed out again (~1728.3s), as expected — still before the ~09:08 UTC quota reset ETA.
+  No new information. No code changes.
