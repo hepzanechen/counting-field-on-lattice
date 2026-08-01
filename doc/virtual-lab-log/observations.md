@@ -844,7 +844,7 @@ noise:
 statusCode: 429
 message: "Monthly usage limit reached. Resets in 1hr 14min. To continue using this
 model now, enable usage from your available balance:
-https://opencode.ai/workspace/wrk_01KPFMC5BG0B3RGPSQ4BJKA8AT/go"
+https://opencode.ai/workspace/[workspace-id]/go"
 ```
 
 Logged at `07:54:05 UTC` → **expected reset ≈ 09:08 UTC**. This is a hard, quantified
