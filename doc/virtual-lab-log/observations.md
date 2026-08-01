@@ -664,3 +664,18 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   block `integrator`) both deserve more data points and deliberate design rather than a
   reactive change to one data point. Worth revisiting if the timeout recurs multiple more
   times tonight.
+
+- **2026-08-01, iteration 14**: **no hypothesis generated** — `creative-explorer` timed
+  out on all 3 retry attempts (600s each, 1737.8s / ~29 min total). **This is the first
+  real-world test tonight of the *other* half of the original timeout fix** (commit
+  `1e9e507`'s `generate_conjectures()` try/except in `demo_auto_experiments.py`) — the
+  exact failure mode that crashed the whole script with an uncaught traceback pre-fix
+  (2026-07-31 loop iteration 4). Tonight it degraded exactly as designed: **script exited
+  cleanly (exit code 0)**, printed `"AUTONOMOUS SESSION FAILED AT GENERATION STEP"`, and
+  wrote a well-formed, clearly-labeled `session_summary.json` with `total_conjectures: 0`
+  — no ledger record created at all (confirmed: still 13 records, unchanged), no crash,
+  no stranded partial state. Both halves of the original timeout fix have now been
+  validated under genuine real-world failures (iteration 13: mid-pipeline retry-then-
+  degrade; iteration 14: first-call wrap-and-exit-cleanly). Second timeout in 14
+  iterations (12/14 = ~86% success rate) — still holding up far better than the ~30%
+  pre-fix rate, and no new code change warranted from these two data points alone.
