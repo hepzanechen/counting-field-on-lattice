@@ -642,3 +642,25 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   still 11 `NEEDS_MORE_DATA` + 1 `FALSIFIED`, 0 `SUPPORTED` — consistent with, and further
   evidence for, iteration 9's structural finding (`improvements.md` §7). No code changes
   this iteration.
+
+- **2026-08-01, iteration 13** (`AUTO-20260801_082911-1`): conjecture about oscillatory
+  Majorana splitting with exact destructive-interference zeros at specific `Nx`. Model:
+  `KitaevChain`. **Result: `ERROR` — first timeout since the fix landed (12/13, not
+  13/13).** Both deterministic experiments completed and passed (`TESTING` status, 2
+  evidence entries, stranded with no synthesis — same failure shape as before the fix).
+  Unlike pre-fix timeouts, this took **3 full retry attempts at 600s each
+  (~2051s / 34 min total)** before giving up — `literature-cartographer` genuinely
+  exceeded even the raised budget every time, not a one-shot 300s miss. **The
+  retry-then-graceful-degrade logic worked exactly as designed**: no crash, a clean
+  `LLMError` message (`"LLM failed schema after 3 attempts: agent
+  'literature-cartographer' timed out after 600s"`), caught by the per-conjecture
+  try/except and recorded as a normal `ERROR:` string — this is the intended fallback
+  behavior working correctly under real failure, not a regression.
+
+  **Not fixed further this iteration** — one occurrence in 13 tries (a 92% post-fix
+  success rate, up from ~30% pre-fix) doesn't justify another change yet, and the two
+  candidate escalations already on file (`improvements.md` §1: raise the timeout further,
+  or make `literature-cartographer` best-effort/optional so a slow literature call can't
+  block `integrator`) both deserve more data points and deliberate design rather than a
+  reactive change to one data point. Worth revisiting if the timeout recurs multiple more
+  times tonight.
