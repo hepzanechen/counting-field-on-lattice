@@ -801,3 +801,13 @@ switching providers/models, which is a design decision for the user, not somethi
 guess at autonomously. The 28-50s snapshot-prune tax is real and worth the user's
 attention separately (a 447MB, 22-day-old DB growing further each day), but is a
 secondary inefficiency, not the primary cause of tonight's outage.
+
+**Empirical confirmation**: post-restart test (fresh worker, `countingFieldOnLattice-infra-w3`)
+timed out identically — `creative-explorer` failed after 1729.9s, essentially the same
+duration as every pre-restart failure. This confirms the prediction above: the web-server
+restart had no effect, because `opencode run` never talked to that process in the first
+place. **Root cause is confirmed external** (upstream `glm-5.1`/`glm-5.2` provider
+unresponsiveness via the `opencode-go` route) — nothing further to investigate or fix
+from inside this repo or this local installation. Resuming the loop per user instruction
+("keep iterating as you wish") — cycles will keep degrading cleanly via the existing
+retry/graceful-degrade logic until the upstream issue clears on its own.
