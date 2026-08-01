@@ -130,12 +130,20 @@ explicit reviewer-role scrutiny of the auditor's own claims (not just the physic
 
 ## 6. Hypothesis diversity is inconsistent and structurally limited
 
-Across all runs this session, 8/9 pre-existing + 6/6 fresh loop hypotheses skewed heavily
-toward `KitaevChain`; `SSHChainBdG` was only picked when either manually prompted or in a
-larger `--max 3` batch. The registered `CATALOG` in
+Across all runs on 2026-07-31, 8/9 pre-existing + 6/6 fresh loop hypotheses skewed
+heavily toward `KitaevChain`; `SSHChainBdG` was only picked when either manually
+prompted or in a larger `--max 3` batch. The registered `CATALOG` in
 `src/quantum_transport/agent_adapter.py` has exactly two models, which structurally caps
 how much `creative-explorer` can diversify. Not urgent, but worth remembering if/when a
 third domain model is added — it would directly widen the exploration space.
+
+**Update 2026-08-01** (loop iteration 12's deeper pass, `observations.md`): with 12 more
+post-fix hypotheses, this looks less severe than the 2026-07-31 sample suggested — 9
+`KitaevChain` / 3 `SSHChainBdG` (25%, vs. ~11% before), and `mu`/`Nx` values within
+`KitaevChain` span a genuinely wide range of physics regimes rather than repeating one or
+two points. `Delta` remains the least-varied axis. The original 6/6-Kitaev batch that
+prompted this finding was a small-sample artifact, not a persistent pattern — downgrading
+this from a concern to a "keep an eye on it" item.
 
 ## 7. No mechanism exists for a hypothesis to accumulate ≥3 evidence entries — likely
 explains why `SUPPORTED` has never once been reached

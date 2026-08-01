@@ -612,3 +612,33 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   (6 sources, relevance 0.8-0.95) against a `z=2` exponent at this transition, and the
   synthesis explicitly declined to falsify on literature priors alone, correctly waiting
   for a clean deterministic sweep. No code changes this iteration.
+
+- **2026-08-01, iteration 12** (`AUTO-20260801_080314-1`): conjecture claimed Majorana
+  splitting decay length is *universal* between Kitaev and "SSH-BdG" chains (same
+  gap-to-hopping ratio) within 30%. Model: `KitaevChain`,
+  `Nx=40, mu=0.2, t=1, Delta=1` (topological) vs. `mu=3` (trivial). **Result:
+  `NEEDS_MORE_DATA`, no timeout, 576.4s total** — twelfth consecutive clean run (12/12).
+  Both experiments clean (dual-path 0.2% and an atol-dominated 18.6% pass). Good
+  self-correction again: the literature-cartographer flagged that "SSH-BdG chain" isn't
+  a standard independent model and that **the actual cross-model comparison the
+  hypothesis needs was never built or tested** — only `KitaevChain` was run twice. This
+  is the second time (after iteration 9's evidence-accumulation finding) that a
+  hypothesis's core claim structurally couldn't be tested by what was actually executed,
+  though here it's a milder, self-corrected instance (the reviewers caught it themselves
+  and said so directly, rather than it silently slipping through as `FALSIFIED` the way
+  iteration 6's did).
+
+  **Deeper pass (iteration 12, scheduled every-3rd review) — aggregate diversity
+  check across all 12 hypotheses tonight**: 9 `KitaevChain` / 3 `SSHChainBdG` (25% SSH,
+  a real improvement over the pre-fix ~1/9 ratio). Within `KitaevChain`, `mu` values
+  span `{0.0, 0.2, 0.5, 1.0, 1.9, 2.0, 3.0, 4.0}` and `Nx` spans `{16, 20, 40}` — a
+  genuinely varied set of physics regimes probed (deep topological, near-boundary,
+  exactly critical, deep trivial), not a narrow repeat of one or two points. **This
+  corrects the iteration-4 diversity concern**, which was drawn from a too-small sample
+  (that batch happened to land 6/6 on Kitaev) — the 12-hypothesis aggregate shows
+  meaningfully better diversity than that early impression suggested. `Delta` is the
+  least-varied axis for Kitaev (`{0.5, 1.0}` only) — worth someone eventually prompting
+  a wider `Delta` range if more diversity is wanted, but not urgent. Verdict distribution
+  still 11 `NEEDS_MORE_DATA` + 1 `FALSIFIED`, 0 `SUPPORTED` — consistent with, and further
+  evidence for, iteration 9's structural finding (`improvements.md` §7). No code changes
+  this iteration.
