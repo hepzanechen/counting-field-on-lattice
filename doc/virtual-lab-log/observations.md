@@ -939,3 +939,34 @@ though no new physics evidence came out of those ~8.7 hours.
   physics, expected). Literature-cartographer again correctly distinguished the
   hypothesis's claimed `-2` critical exponent from the CFT-predicted `-1`, citing 5
   sources. No code changes.
+
+- **2026-08-01, iteration 27** (`AUTO-20260801_182858-1`, deeper-pass iteration):
+  conjecture claimed a parity-dependent power-law staircase at the sweet spot
+  (`mu=0, t=Delta=1`): `min|E| ~ A/Nx^alpha`, `alpha=2` for even `Nx`, `alpha=1` for odd.
+  Model: `KitaevChain`, `Nx=20` (even). **Result: `FALSIFIED`, no timeout, 1220.4s
+  total** — the **second `FALSIFIED` verdict ever** (after iteration 6).
+
+  **This one is methodologically much stronger than iteration 6's.** The measured
+  quantity (`min_abs_eigenvalue`) directly *is* the "min|E|" the hypothesis is about — no
+  mismatch this time. Measured value: exactly `0.0` at `Nx=20`. That's a legitimate
+  one-shot falsification on its own merits: a power law `A/Nx^alpha` with `alpha>0` and
+  finite nonzero `A` can never equal exactly zero at any finite `Nx` — only `A=0` would,
+  which isn't a "staircase." This also matches the known exact-solvability of the Kitaev
+  sweet spot (full Majorana dimerization gives an *exact* zero mode at any `N`, not an
+  exponentially-small one) — same fact iteration 6 relied on, applied more cleanly here
+  since the right observable was actually measured this time.
+
+  **Nuance worth flagging**: the hypothesis's own pre-registered `falsification_strategy`
+  specified three explicit tests — (a) fit exponents over an `Nx` sweep and check
+  `|alpha_even - alpha_odd| >= 0.5`, (b) check for parity inversion across consecutive
+  `Nx`, (c) check whether the `Delta=0` control reproduces the same staircase. **None of
+  these three were actually run or satisfied** — only one `Nx` point exists (no sweep, so
+  (a)/(b) are untestable), and the control `[E2]` gives `min|E|=0.1495` (nonzero, so (c)
+  isn't met either — the control does *not* reproduce zero). The integrator instead used
+  a **different, ad hoc argument** ("exact zero is incompatible with any power law") that
+  is logically sound but wasn't one of the pre-declared tests. This is a milder version of
+  the process concern from iteration 6: `CLAUDE.md`'s falsification-first philosophy is
+  about testing pre-registered criteria, not finding a valid-but-different argument after
+  the fact. The physics conclusion here is very likely correct, but the *process* took a
+  shortcut around its own protocol — worth being aware of as a pattern (this is now 2/2
+  `FALSIFIED` verdicts that didn't strictly execute their own pre-registered strategy).
