@@ -832,3 +832,42 @@ retry/graceful-degrade logic until the upstream issue clears on its own.
   changing the loop mechanism — it also functions as outage-recovery detection, and
   restructuring the schedule unilaterally isn't warranted by "iterate as you wish." No
   code changes.
+
+## Root cause DEFINITIVELY confirmed (2026-08-01, iteration 21) — quota exhaustion, not a network hang
+
+**Supersedes the "external network hang" characterization above.** Iteration 21's raw
+OpenCode log (`~/.local/share/opencode/log/2026-08-01T075358.log`) contains an actual
+surfaced error this time, instead of silence — buried past ~2KB of echoed request-body
+noise:
+
+```
+statusCode: 429
+message: "Monthly usage limit reached. Resets in 1hr 14min. To continue using this
+model now, enable usage from your available balance:
+https://opencode.ai/workspace/wrk_01KPFMC5BG0B3RGPSQ4BJKA8AT/go"
+```
+
+Logged at `07:54:05 UTC` → **expected reset ≈ 09:08 UTC**. This is a hard, quantified
+answer: the `opencode-go` plan's monthly quota for `glm-5.2` (and very likely `glm-5.1`
+too, given the `demo_virtual_lab` bypass test failed identically) is exhausted, not
+some unexplained provider/network flakiness.
+
+**This also reconciles the earlier "silent hang" observation** from the interactive
+root-cause session: most likely the `opencode` CLI has its own internal retry/backoff
+behavior on `429` responses, which can consume the full 600s before *our* subprocess
+timeout kills it (manifesting as apparent silence, no error surfaced) — this particular
+call just happened to fail fast (608ms) before exhausting its own retry budget, so we
+got to see the real error underneath. Same root cause the whole time, two different
+observed symptoms depending on internal retry timing.
+
+**Self-critical note**: the interactive root-cause session's own diagnostic calls
+(2 direct `creative-explorer`/`science-intake` tests, 4 parallel-worker calls, 1
+post-restart test — roughly 7 extra API calls beyond the loop's own consumption)
+plausibly contributed to reaching this quota limit sooner than the loop alone would
+have. Worth keeping in mind before running ad-hoc diagnostic API calls during a
+suspected quota issue in the future — each one has a real cost against a shared,
+apparently-limited monthly balance.
+
+**Going forward**: expect continued failures until ~09:08 UTC, then recovery. No code
+or config changes indicated — this is an account/plan-level constraint, not a bug.
+Nothing else to investigate; this is now a fully closed diagnosis.

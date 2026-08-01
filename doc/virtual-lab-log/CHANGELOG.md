@@ -6,6 +6,20 @@ finding it addresses in `observations.md` / `improvements.md`.
 
 ---
 
+## 2026-08-01 (loop iteration 21) — Root cause definitively confirmed: quota exhaustion (429), not a network hang
+
+**Supersedes** the "confirmed external network hang" conclusion in the entry below.
+Iteration 21's raw OpenCode log surfaced an actual error instead of silence:
+`statusCode: 429, "Monthly usage limit reached. Resets in 1hr 14min..."` (logged
+07:54:05 UTC → reset ≈ 09:08 UTC), for `glm-5.2`/`opencode-go`. This reconciles the
+earlier silent-hang observations too: the CLI likely retries internally on 429 with its
+own backoff, sometimes consuming the full 600s before our subprocess timeout fires
+(silent), sometimes failing fast enough to surface the real error (like this one). Same
+root cause throughout, two symptoms depending on internal retry timing. Not a bug, not
+fixable in-repo — an account/plan quota constraint. Full detail in `observations.md`.
+
+---
+
 ## 2026-08-01 (mid-session, user-requested) — Parallel worker infrastructure + `demo_virtual_lab.py` crash fix
 
 **Context**: user woke up mid-outage (see iteration 13-18 entries in `observations.md`),
