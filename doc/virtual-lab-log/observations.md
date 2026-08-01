@@ -970,3 +970,31 @@ though no new physics evidence came out of those ~8.7 hours.
   the fact. The physics conclusion here is very likely correct, but the *process* took a
   shortcut around its own protocol — worth being aware of as a pattern (this is now 2/2
   `FALSIFIED` verdicts that didn't strictly execute their own pre-registered strategy).
+
+- **2026-08-01, iteration 28** (`AUTO-20260801_190309-1`): **third `FALSIFIED` verdict,
+  confirms the pattern as systemic, not incidental.** Conjecture: `E_split(mu)` oscillates
+  with period `2*pi*t/(Nx+1)`, independent of `Delta`. Model: `KitaevChain`. **Result:
+  `FALSIFIED`, no timeout, 999.0s.** The pre-registered `falsification_strategy`
+  explicitly required scanning `mu` across 20-30 samples *and* multiple `Delta` values
+  (`{0.3, 0.6, 1.0}`), fitting the oscillation period, and comparing against the formula
+  at a 20% tolerance. **None of this ran** — only two single points exist
+  (`mu=1.0` and `mu=3.0`, both at the *same* `Delta=0.3`, not even the multiple `Delta`
+  values required). The integrator's synthesis instead cited exact published node-position
+  formulas (Hegde & Vishveshwara 2016; Becerra & Dmytruk 2025) directly contradicting the
+  claim's `Delta`-independence, explicitly reasoning *"Exact analytical results are the
+  deterministic ground truth here... finite-size numerics could only approximate what the
+  exact solution already states"* — using the existence of an exact solution as
+  justification for skipping the numerical test entirely, more explicitly than either
+  prior case.
+
+  **This is now 3/3 `FALSIFIED` verdicts (iterations 6, 27, 28) that did not execute
+  their own pre-registered falsification criteria**, substituting a literature/analytical
+  argument instead. All three physics conclusions look independently well-supported and
+  likely correct on inspection — this isn't "wrong verdicts," it's "verdicts reached by a
+  different path than the falsification-first protocol specifies." Promoting to
+  `improvements.md` as a new item: worth the user's judgment on whether this is
+  acceptable behavior (literature-grounded shortcuts for exactly-solvable models are
+  arguably legitimate scientific practice) or something the `integrator` prompt should
+  be constrained against (e.g., requiring the pre-registered criteria specifically, or
+  requiring a note when substituting a different argument). Not something to decide or
+  fix autonomously — a process/policy question, not a bug.

@@ -180,6 +180,37 @@ scientific claims, but needs deliberate design (does re-running an existing hypo
 still respect "cheapest falsifying experiment"? does the deep-specialist track file
 need to drive which follow-up experiment gets proposed? etc.), not a quick patch.
 
+## 8. `FALSIFIED` verdicts consistently skip their own pre-registered falsification criteria
+
+**Found**: 2026-08-01, iterations 6, 27, 28 (all three `FALSIFIED` verdicts to date —
+3/3, not incidental). Every hypothesis's `falsification_strategy` field pre-registers
+specific numerical tests (e.g. "fit exponents over an Nx sweep," "scan mu across 20-30
+samples and multiple Delta values"). In all three `FALSIFIED` cases, **the pre-registered
+sweep was never run** — only 1-2 single data points existed each time — and the
+`integrator` instead substituted a different, valid-looking literature/analytical
+argument (citing exact published solutions) to justify `FALSIFIED` anyway. Full detail
+and citations in `observations.md`'s iteration 6/27/28 entries.
+
+**Not a numerics bug** — all three physics conclusions look independently well-supported
+on inspection (exact-solvability arguments for exactly-solvable models are a legitimate
+scientific shortcut in the physics literature). The concern is procedural:
+`CLAUDE.md`'s "falsification-first" design is specifically about pre-declaring what
+result would falsify a hypothesis *before* running experiments, then actually running
+that test — not about reaching `FALSIFIED` by whatever argument happens to be available
+afterward, however sound. If this becomes the model's default way to reach `FALSIFIED`,
+it quietly undermines the pre-registration discipline the whole ledger design depends on.
+
+**Candidate mitigations** (not implemented, needs the user's judgment on which, if any):
+- Constrain the `integrator` prompt to require citing which specific pre-registered
+  criterion was met, and treat a literature-only argument as `INCONCLUSIVE` or
+  `NEEDS_MORE_DATA` rather than `FALSIFIED` unless the deterministic sweep actually ran.
+- Or: explicitly bless "exact-solution short-circuit" as a valid, distinct falsification
+  path in the prompt/design, with its own gate (e.g. require the literature-cartographer
+  to flag "exact solution available" before the integrator may use this shortcut) rather
+  than silently overriding the pre-registered criteria.
+- Or: accept current behavior as fine (arguably it's what a real physicist would do) and
+  just note it — no change needed.
+
 ## Priority order if picking one thing to fix next
 
 1. ~~Timeout/retry handling (§1)~~ — **done 2026-08-01**, 100% completion rate since.
@@ -193,4 +224,6 @@ need to drive which follow-up experiment gets proposed? etc.), not a quick patch
 5. Kitaev critical-point dual-path conditioning (§3) — needs investigation, not just a fix.
 6. Second SSHChainBdG dual-path issue (§2's caveat, now precisely characterized in
    `observations.md` loop iterations 3-4: `Delta`-independent, `t_u/t_v`-asymmetric).
-7. Diversity / auditor-claim-checking (§5, §6) — longer-horizon, more design work.
+7. `FALSIFIED`-skips-pre-registered-criteria pattern (§8) — a policy/design decision for
+   the user, not an autonomous fix; now well-evidenced at 3/3 occurrences.
+8. Diversity / auditor-claim-checking (§5, §6) — longer-horizon, more design work.
