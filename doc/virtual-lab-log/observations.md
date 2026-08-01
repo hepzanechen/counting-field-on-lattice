@@ -875,3 +875,10 @@ Nothing else to investigate; this is now a fully closed diagnosis.
 - **2026-08-01, iteration 22** (08:08 UTC, ~1hr before expected reset): `creative-explorer`
   timed out again (~1728.3s), as expected — still before the ~09:08 UTC quota reset ETA.
   No new information. No code changes.
+
+- **2026-08-01, iteration 23** (started 08:39 UTC, right at the reset boundary): timed out
+  again (~1727.6s), finishing ~09:08 UTC — essentially exactly at the predicted reset
+  time, but still failed (call was already in-flight before the reset, and `ask_json`'s
+  retries happened too close to/before the boundary). Next iteration (~09:12 UTC cron
+  fire) should be the first one clearly entirely past the reset — that's the real test.
+  No code changes.
