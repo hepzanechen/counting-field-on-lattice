@@ -929,3 +929,13 @@ though no new physics evidence came out of those ~8.7 hours.
   wasting a downstream intake call) — see `CHANGELOG.md` for the full writeup and
   verification. `pytest -q` still passes. Ledger unaffected (no hypothesis record was
   ever created for this malformed attempt — confirmed still 14 records).
+
+- **2026-08-01, iteration 26** (`AUTO-20260801_180308-1`): another Kitaev critical-point
+  scaling-exponent conjecture. Model: `KitaevChain`, `Nx=20, mu=2.0`. **Result:
+  `NEEDS_MORE_DATA`, no timeout, 841.3s total** — clean run, no recurrence of iteration
+  25's malformed-proposal issue (well-formed this time; fix untested by this run but no
+  regression either). `dual_path_agreement` at the critical point: `0.0605` — the exact
+  same value as every other `Nx=20, mu=2.0, Delta=1.0` run tonight (deterministic
+  physics, expected). Literature-cartographer again correctly distinguished the
+  hypothesis's claimed `-2` critical exponent from the CFT-predicted `-1`, citing 5
+  sources. No code changes.
