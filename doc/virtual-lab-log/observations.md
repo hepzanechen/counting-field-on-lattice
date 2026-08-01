@@ -1040,3 +1040,7 @@ changes indicated.
   ~2026-08-02T12:22 UTC). No new information. No code changes.
 
 - **iteration 32** (13:06 UTC): timed out again (~1718.7s), expected, no new info.
+
+- **iteration 33** (13:36 UTC): timed out again (~1718.7s), expected, no new info. User
+  is now awake and has asked to merge this branch into `science-agent`; pausing the
+  loop here (cron job left running, but the user is actively driving the session now).
