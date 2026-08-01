@@ -679,3 +679,40 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   degrade; iteration 14: first-call wrap-and-exit-cleanly). Second timeout in 14
   iterations (12/14 = ~86% success rate) — still holding up far better than the ~30%
   pre-fix rate, and no new code change warranted from these two data points alone.
+
+- **2026-08-01, iteration 15**: **third consecutive timeout** — `creative-explorer`
+  again, same failure shape as iteration 14 (3 retries × 600s, ~29 min, clean exit,
+  no ledger record). Three failures in a row (13, 14, 15) after twelve straight
+  successes (1-12) is a real shift, not noise, and this is the scheduled every-3rd
+  deeper-pass iteration, so investigated rather than just logged.
+
+  **Diagnostic performed**: checked the local `opencode web` server process
+  (PID 482, running continuously since 2026-07-10, ~530MB RSS, 273min cumulative CPU) —
+  responds to a plain HTTP GET in 36ms, so the server itself is up and not wedged.
+  Then tried a direct, manual `opencode run --agent creative-explorer` call with a
+  trivial prompt, wrapped in a shell `timeout 60` as a bounded test. **The call hung well
+  past 60s and `timeout` did not kill it** — had to force-kill with `SIGKILL` manually
+  after ~10 minutes. This confirms the slowness is real and reproducible directly at the
+  CLI/backend level, not a bug specific to the demo scripts.
+
+  **However, this also clarifies something reassuring**: plain shell `timeout N CMD`
+  (no `-k` flag) only sends `SIGTERM` at the deadline and does not force-kill — if the
+  target process doesn't exit cleanly on `SIGTERM` (plausible for a Go binary blocked in
+  a network call), it can survive indefinitely past the nominal timeout. The **actual
+  production code path** (`opencode_client.py`'s `subprocess.run(..., timeout=600)`) uses
+  Python's `subprocess` timeout mechanism, which sends `SIGKILL` (not just `SIGTERM`) when
+  the deadline fires — a harder, more reliable kill than my naive diagnostic used. This is
+  consistent with what's actually been observed: iterations 13-15 all terminated cleanly
+  at 600s×3 (not hung forever) via the real code path. So the diagnostic confirms
+  *backend calls can genuinely take very long or hang*, but does **not** suggest the
+  production timeout/retry mechanism itself is unreliable — if anything it slightly
+  increases confidence in it, since it's a strictly harder kill than what just failed to
+  stop my manual test.
+
+  **Assessment, not a code fix**: nothing in this repository changed between iteration 12
+  (last success) and 13 (first failure) — this looks like a genuine period of backend/
+  provider slowness (time-of-day load? rate limiting after ~14 iterations × ~9 calls each
+  ≈ 125+ cumulative calls tonight?), external to the codebase, not something a "small
+  root-caused fix" here can address. The existing retry-then-gracefully-degrade design is
+  already the correct mitigation for exactly this scenario. Continuing to monitor rather
+  than changing code on this basis — will note if it clears up or gets worse.
