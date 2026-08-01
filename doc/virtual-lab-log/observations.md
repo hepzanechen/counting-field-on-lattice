@@ -716,3 +716,22 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   root-caused fix" here can address. The existing retry-then-gracefully-degrade design is
   already the correct mitigation for exactly this scenario. Continuing to monitor rather
   than changing code on this basis — will note if it clears up or gets worse.
+
+- **2026-08-01, iteration 16**: **fourth consecutive timeout**, and `creative-explorer`
+  specifically for the third time in a row (14, 15, 16 — iteration 13 was
+  `literature-cartographer`), same failure shape (3×600s retries, ~29 min, clean exit,
+  no ledger record, no crash). This is now a sustained pattern, not noise: iterations
+  13-16 (roughly the last ~2 hours of wall-clock time) have produced **zero new
+  evidence**, after twelve straight successes before that. No code in this repository
+  changed between the successful streak and the failing streak, and the same
+  `creative-explorer` prompt succeeded 12/12 times earlier tonight with identical code —
+  this continues to point at external backend/provider degradation (specifically
+  affecting `glm-5.2`, the model routed to `creative-explorer`) rather than anything
+  fixable here. **Deliberately not raising the timeout further or making other changes**:
+  there's no way to tell from here whether the backend needs 700s or 7000s right now, and
+  guessing at a number without evidence isn't the "root-caused, verified" bar this loop
+  is held to. Continuing to run on schedule as instructed ("no cap... keep going until
+  told to stop") — if this clears up, later iterations will show it; if it persists for
+  many more cycles, that itself is the most important thing for the user to see in the
+  morning (large stretches of wall-clock time with zero yield), which this log already
+  captures accurately.
