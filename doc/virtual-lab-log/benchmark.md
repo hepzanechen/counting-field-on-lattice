@@ -24,3 +24,4 @@ Auto-appended by `examples.benchmark_virtual_lab --append`. Each row is a cumula
 | 2026-08-01 11:33:17 | 12/13 (0.923) | 619.8s / 2051.4s | {'literature-cartographer timeout': 1} | {'NEEDS_MORE_DATA': 11, 'FALSIFIED': 1, 'TESTING': 1} | {'KitaevChain': 10, 'SSHChainBdG': 3} |
 | 2026-08-01 14:29:22 | 12/13 (0.923) | 619.8s / 2051.4s | {'literature-cartographer timeout': 1} | {'NEEDS_MORE_DATA': 11, 'FALSIFIED': 1, 'TESTING': 1} | {'KitaevChain': 10, 'SSHChainBdG': 3} |
 | 2026-08-01 15:01:58 | 12/13 (0.923) | 619.8s / 2051.4s | {'literature-cartographer timeout': 1} | {'NEEDS_MORE_DATA': 11, 'FALSIFIED': 1, 'TESTING': 1} | {'KitaevChain': 10, 'SSHChainBdG': 3} |
+| 2026-08-01 15:33:33 | 12/13 (0.923) | 619.8s / 2051.4s | {'literature-cartographer timeout': 1} | {'NEEDS_MORE_DATA': 11, 'FALSIFIED': 1, 'TESTING': 1} | {'KitaevChain': 10, 'SSHChainBdG': 3} |

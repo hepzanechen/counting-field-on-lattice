@@ -825,3 +825,10 @@ retry/graceful-degrade logic until the upstream issue clears on its own.
   diagnosed (see "Root cause investigation" section above: confirmed external, upstream
   `glm-5.1`/`glm-5.2` provider unresponsiveness, restart empirically confirmed not to
   help). Nothing new to add; just tracking persistence. No code changes.
+
+- **2026-08-01, iteration 20**: 8th consecutive timeout (iterations 13-20), ~7 hours of
+  sustained outage now (~00:28-07:35 UTC). Same shape (~1729.6s). Diagnosis fully
+  saturated, nothing new to investigate. Keeping the existing 30-min cadence rather than
+  changing the loop mechanism — it also functions as outage-recovery detection, and
+  restructuring the schedule unilaterally isn't warranted by "iterate as you wish." No
+  code changes.
