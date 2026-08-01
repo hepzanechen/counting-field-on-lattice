@@ -1008,3 +1008,29 @@ though no new physics evidence came out of those ~8.7 hours.
   untested, not contradicted"* — confirms the science agent doesn't *always* take the
   literature shortcut when it doesn't apply (no exact-solution special point here to
   short-circuit against, unlike 6/27/28's sweet-spot cases). No code changes.
+
+## New, larger outage: WEEKLY quota exhausted, not just the earlier hourly-tier one (2026-08-01, iteration 30, ~12:22 UTC)
+
+**A different, higher-tier limit than the one diagnosed at iteration 21.** Iteration 30
+timed out again after 6 consecutive clean successes (24-29). The raw OpenCode log
+(`~/.local/share/opencode/log/2026-08-01T122209.log`) shows a *new* error message:
+
+```
+Weekly usage limit reached. Resets in 1 day.
+```
+
+Logged at `12:22:16 UTC` → **expected reset ≈ 2026-08-02T12:22 UTC (~1 day out)**. This is
+distinct from iteration 21's "Monthly usage limit... Resets in 1hr 14min" — the account
+apparently has (at least) two separate quota tiers on the `opencode-go` plan (a
+fast-cycling one, already hit and recovered once overnight, and this slower-cycling
+weekly one), and the night's cumulative usage (30 loop iterations + the interactive
+diagnostic session's extra calls) has now exhausted the weekly tier too.
+
+**This is a materially longer outage window than before** (~1 day vs. ~9 hours). Given
+this loop is session-bound and the user will very likely check back well before a full
+day passes, there's likely nothing more to do here except: (1) keep responding to
+scheduled cron fires with terse, low-noise log entries (nothing new to say each time
+until it clears or the reset window arrives), and (2) make sure this is maximally visible
+at the top of the observations for whenever the user next reads this. Not fixable
+in-repo — same category as iteration 21's finding, just a different quota tier. No code
+changes indicated.

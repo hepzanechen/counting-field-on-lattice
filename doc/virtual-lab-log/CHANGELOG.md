@@ -4,6 +4,11 @@ Dated entries, newest first. Branch: `science-agent-infra` (worktree at
 `../countingFieldOnLattice-infra`, sibling to the main checkout). Every entry cites the
 finding it addresses in `observations.md` / `improvements.md`.
 
+**⚠ If you're reading this after a gap: check the top of `observations.md` for whether
+a quota outage is active.** As of iteration 30 (2026-08-01, ~12:22 UTC), a *weekly*
+`opencode-go` usage limit was hit (distinct from the earlier hourly-tier one at
+iteration 21), expected to reset ~2026-08-02T12:22 UTC (~1 day out). Not an in-repo bug.
+
 ---
 
 ## 2026-08-01 (loop iteration 25) — Validate individual proposal structure in `generate_conjectures`
