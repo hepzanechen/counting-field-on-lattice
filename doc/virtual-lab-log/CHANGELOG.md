@@ -6,6 +6,37 @@ finding it addresses in `observations.md` / `improvements.md`.
 
 ---
 
+## 2026-08-01 (loop iteration 25) — Validate individual proposal structure in `generate_conjectures`
+
+**Symptom**: iteration 25 (`AUTO-20260801_173039-1`) failed with a confusing
+`ValueError("unknown model None (allowed: ['KitaevChain', 'SSHChainBdG'])")` — not a
+timeout, a new failure mode. Root-caused by inspecting
+`data/virtual_lab/proposals/auto_generated.json`: `creative-explorer`'s raw output was
+missing the `"conjecture"` field entirely (had `"title"` but not `"conjecture"` or
+`"falsification_strategy"`), despite `src/science_agent/prompts/creative_explorer.md`
+explicitly specifying both as required in the schema. `ask_json`'s
+`required_keys=["proposals"]` check only validates the top-level key exists, not the
+structure of individual proposals inside it, so the malformed proposal passed through
+unchecked, the empty conjecture text went into `run_full_cycle` → `intake("")`, and
+`science-intake` (given nothing to work with) returned a hypothesis with `model=None`,
+crashing 65s later with an error that gave no hint the real problem was upstream.
+
+**Fix**: `examples/demo_auto_experiments.py::generate_conjectures` now filters out any
+proposal with an empty/missing `"conjecture"` field immediately after receiving the
+LLM response, before it reaches `run_full_cycle`, logging how many were dropped and why.
+Small, isolated, doesn't touch retry/schema logic in `opencode_client.py` itself.
+
+**Verified**: monkeypatched `ask_json` to return a mix of one malformed (missing key),
+one blank (whitespace-only), and one valid proposal — confirmed exactly the valid one
+survives filtering with the correct `auto_id`. Full `pytest -q` (5 tests) still passes.
+
+**Not changed**: whether this was a one-off LLM compliance slip (possibly correlated
+with the model having just come back from the ~8.7hr quota outage — see the entry below)
+or a recurring pattern is unknown from a single occurrence; the fix makes the failure
+mode cheap and clear regardless of frequency, which is the actionable part.
+
+---
+
 ## 2026-08-01 (loop iteration 21) — Root cause definitively confirmed: quota exhaustion (429), not a network hang
 
 **Supersedes** the "confirmed external network hang" conclusion in the entry below.

@@ -47,7 +47,18 @@ def generate_conjectures(max_conjectures: int = 3) -> list[dict]:
         required_keys=["proposals"],
         agent="creative-explorer")
 
-    conjectures = proposals["proposals"][:max_conjectures]
+    # ask_json only validates that the top-level "proposals" key exists, not the
+    # structure of each proposal inside it -- an individually malformed proposal
+    # (e.g. missing "conjecture") previously slipped through, wasted a downstream
+    # intake LLM call, and then crashed with a confusing "unknown model None" deep
+    # inside run_full_cycle instead of a clear error here (see CHANGELOG.md).
+    raw = proposals["proposals"][:max_conjectures]
+    conjectures = [c for c in raw if str(c.get("conjecture", "")).strip()]
+    dropped = len(raw) - len(conjectures)
+    if dropped:
+        print(f"  WARNING: dropped {dropped}/{len(raw)} malformed proposal(s) "
+              f"missing a non-empty 'conjecture' field")
+
     for i, c in enumerate(conjectures):
         c["auto_id"] = f"AUTO-{i+1}"
 

@@ -916,3 +916,16 @@ outage failures, all degraded cleanly via the fixed timeout-handling code with z
 loss. The parallel-worker infrastructure, the `demo_virtual_lab.py` crash fix, and the
 definitive root-cause diagnosis are all durable value produced *during* the outage, even
 though no new physics evidence came out of those ~8.7 hours.
+
+- **2026-08-01, iteration 25**: **new failure mode, not a timeout.** `creative-explorer`
+  responded normally (176.9s) but its proposal was missing the `"conjecture"` field
+  entirely, despite the prompt requiring it — likely LLM schema non-compliance,
+  possibly a lingering effect of the model having just come back from the ~8.7hr quota
+  outage, though that's speculation from one occurrence. This slipped past
+  `ask_json`'s top-level-only schema check, produced an empty conjecture string, and
+  crashed 65s later inside `intake()` with a confusing `unknown model None` error.
+  **Root-caused and fixed** (`examples/demo_auto_experiments.py::generate_conjectures`
+  now filters out proposals missing a non-empty `conjecture` field immediately, before
+  wasting a downstream intake call) — see `CHANGELOG.md` for the full writeup and
+  verification. `pytest -q` still passes. Ledger unaffected (no hypothesis record was
+  ever created for this malformed attempt — confirmed still 14 records).
