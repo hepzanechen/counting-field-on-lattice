@@ -819,3 +819,9 @@ retry/graceful-degrade logic until the upstream issue clears on its own.
   parallel-infrastructure test. Its `.loop.lock` was left stale (never cleaned up mid-
   interrupt) and was correctly identified and removed as stale (>40min old) at the start
   of iteration 19 below.
+
+- **2026-08-01, iteration 19**: outage persists post-restart, as predicted —
+  `creative-explorer` timed out again (~1729.4s), same shape. Root cause already fully
+  diagnosed (see "Root cause investigation" section above: confirmed external, upstream
+  `glm-5.1`/`glm-5.2` provider unresponsiveness, restart empirically confirmed not to
+  help). Nothing new to add; just tracking persistence. No code changes.
