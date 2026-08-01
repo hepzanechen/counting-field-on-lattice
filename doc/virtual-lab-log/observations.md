@@ -998,3 +998,13 @@ though no new physics evidence came out of those ~8.7 hours.
   be constrained against (e.g., requiring the pre-registered criteria specifically, or
   requiring a note when substituting a different argument). Not something to decide or
   fix autonomously — a process/policy question, not a bug.
+
+- **2026-08-01, iteration 29** (`AUTO-20260801_192855-1`): Majorana splitting scaling
+  conjecture (exponential decay, alpha in [1,2]). Model: `KitaevChain`, `Nx=20, mu=1.0,
+  Delta=0.5` vs. `mu=3.0` control. **Result: `NEEDS_MORE_DATA`, no timeout, 901.5s** —
+  both experiments clean (dual-path 0.30% and an atol-dominated 20% pass). Good contrast
+  with iterations 27/28: correctly held at `NEEDS_MORE_DATA` rather than reaching for a
+  literature-based `FALSIFIED` shortcut, explicitly reasoning *"the hypothesis is
+  untested, not contradicted"* — confirms the science agent doesn't *always* take the
+  literature shortcut when it doesn't apply (no exact-solution special point here to
+  short-circuit against, unlike 6/27/28's sweet-spot cases). No code changes.
