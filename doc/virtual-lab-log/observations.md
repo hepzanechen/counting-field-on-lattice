@@ -746,3 +746,58 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   this clearly for the morning: if the user has visibility into their OpenCode/provider
   account (rate limits, quota, service status for `glm-5.2` specifically), that's the
   most likely next lead — nothing further to investigate from inside this repo.
+
+## Root cause investigation (2026-08-01, user-requested, mid-outage)
+
+User woke mid-outage, asked for root-cause investigation before continuing. Findings,
+outside this repo (in the local OpenCode installation), documented here since they're
+the most relevant context for interpreting tonight's timeout pattern.
+
+**Checked `~/.local/share/opencode/log/*.log`** (the server was started with
+`--print-logs`). Found two distinct things:
+
+1. **Every single `opencode run` invocation — including ones from the successful 12/12
+   streak, not just the failing ones — pays a consistent 28-50 second tax from a
+   `service=snapshot prune=7.days cleanup` job**, confirmed across 10+ separate log
+   files. `~/.local/share/opencode/opencode.db` is 447MB with a 14MB `-wal` file,
+   accumulated over 22+ days of continuous server uptime (`opencode web`, PID 482,
+   started 2026-07-10). This is real, measurable overhead on *every* call, though not
+   large enough by itself to explain the full 600s+ hangs.
+
+2. **The actual hang happens after that**: traced one live call in detail
+   (`~/.local/share/opencode/log/2026-08-01T055115.log`) — `service=llm
+   providerID=opencode-go modelID=glm-5.2 agent=creative-explorer ... stream` starts,
+   local housekeeping (session init, the 28-50s prune) proceeds, and then **the log goes
+   completely silent for the remaining ~9+ minutes** until the 600s subprocess timeout
+   fires — no error, no retry signal, no partial response logged. That pattern (clean
+   start, then total silence, no error surfaced) is consistent with a genuine
+   network-level hang talking to the upstream provider, not a local processing bug.
+
+**Important structural discovery while investigating**: `opencode run` does **not** talk
+to the `opencode web` server (port 4096) over HTTP at all — its log shows it opening its
+own direct connection to the same `~/.local/share/opencode/opencode.db` SQLite file
+in-process (`service=db path=...opencode.db opening database`). The two processes share
+a database file, not a network connection. This matters because it means **restarting
+the web server was very unlikely to fix the CLI hang** (see below) — the actual `opencode
+run` timeouts don't route through the process being restarted.
+
+**Action taken**: user explicitly authorized restarting the `opencode web` server given
+its 22-day uptime and the DB-size finding. Killed PID 482 (`SIGTERM`, then `SIGKILL`
+after it didn't respond in 5s) and started a fresh instance. Used `--hostname
+127.0.0.1` instead of the original `--hostname 0.0.0.0` — the auto-mode permission
+classifier correctly flagged binding to all interfaces as expanding network exposure
+beyond what "restart it" authorized; localhost-only is sufficient since every caller is
+on this same machine. New server confirmed healthy (fast HTTP response). Given the
+structural discovery above, **this restart is expected to have no effect on the
+`opencode run` CLI timeouts** — logged here for completeness and because it was an
+explicit, deliberate action, not because it's expected to be the fix. An empirical
+post-restart test is running to confirm this expectation either way.
+
+**Conclusion so far**: the primary bottleneck is very likely genuine upstream
+provider/network unresponsiveness for `opencode-go`'s `glm-5.2` (and separately
+`glm-5.1`, per the earlier `demo_virtual_lab` bypass test) — external to this machine,
+not fixable by anything available in this repo or this local installation short of
+switching providers/models, which is a design decision for the user, not something to
+guess at autonomously. The 28-50s snapshot-prune tax is real and worth the user's
+attention separately (a 447MB, 22-day-old DB growing further each day), but is a
+secondary inefficiency, not the primary cause of tonight's outage.
