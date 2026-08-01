@@ -735,3 +735,14 @@ section automatically every 45 min (see `CHANGELOG.md` for why session-bound, no
   many more cycles, that itself is the most important thing for the user to see in the
   morning (large stretches of wall-clock time with zero yield), which this log already
   captures accurately.
+
+- **2026-08-01, iteration 17**: **fifth consecutive timeout**, `creative-explorer` again
+  (fourth time running: 14-17), identical failure shape. The outage-like period is now
+  ~2.5-3 hours of wall-clock time (iterations 13-17) with zero new evidence. Not taking
+  any escalating action (no model-routing change, no schedule change) — still no
+  in-repo evidence of what's actually wrong, and second-guessing the deliberate
+  `opencode.json` model assignment or the user's own loop-interval setup without real
+  diagnostic grounds isn't warranted by the "conservative, don't guess" mandate. Flagging
+  this clearly for the morning: if the user has visibility into their OpenCode/provider
+  account (rate limits, quota, service status for `glm-5.2` specifically), that's the
+  most likely next lead — nothing further to investigate from inside this repo.
